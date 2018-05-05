@@ -1,0 +1,11 @@
+{
+  "name": "nodejs-rest-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "exit 1"
+  },
+  "author": "ader1990",
+  "license": "ISC"
+}
