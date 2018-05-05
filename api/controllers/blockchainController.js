@@ -100,24 +100,38 @@ exports.read_a_block = function(req, res) {
       var trxs_container = []
       if (trxs_number > 0) {
         var block_offset = 162
-        var trx_block_length = 69
+        var current_block_offset = block_offset
         for(var i=0;i<trxs_number;i++) {
-            var current_block_offset = block_offset + (i * trx_block_length)
             var trx_version = deserializeNumber(substr(block_hex, current_block_offset, 1))
             var trx_nonce = deserializeNumber(substr(block_hex, current_block_offset + 1, 1))
             var trx_time_lock = deserializeNumber(substr(block_hex, current_block_offset + 2, 3))
+
+            // Deserialize from trx data
             var trx_from_length = deserializeNumber(substr(block_hex, current_block_offset + 2 + 3, 1))
             var trx_from_address = substr(block_hex, current_block_offset + 2 + 3 + 1, 20).toString('hex')
             var trx_from_pub_key = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20, 32).toString('hex')
             var trx_from_signature = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32, 64).toString('hex')
             var trx_from_amount = deserializeNumber8BytesBuffer(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64)/10000
+            var trx_from_currency_length = deserializeNumber(substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7, 1))
+            var trx_from_currency_token = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7 + 1, trx_from_currency_length).toString('hex')
             var trx_from = {
               'address': trx_from_address,
-              'public_key': trx_from_pub_key,
+              //'public_key': trx_from_pub_key,
               //'signature': trx_from_signature,
-              'amount': trx_from_amount
+              'amount': trx_from_amount,
+              //'currency_length': trx_from_currency_length,
+              //'currency_token': trx_from_currency_token
             }
+
+            // Deserialize to trx data
+            var trx_to_block_offset = current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7 + 1 + trx_from_currency_length
+            var trx_to_length = deserializeNumber(substr(block_hex, trx_to_block_offset, 1))
+            var trx_to_address = substr(block_hex, trx_to_block_offset + 1, 20).toString('hex')
+            var trx_to_amount = deserializeNumber8BytesBuffer(block_hex, trx_to_block_offset + 1 + 20)/10000
             var trx_to = {
+              //'trx_to_length': trx_to_length,
+              'trx_to_address': trx_to_address,
+              //'trx_to_amount': trx_to_amount
             }
 
             var trx = {
@@ -129,6 +143,7 @@ exports.read_a_block = function(req, res) {
               'to': trx_to
             }
             trxs_container.push(trx)
+            current_block_offset = trx_to_block_offset + 1 + 20 + 7
         }
       }
 
