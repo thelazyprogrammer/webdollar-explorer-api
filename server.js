@@ -1,7 +1,6 @@
 var express = require('express'),
   app = express(),
   port = process.env.PORT || 3000,
-  CouchDB = require('nano')('http://localhost:5984').use('blockchaindb'),
   bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
