@@ -1,7 +1,11 @@
 'use strict';
 var atob = require('atob'),
   bs58 = require('bs58'),
+  crypto = require('crypto'),
   BlockchainDB = require('nano')('http://localhost:5984').use('blockchaindb');
+
+var PREFIX_BASE64 = "584043fe"
+var SUFFIX_BASE64 = "FF"
 
 exports.list_all_blocks = function(req, res) {
   BlockchainDB.list({ limit:20, descending:true, attachments:true, include_docs:true }, function (err, body) {
@@ -72,6 +76,20 @@ function deserializeNumber8BytesBuffer(buffer, offset = 0) {
   return value;
 }
 
+function SHA256(bytes) {
+  let sha256 = crypto.createHash('sha256'); //sha256
+  sha256.update(bytes);
+  return sha256.digest();
+}
+
+function decodeMinerAddress(miner_address) {
+    var address = Buffer.concat([Buffer.from('00', "hex"), Buffer.from(miner_address, 'hex')])
+    var checksum = SHA256(SHA256(address))
+    checksum = substr(checksum, 0, 4)
+    return encodeBase64(Buffer.concat([ Buffer.from(PREFIX_BASE64, 'hex'), address, checksum, Buffer.from(SUFFIX_BASE64, 'hex')]))
+}
+
+
 exports.read_a_block = function(req, res) {
   var blockId = 'block' + parseInt(req.params.blockId);
   BlockchainDB.get(blockId, {attachments:true, include_docs:true}, function (err, body) {
@@ -92,7 +110,7 @@ exports.read_a_block = function(req, res) {
       var block_hash_data = substr(block_hex, 74, 32).toString('hex')
       var miner_address = substr(block_hex, 106, 20).toString('hex')
       var miner_address_encoded = bs58.encode(miner_address)
-      var miner_address_decoded = encodeBase64(miner_address)
+      var miner_address_decoded = decodeMinerAddress(miner_address)
 
       // TRX data
       var trxs_hash_data = substr(block_hex, 126, 32).toString('hex')
@@ -111,14 +129,15 @@ exports.read_a_block = function(req, res) {
             var trx_from_address = substr(block_hex, current_block_offset + 2 + 3 + 1, 20).toString('hex')
             var trx_from_pub_key = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20, 32).toString('hex')
             var trx_from_signature = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32, 64).toString('hex')
-            var trx_from_amount = deserializeNumber8BytesBuffer(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64)/10000
+            var trx_from_amount = deserializeNumber8BytesBuffer(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64)
             var trx_from_currency_length = deserializeNumber(substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7, 1))
             var trx_from_currency_token = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7 + 1, trx_from_currency_length).toString('hex')
             var trx_from = {
-              'address': trx_from_address,
+              //'address': trx_from_address,
+              'address': decodeMinerAddress(trx_from_address),
               //'public_key': trx_from_pub_key,
               //'signature': trx_from_signature,
-              'amount': trx_from_amount,
+              'amount': trx_from_amount/10000,
               //'currency_length': trx_from_currency_length,
               //'currency_token': trx_from_currency_token
             }
@@ -127,20 +146,23 @@ exports.read_a_block = function(req, res) {
             var trx_to_block_offset = current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7 + 1 + trx_from_currency_length
             var trx_to_length = deserializeNumber(substr(block_hex, trx_to_block_offset, 1))
             var trx_to_address = substr(block_hex, trx_to_block_offset + 1, 20).toString('hex')
-            var trx_to_amount = deserializeNumber8BytesBuffer(block_hex, trx_to_block_offset + 1 + 20)/10000
+            var trx_to_amount = deserializeNumber8BytesBuffer(block_hex, trx_to_block_offset + 1 + 20)
             var trx_to = {
               //'trx_to_length': trx_to_length,
-              'trx_to_address': trx_to_address,
-              //'trx_to_amount': trx_to_amount
+              //'address_base': trx_to_address,
+              'address': decodeMinerAddress(trx_to_address),
+              //'amount': trx_to_amount/1000
             }
-
+            trx_from['amount'] = trx_to_amount/10000
+            var trx_fee = (trx_from_amount - trx_to_amount)/10000
             var trx = {
               //'version' : trx_version,
               //'nonce' : trx_nonce,
               //'time_lock' : trx_time_lock,
               //'from_length' : trx_from_length,
               'from': trx_from,
-              'to': trx_to
+              'to': trx_to,
+              'fee': trx_fee
             }
             trxs_container.push(trx)
             current_block_offset = trx_to_block_offset + 1 + 20 + 7
@@ -149,15 +171,15 @@ exports.read_a_block = function(req, res) {
 
       res.json({
         'id' : body._id.replace('block',''),
-        'hash' : block_hash,
+        //'hash' : block_hash,
         //'nonce' : block_nonce,
         //'version' : block_version,
         //'previous_hash' : block_hashPrev,
         'timestamp' : human_timestamp,
         //'hash_data' : block_hash_data,
-        'miner_address' : miner_address,
+        //'miner_address' : miner_address,
         //'miner_address_bs58' : miner_address_encoded,
-        //'miner_address_decoded' : miner_address_decoded,
+        'miner_address' : miner_address_decoded,
         //'trxs_hash_data': trxs_hash_data,
         //'trxs_number': trxs_number,
         'trxs': trxs_container
