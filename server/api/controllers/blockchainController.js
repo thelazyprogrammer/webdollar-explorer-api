@@ -7,17 +7,40 @@ var atob = require('atob'),
 var PREFIX_BASE64 = "584043fe"
 var SUFFIX_BASE64 = "FF"
 
+function compare_blocks(block1, block2) {
+   let comparison = 0
+   let block_id_1 = Number(block1.block_id.replace('block', ''))
+   let block_id_2 = Number(block2.block_id.replace('block', ''))
+   if (block_id_1 > block_id_2) {
+     comparison = 1
+   }
+   if (block_id_1 < block_id_2) {
+     comparison = -1
+   }
+   return comparison
+}
+
 exports.list_all_blocks = function(req, res) {
-  BlockchainDB.list({ limit:20, descending:true, attachments:true, include_docs:true }, function (err, body) {
+  BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
     var blocks = []
     body.rows.forEach(function(doc) {
+      if (doc.doc._attachments) {
       var block = {
-        'block_id': doc.id,
-        'block_length': doc
+        'block_id': Number(doc.id.replace('block', '')),
+        'data': doc.doc._attachments.key.data
       }
-      blocks.push(block)
+      if (!isNaN(block.block_id))
+        blocks.push(block)}
     });
-    res.json(blocks);
+
+    blocks = blocks.sort((a, b) => b.block_id - a.block_id).slice(0,14)
+    var blocks_decoded = []
+    blocks.forEach(function(block) {
+      blocks_decoded.push(decodeRawBlock(block.block_id, block.data))
+    })
+
+    res.header("Access-Control-Allow-Origin", "*");
+    res.json(blocks_decoded);
   })
 };
 
@@ -89,15 +112,7 @@ function decodeMinerAddress(miner_address) {
     return encodeBase64(Buffer.concat([ Buffer.from(PREFIX_BASE64, 'hex'), address, checksum, Buffer.from(SUFFIX_BASE64, 'hex')]))
 }
 
-
-exports.read_a_block = function(req, res) {
-  var blockId = 'block' + parseInt(req.params.blockId);
-  BlockchainDB.get(blockId, {attachments:true, include_docs:true}, function (err, body) {
-    if (!(body)) {
-       res.status(404).send('Not found');
-    } else {
-      // Primary data
-      var  block_raw = body._attachments.key.data
+function decodeRawBlock(block_id, block_raw) {
       var block_hex = Buffer.from(atob(Buffer.from(block_raw, 'base64')), "hex")
       var block_hash = substr(block_hex, 0, 32).toString('hex')
       var block_nonce = deserializeNumber(substr(block_hex, 32, 4))
@@ -169,8 +184,8 @@ exports.read_a_block = function(req, res) {
         }
       }
 
-      res.json({
-        'id' : body._id.replace('block',''),
+      return {
+        'id' : block_id,
         //'hash' : block_hash,
         //'nonce' : block_nonce,
         //'version' : block_version,
@@ -185,7 +200,19 @@ exports.read_a_block = function(req, res) {
         'trxs': trxs_container
         //'block_hex' : block_hex.toString('hex'),
         //'block_raw' : block_raw
-        });
       }
-    })
+}
+
+
+exports.read_a_block = function(req, res) {
+  var blockId = 'block' + parseInt(req.params.blockId);
+  BlockchainDB.get(blockId, {attachments:true, include_docs:true}, function (err, body) {
+    if (!(body)) {
+       res.status(404).send('Not found');
+    } else {
+      // Primary data
+      res.header("Access-Control-Allow-Origin", "*");
+      res.json(decodeRawBlock(body._id.replace('block',''), body._attachments.key.data))
+    }
+  })
 };
