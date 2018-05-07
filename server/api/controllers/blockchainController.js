@@ -190,7 +190,7 @@ function decodeRawBlock(block_id, block_raw) {
         //'nonce' : block_nonce,
         //'version' : block_version,
         //'previous_hash' : block_hashPrev,
-        'timestamp' : human_timestamp,
+        'timestamp' : human_timestamp.toUTCString(),
         //'hash_data' : block_hash_data,
         //'miner_address' : miner_address,
         //'miner_address_bs58' : miner_address_encoded,
