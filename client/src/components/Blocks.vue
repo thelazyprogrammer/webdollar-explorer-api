@@ -1,22 +1,22 @@
 <template>
   <div class="blocks">
-    <h1>WebDollar Blocks</h1>
+    <h1>WebDollar Explorer</h1>
     <div v-if="blocks" class="table-wrap">
       <table>
         <tr>
-          <td>Block Number</td>
-          <td>Block Miner</td>
-          <td>Block Transactions</td>
+          <td>Number</td>
+          <td>Miner</td>
+          <td>Transactions</td>
         </tr>
         <tr v-for="block in blocks">
           <td align="center">
-            <router-link v-bind:to="{ name: 'showpost', params: { id: block.id } }">{{ block.id }}</router-link>
+            <router-link v-bind:to="{ name: 'Block', params: { block_id: block.id } }">{{ block.id }}</router-link>
+          </td>
+          <td align="left">
+            {{ block.miner_address }}
           </td>
           <td align="center">
-            <router-link v-bind:to="{ name: 'showminer', params: { id: block.miner_address } }">{{ block.miner_address }}</router-link>
-          </td>
-          <td align="center">
-            <router-link v-bind:to="{ name: 'showminer', params: { id: block.trxs.length } }">{{ block.trxs.length }}</router-link>
+            {{ block.trxs.length }}
           </td>
         </tr>
       </table>
