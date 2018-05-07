@@ -7,5 +7,8 @@ export default {
   },
   fetchBlock (block_id) {
     return Api().get('block/' + block_id)
+  },
+  fetchMiner (miner_address) {
+    return Api().get('address/' + miner_address)
   }
 }

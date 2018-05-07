@@ -13,7 +13,7 @@
             <router-link v-bind:to="{ name: 'Block', params: { block_id: block.id } }">{{ block.id }}</router-link>
           </td>
           <td align="left">
-            {{ block.miner_address }}
+            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: block.miner_address } }">{{ block.miner_address }}</router-link>
           </td>
           <td align="center">
             {{ block.trxs.length }}
