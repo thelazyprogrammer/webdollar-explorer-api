@@ -7,12 +7,20 @@
       <h4 v-if="miner.transactions && miner.transactions.length" style="float:left; width: 100%;text-align: left;"> Transactions: {{ miner.transactions.length }}</h4>
       <table v-if="miner.transactions && miner.transactions.length">
         <tr>
+          <td>Block number</td>
+          <td>Timestamp</td>
           <td>From</td>
           <td>To</td>
           <td>Amount</td>
           <td>Fee</td>
         </tr>
         <tr v-for="trx in miner.transactions">
+          <td align="left">
+            {{ trx.block_id }}
+          </td>
+          <td align="left">
+            {{ trx.timestamp }}
+          </td>
           <td align="left">
             {{ trx.from.address }}
           </td>
@@ -56,8 +64,6 @@ export default {
 </script>
 <style type="text/css">
 .table-wrap {
-  width: 60%;
-  margin: 0 auto;
   text-align: center;
 }
 table th, table tr {

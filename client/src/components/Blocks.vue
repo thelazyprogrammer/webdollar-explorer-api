@@ -1,7 +1,7 @@
 <template>
   <div class="blocks">
     <h1>WebDollar Explorer</h1>
-    <div v-if="blocks" class="table-wrap">
+    <div v-if="blocks != undefined" class="table-wrap">
       <table>
         <tr>
           <td>Number</td>

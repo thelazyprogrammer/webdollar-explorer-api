@@ -35,7 +35,8 @@ exports.read_an_address = function(req, res) {
           var block_decoded = decodeRawBlock(block_id, doc.doc._attachments.key.data)
           if (block_decoded) {
             var is_miner = false
-            if (block_decoded.miner_address == miner_address) {
+            if (block_decoded.miner_address.includes(miner_address)) {
+                miner.address = block_decoded.miner_address
                 miner.balance += 6000
                 is_miner = true
             }
@@ -44,15 +45,19 @@ exports.read_an_address = function(req, res) {
               if (is_miner) {
                 miner.balance += trx.fee
               }
-              if (trx.from.address == miner_address) {
+              if (trx.from.address.includes(miner_address)) {
+                miner.address = trx.from.address
                 miner.balance -= trx.from.amount
                 has_trx =true
               }
-              if (trx.to.address == miner_address) {
+              if (trx.to.address.includes(miner_address)) {
+                miner.address = trx.to.address
                 miner.balance += trx.from.amount
                 has_trx =true
               }
               if (has_trx) {
+                trx['timestamp'] = block_decoded.timestamp
+                trx['block_id'] = block_decoded.id
                 miner.transactions.push(trx)
               }
             })
@@ -61,6 +66,7 @@ exports.read_an_address = function(req, res) {
       }
     })
 
+    res.header("Cache-Control", "public, max-age=100")
     res.header("Access-Control-Allow-Origin", "*");
     res.json(miner);
   })
@@ -85,6 +91,7 @@ exports.list_all_blocks = function(req, res) {
       blocks_decoded.push(decodeRawBlock(block.block_id, block.data))
     })
 
+    res.header("Cache-Control", "public, max-age=100")
     res.header("Access-Control-Allow-Origin", "*");
     res.json(blocks_decoded);
   });
@@ -257,6 +264,7 @@ exports.read_a_block = function(req, res) {
        res.status(404).send('Not found');
     } else {
       // Primary data
+      res.header("Cache-Control", "public, max-age=100")
       res.header("Access-Control-Allow-Origin", "*");
       res.json(decodeRawBlock(body._id.replace('block',''), body._attachments.key.data))
     }
