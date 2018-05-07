@@ -7,4 +7,7 @@ module.exports = function(app) {
 
   app.route('/block/:blockId')
     .get(blockchain.read_a_block)
+
+  app.route('/address/:address*')
+    .get(blockchain.read_an_address)
 };

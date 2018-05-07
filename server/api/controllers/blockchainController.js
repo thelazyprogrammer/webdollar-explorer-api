@@ -20,6 +20,52 @@ function compare_blocks(block1, block2) {
    return comparison
 }
 
+exports.read_an_address = function(req, res) {
+  BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
+    var miner_address = req.params.address
+    var miner = {
+      'address': miner_address,
+      'balance': 0,
+      'transactions': []
+    }
+    body.rows.forEach(function(doc) {
+      if (doc.doc._attachments) {
+        var block_id = Number(doc.id.replace('block', ''))
+        if (!isNaN(block_id)) {
+          var block_decoded = decodeRawBlock(block_id, doc.doc._attachments.key.data)
+          if (block_decoded) {
+            var is_miner = false
+            if (block_decoded.miner_address == miner_address) {
+                miner.balance += 6000
+                is_miner = true
+            }
+            block_decoded.trxs.forEach(function(trx) {
+              var has_trx = false
+              if (is_miner) {
+                miner.balance += trx.fee
+              }
+              if (trx.from.address == miner_address) {
+                miner.balance -= trx.from.amount
+                has_trx =true
+              }
+              if (trx.to.address == miner_address) {
+                miner.balance += trx.from.amount
+                has_trx =true
+              }
+              if (has_trx) {
+                miner.transactions.push(trx)
+              }
+            })
+          }
+        }
+      }
+    })
+
+    res.header("Access-Control-Allow-Origin", "*");
+    res.json(miner);
+  })
+};
+
 exports.list_all_blocks = function(req, res) {
   BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
     var blocks = []
@@ -41,8 +87,8 @@ exports.list_all_blocks = function(req, res) {
 
     res.header("Access-Control-Allow-Origin", "*");
     res.json(blocks_decoded);
-  })
-};
+  });
+}
 
 function deserializeNumber(buffer){
   if(buffer.length === 1) return buffer[0]; else
