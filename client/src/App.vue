@@ -2,7 +2,7 @@
   <div id="app" style="width:720px;">
     <h2 id="website-name"> <a href="#/"> Webdollar Network </a></h2>
     <router-view/>
-    <h5 id="contribute" style="float:left; width:100%"> Throw a web$ to help webdollar.network get better: <a href="#/miner/WEBD$gB0i257JiEMLsMIeLghM+7huKrsujc6@@7$" class="">WEBD$gB0i257JiEMLsMIeLghM+7huKrsujc6@@7$</a></h5>
+    <h5 id="contribute" style="float:left; width:100%"> Throw a web$ to help webdollar.network get better: <a href="#/miner/WEBD$gC1JvBisEYBCPEfT8rJf6B$$kBdeJHFBtz$" class="">WEBD$gC1JvBisEYBCPEfT8rJf6B$$kBdeJHFBtz$</a></h5>
   </div>  
 </template>
 
