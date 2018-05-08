@@ -2,9 +2,13 @@
   <div class="blocks">
     <h1>WebDollar Explorer</h1>
     <div v-if="miner" class="table-wrap">
-      <h4 style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Miner address: {{ miner.address }}</h4>
-      <h4 style="float:left; width: 100%;text-align: left;"> Miner balance: {{ miner.balance }}</h4>
-      <h4 v-if="miner.transactions && miner.transactions.length" style="float:left; width: 100%;text-align: left;"> Transactions: {{ miner.transactions.length }}</h4>
+      <p style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Miner address: {{ miner.address }}</p>
+      <p style="float:left; width: 100%;text-align: left;"> Total balance: {{ miner.balance }}</p>
+      <p style="float:left; width: 100%;text-align: left;"> Miner balance: {{ miner.miner_balance }}</p>
+      <p style="float:left; width: 100%;text-align: left;"> Transactions sent balance: {{ miner.trx_to_balance }}</p>
+      <p style="float:left; width: 100%;text-align: left;"> Transactions received balance: {{ miner.trx_from_balance }}</p>
+      <p v-if="miner.blocks && miner.blocks.length" style="float:left; width: 100%;text-align: left;"> Blocks mined: {{ miner.blocks.length }}</p>
+      <p v-if="miner.transactions && miner.transactions.length" style="float:left; width: 100%;text-align: left;"> Transactions: {{ miner.transactions.length }}</p>
       <table v-if="miner.transactions && miner.transactions.length">
         <tr>
           <td>Block number</td>
@@ -35,6 +39,20 @@
           </td>
         </tr>
       </table>
+      <table v-if="miner.blocks && miner.blocks.length">
+        <tr>
+          <td>Block number</td>
+          <td>Timestamp</td>
+        </tr>
+        <tr v-for="block in miner.blocks">
+          <td align="left">
+            {{ block.block_id }}
+          </td>
+          <td align="left">
+            {{ block.timestamp }}
+          </td>
+        </tr>
+        </table>
     </div>
     <div v-else>
       There are no miners with this address <br /><br />
