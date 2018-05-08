@@ -20,16 +20,16 @@
         </tr>
         <tr v-for="trx in miner.transactions">
           <td align="left">
-            {{ trx.block_id }}
+            <router-link v-bind:to="{ name: 'Block', params: { block_id: trx.block_id }}">{{ trx.block_id}}</router-link>
           </td>
           <td align="left">
             {{ trx.timestamp }}
           </td>
           <td align="left">
-            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.from.address }}">{{ trx.from.address }}</router-link>
+            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.from.address }}">{{ trx.from.address.substring(0,10)}}..{{ trx.from.address.substring(trx.from.address.length-5)}}</router-link>
           </td>
           <td align="left">
-            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.to.address }}">{{ trx.to.address }}</router-link>
+            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.to.address }}">{{ trx.to.address.substring(0,10) }}..{{ trx.to.address.substring(trx.to.address.length-5)}}</router-link>
           </td>
           <td align="left">
             {{ trx.from.amount }}
@@ -47,7 +47,7 @@
         </tr>
         <tr v-for="block in miner.blocks">
           <td align="left">
-            {{ block.block_id }}
+            <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id }}">{{ block.block_id}}</router-link>
           </td>
           <td align="left">
             {{ block.timestamp }}
