@@ -1,9 +1,8 @@
 <template>
   <div class="blocks">
-    <h1>WebDollar Explorer</h1>
     <div v-if="block" class="table-wrap">
-      <h4 style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Block number: {{ block.id }}</h4>
-      <h4 style="float:left; width: 100%;text-align: left;"> Block miner: {{ block.miner_address }}</h4>
+      <h4 style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Block number:  <router-link v-bind:to="{ name: 'Block', params: { id: block.id }}">{{ block.id }} </router-link> </h4>
+      <h4 style="float:left; width: 100%;text-align: left;"> Block miner: <router-link v-bind:to="{ name: 'Miner', params: { miner_address: block.miner_address }}">{{ block.miner_address }}</router-link></h4>
       <h4 style="float:left; width: 100%;text-align: left;"> Block timestamp: {{ block.timestamp }}</h4>
       <h4 v-if="block.trxs && block.trxs.length" style="float:left; width: 100%;text-align: left;"> Transactions: {{ block.trxs.length }}</h4>
       <table v-if="block.trxs && block.trxs.length">
@@ -15,10 +14,10 @@
         </tr>
         <tr v-for="trx in block.trxs">
           <td align="left">
-            {{ trx.from.address }}
+            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.from.address }}">{{ trx.from.address }}</router-link>
           </td>
           <td align="left">
-            {{ trx.to.address }}
+            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.to.address }}">{{ trx.to.address }}</router-link>
           </td>
           <td align="left">
             {{ trx.from.amount }}
@@ -57,9 +56,7 @@ export default {
 </script>
 <style type="text/css">
 .table-wrap {
-  width: 60%;
-  margin: 0 auto;
-  text-align: center;
+  float:left;
 }
 table th, table tr {
   text-align: left;

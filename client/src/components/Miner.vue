@@ -1,14 +1,14 @@
 <template>
   <div class="blocks">
-    <h1>WebDollar Explorer</h1>
     <div v-if="miner" class="table-wrap">
-      <p style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Miner address: {{ miner.address }}</p>
+      <p style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Miner address: <router-link v-bind:to="{ name: 'Miner', params: { miner_address: miner.address }}">{{ miner.address }}</router-link></p>
       <p style="float:left; width: 100%;text-align: left;"> Total balance: {{ miner.balance }}</p>
       <p style="float:left; width: 100%;text-align: left;"> Miner balance: {{ miner.miner_balance }}</p>
       <p style="float:left; width: 100%;text-align: left;"> Transactions sent balance: {{ miner.trx_to_balance }}</p>
       <p style="float:left; width: 100%;text-align: left;"> Transactions received balance: {{ miner.trx_from_balance }}</p>
       <p v-if="miner.blocks && miner.blocks.length" style="float:left; width: 100%;text-align: left;"> Blocks mined: {{ miner.blocks.length }}</p>
       <p v-if="miner.transactions && miner.transactions.length" style="float:left; width: 100%;text-align: left;"> Transactions: {{ miner.transactions.length }}</p>
+      <h2 v-if="miner.transactions && miner.transactions.length">All transactions:</h2>
       <table v-if="miner.transactions && miner.transactions.length">
         <tr>
           <td>Block number</td>
@@ -26,10 +26,10 @@
             {{ trx.timestamp }}
           </td>
           <td align="left">
-            {{ trx.from.address }}
+            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.from.address }}">{{ trx.from.address }}</router-link>
           </td>
           <td align="left">
-            {{ trx.to.address }}
+            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.to.address }}">{{ trx.to.address }}</router-link>
           </td>
           <td align="left">
             {{ trx.from.amount }}
@@ -39,6 +39,7 @@
           </td>
         </tr>
       </table>
+      <h2 v-if="miner.blocks && miner.blocks.length">All mined blocks:</h2>
       <table v-if="miner.blocks && miner.blocks.length">
         <tr>
           <td>Block number</td>

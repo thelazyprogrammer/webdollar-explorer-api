@@ -1,6 +1,5 @@
 <template>
   <div class="blocks">
-    <h1>WebDollar Explorer</h1>
     <div v-if="blocks != undefined" class="table-wrap">
       <table>
         <tr>
@@ -49,9 +48,8 @@ export default {
 </script>
 <style type="text/css">
 .table-wrap {
-  width: 60%;
-  margin: 0 auto;
-  text-align: center;
+  float: left;
+  margin: auto;
 }
 table th, table tr {
   text-align: left;
