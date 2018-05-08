@@ -6,6 +6,10 @@ var atob = require('atob'),
 
 var PREFIX_BASE64 = "584043fe"
 var SUFFIX_BASE64 = "FF"
+var FIRST_BLOCK_REWARDS = [1, 1867487789, 1007804769, 552321669, 307400655, 173745886, 99728963, 58133318,
+  34413271, 20688253, 12630447, 7830882, 4930598, 3152722, 2047239, 1350046, 904119,
+  614893, 424689, 297878, 212180, 153485, 112752, 84116, 63728, 49032, 38311, 30400,
+  24497, 20047, 16660, 14061, 12051, 10490, 9272, 8323, 7588, 7025, 6604, 6306, 6113]
 
 function compare_blocks(block1, block2) {
    let comparison = 0
@@ -37,6 +41,10 @@ exports.read_an_address = function(req, res) {
       if (doc.doc._attachments) {
         var block_id = Number(doc.id.replace('block', ''))
         if (!isNaN(block_id)) {
+          var reward = 6000
+          if (block_id < 41) {
+            reward = FIRST_BLOCK_REWARDS[block_id]
+          }
           var block_decoded = decodeRawBlock(block_id, doc.doc._attachments.key.data)
           if (block_decoded) {
             var is_miner = false
@@ -46,8 +54,8 @@ exports.read_an_address = function(req, res) {
                   'block_id': block_decoded.id,
                   'timestamp': block_decoded.timestamp,
                 })
-                miner.balance += 6000
-                miner.miner_balance += 6000
+                miner.balance += reward
+                miner.miner_balance += reward
                 is_miner = true
             }
             block_decoded.trxs.forEach(function(trx) {
