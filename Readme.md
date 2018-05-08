@@ -25,6 +25,28 @@ npm run commands
 # press 8
 ```
 
-# Create a REST API to show every block information
+## Start REST API
+```bash
+cd server
+npm install
+npm run start
+```
+
+# REST API endpoints
+```bash
+# shows last 14 blocks
 GET: /block
+
+# shows block information
 GET: /block/<block-id>
+
+# shows miner information
+GET: /miner/<miner_address>
+```
+
+## Start Explorer Dashboard
+```bash
+cd client
+npm install
+npm run dev
+```
