@@ -8,28 +8,25 @@
       <p style="float:left; width: 100%;text-align: left;"> Transactions received balance: {{ miner.trx_from_balance }}</p>
       <p v-if="miner.blocks && miner.blocks.length" style="float:left; width: 100%;text-align: left;"> Blocks mined: {{ miner.blocks.length }}</p>
       <p v-if="miner.transactions && miner.transactions.length" style="float:left; width: 100%;text-align: left;"> Transactions: {{ miner.transactions.length }}</p>
-      <h2 v-if="miner.transactions && miner.transactions.length">All transactions:</h2>
+      <h2 v-if="miner.transactions && miner.transactions.length">Transactions</h2>
       <table v-if="miner.transactions && miner.transactions.length">
         <tr>
-          <td>Block number</td>
-          <td>Timestamp</td>
+          <td>Block</td>
           <td>From</td>
           <td>To</td>
           <td>Amount</td>
           <td>Fee</td>
+          <td>Timestamp</td>
         </tr>
         <tr v-for="trx in miner.transactions">
           <td align="left">
-            <router-link v-bind:to="{ name: 'Block', params: { block_id: trx.block_id }}">{{ trx.block_id}}</router-link>
+            <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_id }}">{{ trx.block_id}}</router-link>
           </td>
           <td align="left">
-            {{ trx.timestamp }}
+            <router-link replace v-bind:to="{ name: 'Miner', params: { miner_address: trx.from.address }}">{{ trx.from.address.substring(0,10)}}..{{ trx.from.address.substring(trx.from.address.length-5)}}</router-link>
           </td>
           <td align="left">
-            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.from.address }}">{{ trx.from.address.substring(0,10)}}..{{ trx.from.address.substring(trx.from.address.length-5)}}</router-link>
-          </td>
-          <td align="left">
-            <router-link v-bind:to="{ name: 'Miner', params: { miner_address: trx.to.address }}">{{ trx.to.address.substring(0,10) }}..{{ trx.to.address.substring(trx.to.address.length-5)}}</router-link>
+            <router-link replace v-bind:to="{ name: 'Miner', params: { miner_address: trx.to.address }}">{{ trx.to.address.substring(0,10) }}..{{ trx.to.address.substring(trx.to.address.length-5)}}</router-link>
           </td>
           <td align="left">
             {{ trx.from.amount }}
@@ -37,12 +34,15 @@
           <td align="left">
             {{ trx.fee }}
           </td>
+          <td align="left">
+            {{ trx.timestamp }}
+          </td>
         </tr>
       </table>
-      <h2 v-if="miner.blocks && miner.blocks.length">All mined blocks:</h2>
+      <h2 v-if="miner.blocks && miner.blocks.length">Mined blocks</h2>
       <table v-if="miner.blocks && miner.blocks.length">
         <tr>
-          <td>Block number</td>
+          <td>Block</td>
           <td>Timestamp</td>
         </tr>
         <tr v-for="block in miner.blocks">
@@ -70,12 +70,16 @@ export default {
       miner: []
     }
   },
+  beforeRouteUpdate (to) {
+  //  this.$route.params.miner_address = to.params.miner_address
+    this.getMiner(to.params.miner_address)
+  },
   mounted () {
-    this.getMiner()
+    this.getMiner(this.$route.params.miner_address)
   },
   methods: {
-    async getMiner () {
-      const response = await BlocksService.fetchMiner(this.$route.params.miner_address,)
+    async getMiner (miner) {
+      const response = await BlocksService.fetchMiner(miner)
       this.miner = response.data
     }
   }

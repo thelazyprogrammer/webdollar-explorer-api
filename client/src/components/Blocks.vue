@@ -1,7 +1,7 @@
 <template>
   <div class="blocks">
     <div v-if="blocks != undefined" class="table-wrap">
-      <table>
+      <table style="width:100%">
         <tr>
           <td>Number</td>
           <td>Miner</td>
@@ -49,6 +49,7 @@ export default {
 <style type="text/css">
 .table-wrap {
   float: left;
+  width:600px;
   margin: auto;
 }
 table th, table tr {
