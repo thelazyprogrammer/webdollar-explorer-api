@@ -1,7 +1,7 @@
 <template>
   <div class="blocks">
     <div v-if="miner" class="table-wrap">
-      <p style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Miner address: <router-link v-bind:to="{ name: 'Miner', params: { miner_address: miner.address }}">{{ miner.address }}</router-link></p>
+      <p style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Miner address:  <a :href="'#/miner/' + miner.address">{{ miner.address }}</a></p>
       <p style="float:left; width: 100%;text-align: left;"> WEBD balance: {{ miner.balance }}</p>
       <p style="float:left; width: 100%;text-align: left;"> Mined amount: {{ miner.miner_balance }}</p>
       <p style="float:left; width: 100%;text-align: left;"> Transactions sent amount: {{ miner.trx_to_balance }}</p>
@@ -23,10 +23,10 @@
             <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_id }}">{{ trx.block_id}}</router-link>
           </td>
           <td align="left">
-            <router-link replace v-bind:to="{ name: 'Miner', params: { miner_address: trx.from.address }}">{{ trx.from.address.substring(0,10)}}..{{ trx.from.address.substring(trx.from.address.length-5)}}</router-link>
+            <a :href="'#/miner/' + trx.from.address">{{ trx.from.address.substring(0,10)}}..{{ trx.from.address.substring(trx.from.address.length-5) }}</a>
           </td>
           <td align="left">
-            <router-link replace v-bind:to="{ name: 'Miner', params: { miner_address: trx.to.address }}">{{ trx.to.address.substring(0,10) }}..{{ trx.to.address.substring(trx.to.address.length-5)}}</router-link>
+            <a :href="'#/miner/' + trx.to.address">{{ trx.to.address.substring(0,10)}}..{{ trx.to.address.substring(trx.to.address.length-5) }}</a>
           </td>
           <td align="left">
             {{ trx.from.amount }}
@@ -75,7 +75,7 @@ export default {
     this.getMiner(to.params.miner_address)
   },
   mounted () {
-    this.getMiner(this.$route.params.miner_address)
+    this.getMiner(window.location.href.substring(36,window.location.href.length))
   },
   methods: {
     async getMiner (miner) {

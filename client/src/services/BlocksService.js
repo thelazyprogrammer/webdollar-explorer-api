@@ -9,6 +9,6 @@ export default {
     return Api().get('block/' + block_id)
   },
   fetchMiner (miner_address) {
-    return Api().get('address/' + miner_address)
+    return Api().get('address/' + encodeURIComponent(miner_address))
   }
 }

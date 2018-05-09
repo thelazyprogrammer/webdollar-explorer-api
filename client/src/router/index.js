@@ -24,7 +24,7 @@ export default new Router({
       component: Block
     },
     {
-      path: '/miner/:miner_address',
+      path: '/miner/:miner_address*',
       name: 'Miner',
       component: Miner
     },
