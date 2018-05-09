@@ -2,10 +2,10 @@
   <div class="blocks">
     <div v-if="miner" class="table-wrap">
       <p style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Miner address: <router-link v-bind:to="{ name: 'Miner', params: { miner_address: miner.address }}">{{ miner.address }}</router-link></p>
-      <p style="float:left; width: 100%;text-align: left;"> Total balance: {{ miner.balance }}</p>
-      <p style="float:left; width: 100%;text-align: left;"> Miner balance: {{ miner.miner_balance }}</p>
-      <p style="float:left; width: 100%;text-align: left;"> Transactions sent balance: {{ miner.trx_to_balance }}</p>
-      <p style="float:left; width: 100%;text-align: left;"> Transactions received balance: {{ miner.trx_from_balance }}</p>
+      <p style="float:left; width: 100%;text-align: left;"> WEBD balance: {{ miner.balance }}</p>
+      <p style="float:left; width: 100%;text-align: left;"> Mined amount: {{ miner.miner_balance }}</p>
+      <p style="float:left; width: 100%;text-align: left;"> Transactions sent amount: {{ miner.trx_to_balance }}</p>
+      <p style="float:left; width: 100%;text-align: left;"> Transactions received amount: {{ miner.trx_from_balance }}</p>
       <p v-if="miner.blocks && miner.blocks.length" style="float:left; width: 100%;text-align: left;"> Blocks mined: {{ miner.blocks.length }}</p>
       <p v-if="miner.transactions && miner.transactions.length" style="float:left; width: 100%;text-align: left;"> Transactions: {{ miner.transactions.length }}</p>
       <h2 v-if="miner.transactions && miner.transactions.length">Transactions</h2>
