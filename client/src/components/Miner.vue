@@ -14,7 +14,7 @@
       <p style="float:left; width: 100%;text-align: left;"> Transactions received amount: {{ miner.trx_from_balance }}</p>
       <p v-if="miner.blocks && miner.blocks.length" style="float:left; width: 100%;text-align: left;"> Blocks mined: {{ miner.blocks.length }}</p>
       <p v-if="miner.transactions && miner.transactions.length" style="float:left; width: 100%;text-align: left;"> Transactions: {{ miner.transactions.length }}</p>
-      <h2 v-if="miner.transactions && miner.transactions.length">Transactions</h2>
+      <h2 style="float:left;width:100%;" v-if="miner.transactions && miner.transactions.length">Transactions</h2>
       <table v-if="miner.transactions && miner.transactions.length">
         <tr>
           <td>Block</td>
@@ -45,7 +45,7 @@
           </td>
         </tr>
       </table>
-      <h2 v-if="miner.blocks && miner.blocks.length">Mined blocks</h2>
+      <h2 style="float:left;width:100%;" v-if="miner.blocks && miner.blocks.length">Mined blocks</h2>
       <table v-if="miner.blocks && miner.blocks.length">
         <tr>
           <td>Block</td>

@@ -1,6 +1,6 @@
 <template>
   <div id="app" style="width:600px;">
-    <h2 id="website-name"> <a href="#/"> Webdollar Network </a></h2>
+    <h2 id="website-name"> <a href="#/"> WebDollar Network </a></h2>
     <router-view/>
     <p id="contribute" style="margin: 20px 0px 10px 0px; height:5px;font-size: 10px; float:left; width:100%"> <center>Throw a web$ to help webdollar.network get better: <a href="#/miner/WEBD$gC1JvBisEYBCPEfT8rJf6B$$kBdeJHFBtz$" class="">WEBD$gC1JvBisEYBCPEfT8rJf6B$$kBdeJHFBtz$</a></center></p>
     <p style="float:left;font-size: 10px; margin:5px 0px 5px 0px; width:100%"> <center>The owner of this website disclaims any liability in connection with the integrity and use of this information.</center></p>
