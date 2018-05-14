@@ -2,12 +2,12 @@
   <div class="blocks">
     <div id="search_wrapper">
         <div style="display: inline;float:left;" >
-          <input v-model="searchAddress" id="searchBox" v-on:enter="onSearchAddress" type="text" placeholder="Search by WEBD Address" style="float:left;width: 330px; height: 31px;float:left;" autocomplete="off">
+          <input v-model="searchAddress" id="searchBox" v-on:enter="onSearchAddress" type="text" placeholder="Search by Address" style="float:left;width: 330px; height: 31px;float:left;" autocomplete="off">
           <button v-model="searchStart" v-on:click="onSearchAddress" type="submit" style="padding: 3px 6px 3px 6px; height: 37px; width: 41px; border:0px;cursor:pointer;margin-left: -3px; margin-top: 0px;float:left;background: #4d7ef7; color: #fff;">GO</button>
         </div>
     </div>
-    <div id="address" v-if="miner && miner.address" class="table-wrap">
-      <p style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> WEBD address:  <a :href="'#/miner/' + miner.address">{{ miner.address }}</a></p>
+    <div v-if="miner.address" class="table-wrap">
+      <p style="float:left; align:left;text-align: left; height: 10px;width: 100%;"> Miner address:  <a :href="'#/miner/' + miner.address">{{ miner.address }}</a></p>
       <p style="float:left; width: 100%;text-align: left;"> WEBD balance: {{ miner.balance }}</p>
       <p style="float:left; width: 100%;text-align: left;"> Mined amount: {{ miner.miner_balance }}</p>
       <p style="float:left; width: 100%;text-align: left;"> Transactions sent amount: {{ miner.trx_to_balance }}</p>
@@ -61,11 +61,8 @@
         </tr>
         </table>
     </div>
-    <div id="loader" v-else style="float:left;width:100%; margin-top:10px;">
-      <div class="spinner">
-        <div class="double-bounce1"></div>
-        <div class="double-bounce2"></div>
-      </div>
+    <div v-else style="float:left;width:100%; margin-top:10px;">
+      There are no miners with this address. <br /><br />
     </div>
   </div>
 </template>
@@ -85,12 +82,10 @@ export default {
     this.getMiner(to.params.miner_address)
   },
   mounted () {
-    this.miner = []
     this.getMiner(window.location.href.substring(34,window.location.href.length))
   },
   methods: {
     async getMiner (miner) {
-      this.miner = []
       const response = await BlocksService.fetchMiner(miner)
       this.miner = response.data
     },
@@ -138,47 +133,5 @@ a.add_post_link {
   text-transform: uppercase;
   font-size: 12px;
   font-weight: bold;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-
-  position: relative;
-  margin: 100px auto;
-}
-
-.double-bounce1, .double-bounce2 {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #333;
-  opacity: 0.6;
-  position: absolute;
-  top: 0;
-  left: 0;
-  
-  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
-  animation: sk-bounce 2.0s infinite ease-in-out;
-}
-
-.double-bounce2 {
-  -webkit-animation-delay: -1.0s;
-  animation-delay: -1.0s;
-}
-
-@-webkit-keyframes sk-bounce {
-  0%, 100% { -webkit-transform: scale(0.0) }
-  50% { -webkit-transform: scale(1.0) }
-}
-
-@keyframes sk-bounce {
-  0%, 100% { 
-    transform: scale(0.0);
-    -webkit-transform: scale(0.0);
-  } 50% { 
-    transform: scale(1.0);
-    -webkit-transform: scale(1.0);
-  }
 }
 </style>
