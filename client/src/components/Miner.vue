@@ -75,7 +75,7 @@ export default {
     this.getMiner(to.params.miner_address)
   },
   mounted () {
-    this.getMiner(window.location.href.substring(36,window.location.href.length))
+    this.getMiner(window.location.href.substring(34,window.location.href.length))
   },
   methods: {
     async getMiner (miner) {
