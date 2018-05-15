@@ -10,7 +10,7 @@
 
           <h2 v-if="miner.blocks && miner.blocks.length">Mined blocks</h2>
 
-          <light-blocks :blocks="this.miner.blocks"></light-blocks>
+          <light-blocks :showMiner="false" :blocks="this.miner.blocks"></light-blocks>
 
         </div>
 

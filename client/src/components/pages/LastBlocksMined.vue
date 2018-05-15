@@ -4,7 +4,7 @@
 
     <h2>Last mined blocks</h2>
 
-    <blocks-list :blocks="this.blocks"></blocks-list>
+    <blocks-list :showMiner="true" :blocks="this.blocks"></blocks-list>
 
   </div>
 

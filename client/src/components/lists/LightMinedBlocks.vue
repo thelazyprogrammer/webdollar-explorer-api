@@ -6,7 +6,7 @@
 
       <tr>
         <td>Block</td>
-        <td>Timestamp</td>
+        <td> {{ showMiner === true ? 'Miner' : 'Timestamp' }} </td>
         <td>Txs</td>
       </tr>
 
@@ -17,11 +17,16 @@
         </td>
 
         <td align="left">
-          {{ block.timestamp }}
+          <a v-if="showMiner" :href="'#/miner/' + block.miner_address">
+            {{ block.miner_address }}
+          </a>
+          <span v-else>
+            {{ block.timestamp }}
+          </span>
         </td>
 
         <td align="left">
-          {{ block.trxs.length }}
+          {{ block.trxs }}
         </td>
 
       </tr>
@@ -42,6 +47,7 @@ export default {
 
   props:{
     blocks:{ default:()=>{return [] }},
+    showMiner: { default: true }
   },
 
   methods: {
