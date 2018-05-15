@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Blocks from '@/components/Blocks'
-import Block from '@/components/Block'
-import Miner from '@/components/Miner'
-import Search from '@/components/Search'
+import Blocks from '@/components/pages/LastBlocksMined'
+import Block from '@/components/pages/Block'
+import Miner from '@/components/pages/Miner'
+import Search from '@/components/utils/Search'
 
 Vue.use(Router)
 
@@ -33,6 +33,6 @@ export default new Router({
       path: '/search/:miner_address',
       name: 'Search',
       component: Search
-    },
+    }
   ]
 })
