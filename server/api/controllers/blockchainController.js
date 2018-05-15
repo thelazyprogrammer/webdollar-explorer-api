@@ -32,6 +32,7 @@ exports.read_an_address = function(req, res) {
       'balance': 0,
       'miner_balance': 0,
       'miner_fee_balance': 0,
+      'miner_fee_to_balance': 0,
       'trx_to_balance': 0,
       'trx_from_balance': 0,
       'blocks': [],
@@ -62,19 +63,20 @@ exports.read_an_address = function(req, res) {
               var has_trx = false
               if (is_miner) {
                 miner.balance += trx.fee
-                miner.miner_fee_balance += trx.fee
+                miner.miner_fee_balance = Number((miner.miner_fee_balance + trx.fee).toFixed(4))
               }
               if (trx.from.address.includes(miner_address)) {
                 miner.address = trx.from.address
                 miner.balance -= trx.from.amount
                 miner.balance -= trx.fee
-                miner.trx_to_balance += trx.from.amount
+                miner.miner_fee_to_balance =  Number((miner.miner_fee_to_balance + trx.fee).toFixed(4))
+                miner.trx_to_balance = Number((miner.trx_to_balance + trx.from.amount).toFixed(4))
                 has_trx =true
               }
               if (trx.to.address.includes(miner_address)) {
                 miner.address = trx.to.address
                 miner.balance += trx.from.amount
-                miner.trx_from_balance += trx.from.amount
+                miner.trx_from_balance = Number((miner.trx_from_balance + trx.from.amount).toFixed(4))
                 has_trx =true
               }
               if (has_trx) {
@@ -85,6 +87,7 @@ exports.read_an_address = function(req, res) {
             })
             miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+            miner.balance = Number((Number((Number((Number((miner.miner_balance + miner.miner_fee_balance).toFixed(4)) + miner.trx_from_balance).toFixed(4)) - miner.trx_to_balance).toFixed(4)) - miner.miner_fee_to_balance).toFixed(4))
           }
         }
       }
