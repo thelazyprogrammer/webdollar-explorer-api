@@ -25,12 +25,15 @@ export default {
 
     async onSearchAddress (event) {
       if (this.searchAddress) {
-        if (this.searchAddress.indexOf("WEBD")>=0){
-          this.$router.push({ path: `/miner/` + this.searchAddress });
+        if (this.searchAddress.indexOf("WEBD") >=0 ) {
+           this.$router.push({ path: `/miner/` + this.searchAddress });
+           window.location.href = `#/miner/` + this.searchAddress
         } else {
           this.$router.push({ path: `/blocks/` + this.searchAddress });
         }
-        location.reload()
+        setTimeout(function () {
+          location.reload()
+        }, 10)
       }
     }
 
