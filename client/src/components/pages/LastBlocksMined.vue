@@ -6,7 +6,9 @@
 
     <blocks-list v-if="blocks!==''" :showMiner="true" :blocks="this.blocks"></blocks-list>
 
-    <loading v-else></loading>
+    <div v-else class="maxWidthLoader">
+      <loading ></loading>
+    </div>
 
   </div>
 
@@ -16,7 +18,7 @@
 
 import BlocksList from '@/components/lists/LightMinedBlocks.vue'
 import BlocksService from '@/services/BlocksService'
-import Loading from '@/components/pages/Loading'
+import Loading from '@/components/utils/Loading'
 
 export default {
 
@@ -46,5 +48,10 @@ export default {
 
 <style type="text/css">
 
+  .maxWidthLoader{
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+  }
 
 </style>

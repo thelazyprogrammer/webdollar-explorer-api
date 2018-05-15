@@ -123,6 +123,14 @@ a.add_post_link {
   color:#fff
 }
 
+.spinner {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  margin: 100px auto;
+}
+
+
 .double-bounce1, .double-bounce2 {
   width: 100%;
   height: 100%;
@@ -135,6 +143,11 @@ a.add_post_link {
 
   -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
   animation: sk-bounce 2.0s infinite ease-in-out;
+}
+
+#loader{
+  width: 100px;
+  margin: 0 auto;
 }
 
 .double-bounce2 {

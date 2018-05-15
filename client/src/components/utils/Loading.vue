@@ -1,6 +1,6 @@
 <template>
 
-  <div id="loader" style="float:left;width:100%; margin-top:10px;">
+  <div id="loader">
     <div class="spinner">
       <div class="double-bounce1"></div>
       <div class="double-bounce2"></div>

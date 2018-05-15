@@ -27,7 +27,7 @@ import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
 import Transactions from '@/components/lists/Transactions.vue'
 import BlockInfo from '@/components/infoComponents/BlockInfo.vue'
-import Loading from '@/components/pages/Loading'
+import Loading from '@/components/utils/Loading'
 
 export default {
   name: 'block',

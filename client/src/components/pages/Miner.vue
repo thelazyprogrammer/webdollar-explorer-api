@@ -38,7 +38,7 @@ import BlocksService from '@/services/BlocksService'
 import Transactions from '@/components/lists/Transactions.vue'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
 import LightBlocks from '@/components/lists/LightMinedBlocks.vue'
-import Loading from '@/components/pages/Loading'
+import Loading from '@/components/utils/Loading'
 
 export default {
 
@@ -96,7 +96,7 @@ export default {
 }
 
 .transactionsTable{
-  width: 100px!important
+  width: 1000px!important
 }
 
   .minedBlocksAndTransactions{
