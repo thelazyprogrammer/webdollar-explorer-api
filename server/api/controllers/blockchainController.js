@@ -2,7 +2,7 @@
 var atob = require('atob'),
   bs58 = require('bs58'),
   crypto = require('crypto'),
-  BlockchainDB = require('nano')('http://localhost:5984').use('blockchaindb');
+  BlockchainDB = require('nano')('http://localhost:5984').use('blockchai');
 
 var PREFIX_BASE64 = "584043fe"
 var SUFFIX_BASE64 = "FF"
@@ -32,6 +32,7 @@ exports.read_an_address = function(req, res) {
       'balance': 0,
       'miner_balance': 0,
       'miner_fee_balance': 0,
+      'miner_fee_to_balance': 0,
       'trx_to_balance': 0,
       'trx_from_balance': 0,
       'blocks': [],
@@ -53,6 +54,7 @@ exports.read_an_address = function(req, res) {
                 miner.blocks.push({
                   'block_id': block_decoded.id,
                   'timestamp': block_decoded.timestamp,
+                  'trxs':  block_decoded.trxs.length
                 })
                 miner.balance += reward
                 miner.miner_balance += reward
@@ -62,19 +64,20 @@ exports.read_an_address = function(req, res) {
               var has_trx = false
               if (is_miner) {
                 miner.balance += trx.fee
-                miner.miner_fee_balance += trx.fee
+                miner.miner_fee_balance = Number((miner.miner_fee_balance + trx.fee).toFixed(4))
               }
               if (trx.from.address.includes(miner_address)) {
                 miner.address = trx.from.address
                 miner.balance -= trx.from.amount
                 miner.balance -= trx.fee
-                miner.trx_to_balance += trx.from.amount
+                miner.miner_fee_to_balance =  Number((miner.miner_fee_to_balance + trx.fee).toFixed(4))
+                miner.trx_to_balance = Number((miner.trx_to_balance + trx.from.amount).toFixed(4))
                 has_trx =true
               }
               if (trx.to.address.includes(miner_address)) {
                 miner.address = trx.to.address
                 miner.balance += trx.from.amount
-                miner.trx_from_balance += trx.from.amount
+                miner.trx_from_balance = Number((miner.trx_from_balance + trx.from.amount).toFixed(4))
                 has_trx =true
               }
               if (has_trx) {
@@ -85,6 +88,7 @@ exports.read_an_address = function(req, res) {
             })
             miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+            miner.balance = Number((Number((Number((Number((miner.miner_balance + miner.miner_fee_balance).toFixed(4)) + miner.trx_from_balance).toFixed(4)) - miner.trx_to_balance).toFixed(4)) - miner.miner_fee_to_balance).toFixed(4))
           }
         }
       }
@@ -254,7 +258,9 @@ function decodeRawBlock(block_id, block_raw) {
               //'from_length' : trx_from_length,
               'from': trx_from,
               'to': trx_to,
-              'fee': trx_fee
+              'fee': trx_fee,
+              'block_id': block_id,
+              'timestamp': human_timestamp.toUTCString()
             }
             trxs_container.push(trx)
             current_block_offset = trx_to_block_offset + 1 + 20 + 7
@@ -263,6 +269,7 @@ function decodeRawBlock(block_id, block_raw) {
 
       return {
         'id' : block_id,
+        'block_id' : block_id,
         //'hash' : block_hash,
         //'nonce' : block_nonce,
         //'version' : block_version,

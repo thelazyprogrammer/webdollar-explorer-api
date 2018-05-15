@@ -1,0 +1,43 @@
+<template>
+
+  <div id="search_wrapper">
+    <input v-model="searchAddress" id="searchBox" v-on:enter="onSearchAddress" type="text" placeholder="Search by Address/Block" autocomplete="off">
+    <button v-on:click="onSearchAddress" type="submit">GO</button>
+  </div>
+
+</template>
+
+<script>
+
+import BlocksService from '@/services/BlocksService'
+
+export default {
+
+  name: 'search',
+
+  data () {
+    return {
+      searchAddress: ''
+    }
+  },
+
+  methods: {
+
+    async onSearchAddress (event) {
+      if (this.searchAddress) {
+        if (this.searchAddress.indexOf("WEBD") >=0 ) {
+           this.$router.push({ path: `/miner/` + this.searchAddress });
+           window.location.href = `#/miner/` + this.searchAddress
+        } else {
+          this.$router.push({ path: `/blocks/` + this.searchAddress });
+        }
+        setTimeout(function () {
+          location.reload()
+        }, 10)
+      }
+    }
+
+  }
+
+}
+</script>
