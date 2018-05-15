@@ -84,7 +84,7 @@ export default {
 <style type="text/css">
 
 .minedBlocksList{
-  width: 400px!important;
+  width: 450px!important;
 }
 
 .spinner {

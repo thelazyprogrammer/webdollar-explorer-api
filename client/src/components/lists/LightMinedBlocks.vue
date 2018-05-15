@@ -7,7 +7,6 @@
       <tr>
         <td>Block</td>
         <td> {{ showMiner === true ? 'Miner' : 'Timestamp' }} </td>
-        <td v-if="showMiner == true"> Timestamp </td>
         <td>Txs</td>
       </tr>
 
@@ -23,11 +22,6 @@
             {{ block.miner_address }}
           </a>
           <span v-else>
-            {{ block.timestamp }}
-          </span>
-        </td>
-        <td v-if="showMiner == true" align="left">
-          <span>
             {{ block.timestamp }}
           </span>
         </td>

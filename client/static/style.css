@@ -170,10 +170,19 @@ a.add_post_link {
     }
 }
 
+.webdollar-explorer-link{
+  font-size: 24px;
+  line-height: 70px;
+  padding: 0!important;
+  margin-left: 6px;
+  float: left;
+}
+
 #header{
   height: 70px;
   border-bottom: solid 1px #fec02c;
   width: 100%;
+  min-width: 570px;
   background-color: #292929;
 }
 
@@ -196,7 +205,7 @@ a.add_post_link {
 
 .minerTable div{
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 280px 1fr;
   padding: 5px 10px;
 }
 
@@ -283,7 +292,7 @@ a.add_post_link {
 }
 
 .webdollar-explorer-link {
-  font-size: 35px;
+  font-size: 20px;
   padding-top: 18px;
   float: left;
 }

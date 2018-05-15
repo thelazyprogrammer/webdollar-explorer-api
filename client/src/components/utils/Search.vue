@@ -1,7 +1,7 @@
 <template>
 
   <div id="search_wrapper">
-    <input v-model="searchAddress" id="searchBox" v-on:enter="onSearchAddress" type="text" placeholder="Search by WEBD Address" autocomplete="off">
+    <input v-model="searchAddress" id="searchBox" v-on:enter="onSearchAddress" type="text" placeholder="Search by Address/Block" autocomplete="off">
     <button v-model="searchStart" v-on:click="onSearchAddress" type="submit">GO</button>
   </div>
 
@@ -40,9 +40,16 @@ export default {
     },
 
     async onSearchAddress (event) {
-      await this.getMiner(this.searchAddress);
-      this.$router.push({ path: `/miner/`+this.miner.address });
+
+      if (this.searchAddress.indexOf("WEBD")>=0){
+        await this.getMiner(this.searchAddress);
+        this.$router.push({ path: `/miner/`+this.miner.address });
+      }else{
+        this.$router.push({ path: `/blocks/`+this.searchAddress });
+      }
+
       this.searchAddress = '';
+
     }
 
   }

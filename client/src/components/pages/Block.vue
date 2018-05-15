@@ -44,13 +44,10 @@ export default {
   },
   methods: {
     async getBlock () {
-      const response = await BlocksService.fetchBlock(this.$route.params.block_id,)
+      const response = await BlocksService.fetchBlock(this.$route.params.block_id)
       this.block = response.data
     },
 
-    formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number, decimals);
-    }
   }
 }
 </script>

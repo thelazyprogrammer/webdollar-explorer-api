@@ -6,9 +6,7 @@
 
     <blocks-list v-if="blocks!==''" :showMiner="true" :blocks="this.blocks"></blocks-list>
 
-    <div v-else class="maxWidthLoader">
-      <loading ></loading>
-    </div>
+    <loading v-else></loading>
 
   </div>
 
@@ -46,12 +44,8 @@ export default {
 }
 </script>
 
-<style type="text/css">
-
-  .maxWidthLoader{
-    width: 100px;
-    height: 100px;
-    margin: 0 auto;
+<style>
+  .minedBlocksList{
+    width: 880px!important;
   }
-
 </style>
