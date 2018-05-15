@@ -36,9 +36,13 @@
           <span>
             Transactions
           </span>
-        <span>
+        <span v-if="block.trxs">
             {{ block.trxs.length }}
           </span>
+        <span v-else>
+            0
+          </span>
+
       </div>
 
     </div>

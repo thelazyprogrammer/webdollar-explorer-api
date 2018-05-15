@@ -11,7 +11,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Blocks',
+      name: 'Landing',
       component: Blocks
     },
     {

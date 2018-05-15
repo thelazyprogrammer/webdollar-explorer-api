@@ -20,7 +20,7 @@ import Loading from '@/components/utils/Loading'
 
 export default {
 
-  name: 'last mined blocks',
+  name: 'last_mined_blocks',
 
   components: {BlocksList, Loading},
 

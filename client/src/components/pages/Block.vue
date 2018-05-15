@@ -7,7 +7,7 @@
 
       <div>
 
-        <h2 v-if="block.trxs.length !== 0">Transactions</h2>
+        <h2 v-if="block.trxs && block.trxs.length !== 0">Transactions</h2>
 
         <transactions :transactions="block.trxs"></transactions>
 
