@@ -2,7 +2,7 @@
 var atob = require('atob'),
   bs58 = require('bs58'),
   crypto = require('crypto'),
-  BlockchainDB = require('nano')('http://localhost:5984').use('blockchaindb');
+  BlockchainDB = require('nano')('http://localhost:5984').use('blockchai');
 
 var PREFIX_BASE64 = "584043fe"
 var SUFFIX_BASE64 = "FF"
@@ -266,6 +266,7 @@ function decodeRawBlock(block_id, block_raw) {
 
       return {
         'id' : block_id,
+        'block_id' : block_id,
         //'hash' : block_hash,
         //'nonce' : block_nonce,
         //'version' : block_version,
