@@ -36,11 +36,13 @@ export default {
     async getMiner (miner) {
       this.miner = [];
       const response = await BlocksService.fetchMiner(miner);
-      this.miner = response.data
+      this.miner = response.data;
     },
 
     async onSearchAddress (event) {
-       this.getMiner(this.searchAddress);
+      await this.getMiner(this.searchAddress);
+      this.$router.push({ path: `/miner/`+this.miner.address });
+      this.searchAddress = '';
     }
 
   }

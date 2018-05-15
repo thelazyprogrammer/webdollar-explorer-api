@@ -33,6 +33,6 @@ export default new Router({
       path: '/search/:miner_address',
       name: 'Search',
       component: Search
-    },
+    }
   ]
 })

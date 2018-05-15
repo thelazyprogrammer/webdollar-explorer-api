@@ -4,7 +4,9 @@
 
     <h2>Last mined blocks</h2>
 
-    <blocks-list :showMiner="true" :blocks="this.blocks"></blocks-list>
+    <blocks-list v-if="blocks!==''" :showMiner="true" :blocks="this.blocks"></blocks-list>
+
+    <loading v-else></loading>
 
   </div>
 
@@ -14,16 +16,17 @@
 
 import BlocksList from '@/components/lists/LightMinedBlocks.vue'
 import BlocksService from '@/services/BlocksService'
+import Loading from '@/components/pages/Loading'
 
 export default {
 
   name: 'last mined blocks',
 
-  components: {BlocksList},
+  components: {BlocksList, Loading},
 
   data () {
     return {
-      blocks: []
+      blocks: ''
     }
   },
 

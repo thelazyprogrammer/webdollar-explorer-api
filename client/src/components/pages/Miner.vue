@@ -26,12 +26,7 @@
 
     </div>
 
-    <div id="loader" v-else style="float:left;width:100%; margin-top:10px;">
-      <div class="spinner">
-        <div class="double-bounce1"></div>
-        <div class="double-bounce2"></div>
-      </div>
-    </div>
+    <loading v-else></loading>
 
   </div>
 </template>
@@ -43,10 +38,11 @@ import BlocksService from '@/services/BlocksService'
 import Transactions from '@/components/lists/Transactions.vue'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
 import LightBlocks from '@/components/lists/LightMinedBlocks.vue'
+import Loading from '@/components/pages/Loading'
 
 export default {
 
-  components:{ Transactions, MinerInfo, LightBlocks },
+  components:{ Transactions, MinerInfo, LightBlocks, Loading },
 
   name: 'miner',
 
@@ -100,7 +96,7 @@ export default {
 }
 
 .transactionsTable{
-  width: 1000px!important
+  width: 100px!important
 }
 
   .minedBlocksAndTransactions{

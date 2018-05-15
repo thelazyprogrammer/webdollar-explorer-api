@@ -13,7 +13,8 @@
       <tr v-for="block in blocks">
 
         <td align="left">
-          <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id }}">{{ block.block_id}}</router-link>
+          <router-link v-if="showMiner" v-bind:to="{ name: 'Block', params: { block_id: block.id }}">{{ block.id}}</router-link>
+          <router-link v-else v-bind:to="{ name: 'Block', params: { block_id: block.block_id }}">{{ block.block_id}}</router-link>
         </td>
 
         <td align="left">

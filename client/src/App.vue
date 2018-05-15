@@ -53,12 +53,7 @@
         this.miner = []
         const response = await BlocksService.fetchMiner(miner)
         this.miner = response.data
-      },
-
-      async onSearchAddress (event) {
-        this.getMiner(this.searchAddress)
       }
-
     }
 
   }

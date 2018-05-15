@@ -7,7 +7,7 @@
 
       <div>
 
-        <h2>Transactions</h2>
+        <h2 v-if="block.trxs.length !== 0">Transactions</h2>
 
         <transactions :transactions="block.trxs"></transactions>
 
@@ -15,9 +15,7 @@
 
     </div>
 
-    <div v-else>
-      There are no blocks <br /><br />
-    </div>
+    <loading v-else></loading>
 
   </div>
 
@@ -29,11 +27,12 @@ import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
 import Transactions from '@/components/lists/Transactions.vue'
 import BlockInfo from '@/components/infoComponents/BlockInfo.vue'
+import Loading from '@/components/pages/Loading'
 
 export default {
   name: 'block',
 
-  components:{ Transactions, BlockInfo },
+  components:{ Transactions, BlockInfo, Loading },
 
   data () {
     return {
