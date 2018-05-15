@@ -54,6 +54,7 @@ exports.read_an_address = function(req, res) {
                 miner.blocks.push({
                   'block_id': block_decoded.id,
                   'timestamp': block_decoded.timestamp,
+                  'trxs':  block_decoded.trxs.length
                 })
                 miner.balance += reward
                 miner.miner_balance += reward
