@@ -26,7 +26,12 @@
         </td>
 
         <td align="left">
-          {{ block.trxs }}
+          <a v-if="showMiner" :href="'#/miner/' + block.miner_address">
+            {{ block.trxs.length }}
+          </a>
+          <span v-else>
+            {{ block.trxs }}
+          </span>
         </td>
 
       </tr>

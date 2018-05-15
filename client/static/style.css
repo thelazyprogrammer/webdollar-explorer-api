@@ -223,6 +223,7 @@ a.add_post_link {
   margin-left: -3px;
   margin-top: 0px;
   float:left;
+  outline: none;
   background: #fec02c;
   color: #5a5a5a;
   border-top-right-radius: 5px;
