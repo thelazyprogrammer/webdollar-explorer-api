@@ -257,7 +257,9 @@ function decodeRawBlock(block_id, block_raw) {
               //'from_length' : trx_from_length,
               'from': trx_from,
               'to': trx_to,
-              'fee': trx_fee
+              'fee': trx_fee,
+              'block_id': block_id,
+              'timestamp': human_timestamp.toUTCString()
             }
             trxs_container.push(trx)
             current_block_offset = trx_to_block_offset + 1 + 20 + 7
