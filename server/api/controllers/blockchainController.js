@@ -2,6 +2,7 @@
 var atob = require('atob'),
   bs58 = require('bs58'),
   crypto = require('crypto'),
+  request = require('request'),
   BlockchainDB = require('nano')('http://localhost:5984').use('blockchai');
 
 var PREFIX_BASE64 = "584043fe"
@@ -101,6 +102,39 @@ exports.read_an_address = function(req, res) {
 };
 
 exports.list_all_blocks = function(req, res) {
+  var blocks = [];
+  var max_block_length;
+  var max_blocks = 14;
+
+  try {
+    request.get('https://webdollar.network:5000', function (error, response, body) {
+      try {
+        max_block_length = JSON.parse(body).blocks.length - 1
+        var keys = []
+        for (var i = 0; i < max_blocks; i++) {
+          keys.push("block" + (max_block_length - i))
+        }
+        BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
+          var blocks_decoded = []
+          body.rows.forEach(function(block) {
+            blocks_decoded.push(decodeRawBlock(Number(block.id.replace('block', '')),
+                                block.doc._attachments.key.data))
+          });
+          res.header("Access-Control-Allow-Origin", "*");
+          res.json(blocks_decoded)
+        });
+       } catch (e) {
+         console.log(e)
+         getBlocksFallback(res)
+       }
+    });
+   } catch (e) {
+     console.log(e)
+     getBlocksFallback(res)
+   }
+}
+
+function getBlocksFallback(res) {
   BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
     var blocks = []
     body.rows.forEach(function(doc) {
@@ -124,6 +158,7 @@ exports.list_all_blocks = function(req, res) {
     res.json(blocks_decoded);
   });
 }
+
 
 function deserializeNumber(buffer){
   if(buffer.length === 1) return buffer[0]; else
