@@ -117,8 +117,10 @@ exports.list_all_blocks = function(req, res) {
         BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
           var blocks_decoded = []
           body.rows.forEach(function(block) {
-            blocks_decoded.push(decodeRawBlock(Number(block.id.replace('block', '')),
-                                block.doc._attachments.key.data))
+            if (block.id) {
+              blocks_decoded.push(decodeRawBlock(Number(block.id.replace('block', '')),
+                                  block.doc._attachments.key.data))
+            }
           });
           res.header("Access-Control-Allow-Origin", "*");
           res.json(blocks_decoded)
