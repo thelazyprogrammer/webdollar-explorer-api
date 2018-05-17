@@ -26,19 +26,24 @@ function compare_blocks(block1, block2) {
 }
 
 exports.read_an_address = function(req, res) {
+  var miner_address = req.params.address
+  var miner = {
+    'address': miner_address,
+    'balance': 0,
+    'miner_balance': 0,
+    'miner_fee_balance': 0,
+    'miner_fee_to_balance': 0,
+    'trx_to_balance': 0,
+    'trx_from_balance': 0,
+    'blocks': [],
+    'transactions': []
+  }
+
+  if (miner_address.length < 10) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.json(miner);
+  } else {
   BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
-    var miner_address = req.params.address
-    var miner = {
-      'address': miner_address,
-      'balance': 0,
-      'miner_balance': 0,
-      'miner_fee_balance': 0,
-      'miner_fee_to_balance': 0,
-      'trx_to_balance': 0,
-      'trx_from_balance': 0,
-      'blocks': [],
-      'transactions': []
-    }
     body.rows.forEach(function(doc) {
       if (doc.doc._attachments) {
         var block_id = Number(doc.id.replace('block', ''))
@@ -98,7 +103,8 @@ exports.read_an_address = function(req, res) {
     res.header("Cache-Control", "public, max-age=100")
     res.header("Access-Control-Allow-Origin", "*");
     res.json(miner);
-  })
+  });
+  }
 };
 
 exports.list_all_blocks = function(req, res) {
