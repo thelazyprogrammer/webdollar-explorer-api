@@ -3,7 +3,7 @@ var atob = require('atob'),
   bs58 = require('bs58'),
   crypto = require('crypto'),
   request = require('request'),
-  BlockchainDB = require('nano')('http://localhost:5984').use('blockchai');
+  BlockchainDB = require('nano')('http://localhost:5984').use('blockjs');
 
 var PREFIX_BASE64 = "584043fe"
 var SUFFIX_BASE64 = "FF"
@@ -111,9 +111,8 @@ exports.list_all_blocks = function(req, res) {
   var blocks = [];
   var max_block_length;
   var max_blocks = 14;
-
   try {
-    request.get('https://webdollar.network:5000', function (error, response, body) {
+    request.get('http://localhost:10000', function (error, response, body) {
       try {
         max_block_length = JSON.parse(body).blocks.length - 1
         var keys = []
@@ -260,6 +259,11 @@ function decodeRawBlock(block_id, block_raw) {
         var current_block_offset = block_offset
         for(var i=0;i<trxs_number;i++) {
             var trx_version = deserializeNumber(substr(block_hex, current_block_offset, 1))
+            const TRX_NONCE_V2_BLOCK = 46950
+            if (block_id > TRX_NONCE_V2_BLOCK) {
+              current_block_offset += 1
+            }
+
             var trx_nonce = deserializeNumber(substr(block_hex, current_block_offset + 1, 1))
             var trx_time_lock = deserializeNumber(substr(block_hex, current_block_offset + 2, 3))
 
