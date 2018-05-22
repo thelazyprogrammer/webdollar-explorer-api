@@ -8,6 +8,7 @@ let MAX_SYNC_OFFSET = 120 * 1000
 
 exports.get_status = function(req, res) {
   let lastBlockInfo = blockchain.getSyncInfo(function (block) {
+    res.header("Access-Control-Allow-Origin", "*");
     if (!block) {
       res.json({})
       return
