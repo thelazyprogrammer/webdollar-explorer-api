@@ -1,158 +1,15 @@
 'use strict';
 var atob = require('atob'),
   bs58 = require('bs58'),
-  crypto = require('crypto'),
-  request = require('request'),
-  BlockchainDB = require('nano')('http://localhost:5984').use('blockjs');
+  crypto = require('crypto');
 
-var PREFIX_BASE64 = "584043fe"
-var SUFFIX_BASE64 = "FF"
-var FIRST_BLOCK_REWARDS = [1, 1867487789, 1007804769, 552321669, 307400655, 173745886, 99728963, 58133318,
+const PREFIX_BASE64 = "584043fe"
+const SUFFIX_BASE64 = "FF"
+const FIRST_BLOCK_REWARDS = [1, 1867487789, 1007804769, 552321669, 307400655, 173745886, 99728963, 58133318,
   34413271, 20688253, 12630447, 7830882, 4930598, 3152722, 2047239, 1350046, 904119,
   614893, 424689, 297878, 212180, 153485, 112752, 84116, 63728, 49032, 38311, 30400,
   24497, 20047, 16660, 14061, 12051, 10490, 9272, 8323, 7588, 7025, 6604, 6306, 6113]
-
-exports.read_an_address = function(req, res) {
-  var miner_address = req.params.address
-  var miner = {
-    'address': miner_address,
-    'balance': 0,
-    'miner_balance': 0,
-    'miner_fee_balance': 0,
-    'miner_fee_to_balance': 0,
-    'trx_to_balance': 0,
-    'trx_from_balance': 0,
-    'blocks': [],
-    'transactions': []
-  }
-
-  if (miner_address.length < 10) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.json(miner);
-  } else {
-  BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
-    body.rows.forEach(function(doc) {
-      if (doc.doc._attachments) {
-        var block_id = Number(doc.id.replace('block', ''))
-        if (!isNaN(block_id)) {
-          var reward = 6000
-          if (block_id < 41) {
-            reward = FIRST_BLOCK_REWARDS[block_id]
-          }
-          var block_decoded = decodeRawBlock(block_id, doc.doc._attachments.key.data)
-          if (block_decoded) {
-            var is_miner = false
-            if (block_decoded.miner_address.includes(miner_address)) {
-                miner.address = block_decoded.miner_address
-                miner.blocks.push({
-                  'block_id': block_decoded.id,
-                  'timestamp': block_decoded.timestamp,
-                  'trxs':  block_decoded.trxs.length
-                })
-                miner.balance += reward
-                miner.miner_balance += reward
-                is_miner = true
-            }
-            block_decoded.trxs.forEach(function(trx) {
-              var has_trx = false
-              if (is_miner) {
-                miner.balance += trx.fee
-                miner.miner_fee_balance = Number((miner.miner_fee_balance + trx.fee).toFixed(4))
-              }
-              if (trx.from.address.includes(miner_address)) {
-                miner.address = trx.from.address
-                miner.balance -= trx.from.amount
-                miner.balance -= trx.fee
-                miner.miner_fee_to_balance =  Number((miner.miner_fee_to_balance + trx.fee).toFixed(4))
-                miner.trx_to_balance = Number((miner.trx_to_balance + trx.from.amount).toFixed(4))
-                has_trx =true
-              }
-              if (trx.to.address.includes(miner_address)) {
-                miner.address = trx.to.address
-                miner.balance += trx.from.amount
-                miner.trx_from_balance = Number((miner.trx_from_balance + trx.from.amount).toFixed(4))
-                has_trx =true
-              }
-              if (has_trx) {
-                trx['timestamp'] = block_decoded.timestamp
-                trx['block_id'] = block_decoded.id
-                miner.transactions.push(trx)
-              }
-            })
-            miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-            miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-            miner.balance = Number((Number((Number((Number((miner.miner_balance + miner.miner_fee_balance).toFixed(4)) + miner.trx_from_balance).toFixed(4)) - miner.trx_to_balance).toFixed(4)) - miner.miner_fee_to_balance).toFixed(4))
-          }
-        }
-      }
-    })
-
-    res.header("Cache-Control", "public, max-age=100")
-    res.header("Access-Control-Allow-Origin", "*");
-    res.json(miner);
-  });
-  }
-};
-
-exports.list_all_blocks = function(req, res) {
-  var blocks = [];
-  var max_block_length;
-  var max_blocks = 14;
-  try {
-    request.get('http://localhost:10000', function (error, response, body) {
-      try {
-        max_block_length = JSON.parse(body).blocks.length - 1
-        var keys = []
-        for (var i = 0; i < max_blocks; i++) {
-          keys.push("block" + (max_block_length - i))
-        }
-        BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
-          var blocks_decoded = []
-          body.rows.forEach(function(block) {
-            if (block.id) {
-              blocks_decoded.push(decodeRawBlock(Number(block.id.replace('block', '')),
-                                  block.doc._attachments.key.data))
-            }
-          });
-          res.header("Access-Control-Allow-Origin", "*");
-          res.json(blocks_decoded)
-        });
-       } catch (e) {
-         console.log(e)
-         getBlocksFallback(res)
-       }
-    });
-   } catch (e) {
-     console.log(e)
-     getBlocksFallback(res)
-   }
-}
-
-function getBlocksFallback(res) {
-  BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
-    var blocks = []
-    body.rows.forEach(function(doc) {
-      if (doc.doc._attachments) {
-      var block = {
-        'block_id': Number(doc.id.replace('block', '')),
-        'data': doc.doc._attachments.key.data
-      }
-      if (!isNaN(block.block_id))
-        blocks.push(block)}
-    });
-
-    blocks = blocks.sort((a, b) => b.block_id - a.block_id).slice(0,14)
-    var blocks_decoded = []
-    blocks.forEach(function(block) {
-      blocks_decoded.push(decodeRawBlock(block.block_id, block.data))
-    })
-
-    res.header("Cache-Control", "public, max-age=100")
-    res.header("Access-Control-Allow-Origin", "*");
-    res.json(blocks_decoded);
-  });
-}
-
+const TRX_NONCE_V2_BLOCK = 46950
 
 function deserializeNumber(buffer){
   if(buffer.length === 1) return buffer[0]; else
@@ -222,7 +79,7 @@ function decodeMinerAddress(miner_address) {
     return encodeBase64(Buffer.concat([ Buffer.from(PREFIX_BASE64, 'hex'), address, checksum, Buffer.from(SUFFIX_BASE64, 'hex')]))
 }
 
-function decodeRawBlock(block_id, block_raw) {
+exports.decodeRawBlock = function(block_id, block_raw) {
       var block_hex = Buffer.from(atob(Buffer.from(block_raw, 'base64')), "hex")
       var block_hash = substr(block_hex, 0, 32).toString('hex')
       var block_nonce = deserializeNumber(substr(block_hex, 32, 4))
@@ -246,7 +103,8 @@ function decodeRawBlock(block_id, block_raw) {
         var current_block_offset = block_offset
         for(var i=0;i<trxs_number;i++) {
             var trx_version = deserializeNumber(substr(block_hex, current_block_offset, 1))
-            const TRX_NONCE_V2_BLOCK = 46950
+
+            // HARD FORK change
             if (block_id > TRX_NONCE_V2_BLOCK) {
               current_block_offset += 1
             }
@@ -321,17 +179,3 @@ function decodeRawBlock(block_id, block_raw) {
       }
 }
 
-
-exports.read_a_block = function(req, res) {
-  var blockId = 'block' + parseInt(req.params.blockId);
-  BlockchainDB.get(blockId, {attachments:true, include_docs:true}, function (err, body) {
-    if (!(body)) {
-       res.status(404).send('Not found');
-    } else {
-      // Primary data
-      res.header("Cache-Control", "public, max-age=100")
-      res.header("Access-Control-Allow-Origin", "*");
-      res.json(decodeRawBlock(body._id.replace('block',''), body._attachments.key.data))
-    }
-  })
-};

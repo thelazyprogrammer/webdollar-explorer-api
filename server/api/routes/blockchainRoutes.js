@@ -1,6 +1,7 @@
 'use strict';
 module.exports = function(app) {
   var blockchain = require('../controllers/blockchainController');
+  var statusController = require('../controllers/statusController');
 
   app.route('/block')
     .get(blockchain.list_all_blocks)
@@ -10,4 +11,7 @@ module.exports = function(app) {
 
   app.route('/address/:address*')
     .get(blockchain.read_an_address)
+
+  app.route('/status')
+    .get(statusController.get_status)
 };
