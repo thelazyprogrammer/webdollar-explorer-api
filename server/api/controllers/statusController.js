@@ -3,7 +3,7 @@ let blockchain = require('../blockchain/blockchain');
 
 // if the current block is older than MAX_SYNC_OFFSET seconds,
 // then the explorer is unsynced
-let MAX_SYNC_OFFSET = 120
+let MAX_SYNC_OFFSET = 120 * 1000
 
 
 exports.get_status = function(req, res) {
