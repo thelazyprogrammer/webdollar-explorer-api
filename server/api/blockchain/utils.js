@@ -21,12 +21,15 @@ function deserializeNumber(buffer){
 }
 
 function substr(buffer, index, count){
- if (count === undefined)
-   count = buffer.length;
+  if (count === undefined) {
+    count = buffer.length;
+  }
 
- let length = Math.min(index + count, buffer.length);
- if (length-index <= 0)
-   throw {message: "length-index <= 0...", buffer: buffer.toString("hex"), index:index, length:length, count: count};
+  let length = Math.min(index + count, buffer.length);
+  if (length-index <= 0) {
+    throw {message: "length-index <= 0...", buffer: buffer.toString("hex"), index:index, length:length, count: count};
+  }
+
   let buf = new Buffer(length-index);
   buffer.copy(buf, 0, index, length);
   return buf;
@@ -42,13 +45,13 @@ function decodeBase64(str) {
     if (str[i] === '$') newStr +=  '/';
     else newStr += str[i];
   }
-  let result = new Buffer(newStr, 'base64');
-  return result;
+  return (new Buffer(newStr, 'base64'));
 }
 
 function encodeBase64(buffer) {
-  if (!Buffer.isBuffer(buffer))
+  if (!Buffer.isBuffer(buffer)) {
     buffer = new Buffer(buffer);
+  }
   let result = buffer.toString('base64');
   let newStr = '';
   for (let i = 0; i < result.length; i++) {
@@ -82,58 +85,58 @@ function decodeMinerAddress(miner_address) {
 
 exports.decodeRawBlock = function(block_id, block_raw) {
       var block_hex = Buffer.from(atob(Buffer.from(block_raw, 'base64')), "hex")
-      var block_hash = substr(block_hex, 0, 32).toString('hex')
-      var block_nonce = deserializeNumber(substr(block_hex, 32, 4))
-      var block_version = deserializeNumber(substr(block_hex, 36, 2))
-      var block_hashPrev = substr(block_hex, 38, 32).toString('hex')
+
+      //var block_hash = substr(block_hex, 0, 32).toString('hex')
+      //var block_nonce = deserializeNumber(substr(block_hex, 32, 4))
+      //var block_version = deserializeNumber(substr(block_hex, 36, 2))
+      //var block_hashPrev = substr(block_hex, 38, 32).toString('hex')
       var block_timestamp = deserializeNumber(substr(block_hex, 70, 4)) + 1524742312
       var human_timestamp = new Date(block_timestamp * 1000)
 
       // Secondary data
-      var block_hash_data = substr(block_hex, 74, 32).toString('hex')
+      //var block_hash_data = substr(block_hex, 74, 32).toString('hex')
       var miner_address = substr(block_hex, 106, 20).toString('hex')
-      var miner_address_encoded = bs58.encode(miner_address)
       var miner_address_decoded = decodeMinerAddress(miner_address)
 
       // TRX data
-      var trxs_hash_data = substr(block_hex, 126, 32).toString('hex')
+      //var trxs_hash_data = substr(block_hex, 126, 32).toString('hex')
       var trxs_number = deserializeNumber(substr(block_hex, 158, 4))
       var trxs_container = []
       if (trxs_number > 0) {
         var block_offset = 162
         var current_block_offset = block_offset
         for(var i=0;i<trxs_number;i++) {
-            var trx_version = deserializeNumber(substr(block_hex, current_block_offset, 1))
+            //var trx_version = deserializeNumber(substr(block_hex, current_block_offset, 1))
 
             // HARD FORK change
             if (block_id > TRX_NONCE_V2_BLOCK) {
               current_block_offset += 1
             }
 
-            var trx_nonce = deserializeNumber(substr(block_hex, current_block_offset + 1, 1))
-            var trx_time_lock = deserializeNumber(substr(block_hex, current_block_offset + 2, 3))
+            //var trx_nonce = deserializeNumber(substr(block_hex, current_block_offset + 1, 1))
+            //var trx_time_lock = deserializeNumber(substr(block_hex, current_block_offset + 2, 3))
 
             // Deserialize from trx data
-            var trx_from_length = deserializeNumber(substr(block_hex, current_block_offset + 2 + 3, 1))
+            //var trx_from_length = deserializeNumber(substr(block_hex, current_block_offset + 2 + 3, 1))
             var trx_from_address = substr(block_hex, current_block_offset + 2 + 3 + 1, 20).toString('hex')
-            var trx_from_pub_key = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20, 32).toString('hex')
-            var trx_from_signature = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32, 64).toString('hex')
+            // var trx_from_pub_key = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20, 32).toString('hex')
+            // var trx_from_signature = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32, 64).toString('hex')
             var trx_from_amount = deserializeNumber8BytesBuffer(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64)
             var trx_from_currency_length = deserializeNumber(substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7, 1))
-            var trx_from_currency_token = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7 + 1, trx_from_currency_length).toString('hex')
+            // var trx_from_currency_token = substr(block_hex, current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7 + 1, trx_from_currency_length).toString('hex')
             var trx_from = {
-              //'address': trx_from_address,
+              // 'address': trx_from_address,
               'address': decodeMinerAddress(trx_from_address),
-              //'public_key': trx_from_pub_key,
-              //'signature': trx_from_signature,
+              // 'public_key': trx_from_pub_key,
+              // 'signature': trx_from_signature,
               'amount': trx_from_amount/10000,
-              //'currency_length': trx_from_currency_length,
-              //'currency_token': trx_from_currency_token
+              // 'currency_length': trx_from_currency_length,
+              // 'currency_token': trx_from_currency_token
             }
 
             // Deserialize to trx data
             var trx_to_block_offset = current_block_offset + 2 + 3 + 1 + 20 + 32 + 64 + 7 + 1 + trx_from_currency_length
-            var trx_to_length = deserializeNumber(substr(block_hex, trx_to_block_offset, 1))
+            //var trx_to_length = deserializeNumber(substr(block_hex, trx_to_block_offset, 1))
             var trx_to_address = substr(block_hex, trx_to_block_offset + 1, 20).toString('hex')
             var trx_to_amount = deserializeNumber8BytesBuffer(block_hex, trx_to_block_offset + 1 + 20)
             var trx_to = {
