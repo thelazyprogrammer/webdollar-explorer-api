@@ -83,8 +83,13 @@ function decodeMinerAddress(miner_address) {
     return encodeBase64(Buffer.concat([ Buffer.from(PREFIX_BASE64, 'hex'), address, checksum, Buffer.from(SUFFIX_BASE64, 'hex')]))
 }
 
-exports.decodeRawBlock = function(block_id, block_raw) {
+exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
       var block_hex = Buffer.from(atob(Buffer.from(block_raw, 'base64')), "hex")
+      const AMOUNT_DIVIDER = 10000
+      var amountDivider = 1
+      if (divide_amounts) {
+        amountDivider = AMOUNT_DIVIDER
+      }
 
       const OFFSET_1 = 1
       const OFFSET_2 = 2
@@ -175,7 +180,7 @@ exports.decodeRawBlock = function(block_id, block_raw) {
               'address': decodeMinerAddress(trx_from_address),
               // 'public_key': trx_from_pub_key,
               // 'signature': trx_from_signature,
-              'amount': trx_from_amount/10000,
+              'amount': trx_from_amount / amountDivider,
               // 'currency_length': trx_from_currency_length,
               // 'currency_token': trx_from_currency_token
             }
@@ -193,8 +198,8 @@ exports.decodeRawBlock = function(block_id, block_raw) {
               'address': decodeMinerAddress(trx_to_address),
               //'amount': trx_to_amount/1000
             }
-            trx_from['amount'] = trx_to_amount/10000
-            var trx_fee = (trx_from_amount - trx_to_amount)/10000
+            trx_from['amount'] = trx_to_amount
+            var trx_fee = trx_from_amount - trx_to_amount
             var trx = {
               //'version' : trx_version,
               //'nonce' : trx_nonce,
@@ -202,7 +207,7 @@ exports.decodeRawBlock = function(block_id, block_raw) {
               //'from_length' : trx_from_length,
               'from': trx_from,
               'to': trx_to,
-              'fee': trx_fee,
+              'fee': trx_fee / amountDivider,
               'block_id': block_id,
               'timestamp': human_timestamp.toUTCString()
             }
