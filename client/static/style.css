@@ -181,7 +181,7 @@ a.add_post_link {
   height: 70px;
   border-bottom: solid 1px #fec02c;
   width: 100%;
-  min-width: 570px;
+  min-width: 620px;
   background-color: #292929;
 }
 
@@ -272,7 +272,6 @@ a.add_post_link {
 }
 
 #search_wrapper input:focus{
-  width: 400px;
   background-color: #383838;
   transition: all 0.5s ease;
 }
@@ -295,3 +294,40 @@ a.add_post_link {
   padding-top: 18px;
   float: left;
 }
+
+#status_wrapper {
+  float:left;
+  position: relative;
+  color: #fff;
+  padding-top: 10px;
+  padding-left: 5px;
+}
+
+.synced {
+  color: #00c000;
+}
+
+.syncing {
+    -webkit-animation-name: example; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 5s; /* Safari 4.0 - 8.0 */
+    animation-name: example;
+    animation-duration: 5s;
+    animation-iteration-count: 1000;
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes example {
+    0%   {color: red;}
+    25%  {color: #fec02c;}
+    50%   {color: red;}
+    100%  {color: #fec02c;}
+}
+
+/* Standard syntax */
+@keyframes example {
+    0%   {color: red;}
+    25%  {color: #fec02c;}
+    50%  {color: red;}
+    100% {color: #fec02c;}
+}
+

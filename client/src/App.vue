@@ -3,14 +3,13 @@
   <div id="app">
 
     <div id="header">
-
       <a class="logoLink" href="https://webdollar.io">
         <img src="https://webdollar.io/public/assets/images/WebDollar-logo-white.png" alt="webDollar logo" id="logo" title="webDollar logo">
       </a>
       <a class="webdollar-explorer-link" href="#/">
         WebDollar Explorer
       </a>
-
+      <status></status>
       <search></search>
 
     </div>
@@ -33,30 +32,21 @@
 
 <script>
 
+  import Status from '@/components/utils/Status.vue'
   import Search from '@/components/utils/Search.vue'
-  import BlocksService from '@/services/BlocksService'
 
   export default {
 
     name: 'App',
 
-    components: {Search},
+    components: {Status,Search},
 
     data () {
       return {
-        miner: [],
-        searchAddress: '',
-        searchStart: ''
       }
     },
 
     methods: {
-
-      async getMiner (miner) {
-        this.miner = []
-        const response = await BlocksService.fetchMiner(miner)
-        this.miner = response.data
-      }
     }
 
   }
