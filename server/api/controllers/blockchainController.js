@@ -103,6 +103,7 @@ function computeAddress(miner, miner_address, docs) {
 }
 
 function syncAddressDB(miner) {
+  console.log("caching address " + miner.address)
   couchAuth.get(ADDRESS_CACHE_DB, miner.address).then(({data, headers, status}) => {
     couchAuth.update(ADDRESS_CACHE_DB, {
       _id: data._id,
@@ -137,7 +138,7 @@ exports.read_an_address = function(req, res) {
     var previous_miner = data.miner
     previous_miner.blocks = data.blocks
     previous_miner.transactions = data.transactions
-    console.log(previous_miner)
+    console.log("Found cached address " + miner.address)
     request.get('http://localhost:10000', function (error, response, body) {
       try {
         var keys = []
