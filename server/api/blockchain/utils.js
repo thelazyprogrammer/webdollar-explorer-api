@@ -198,7 +198,7 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
               'address': decodeMinerAddress(trx_to_address),
               //'amount': trx_to_amount/1000
             }
-            trx_from['amount'] = trx_to_amount
+            trx_from['amount'] = trx_to_amount / amountDivider
             var trx_fee = trx_from_amount - trx_to_amount
             var trx = {
               //'version' : trx_version,
