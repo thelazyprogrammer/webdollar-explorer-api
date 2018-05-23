@@ -68,6 +68,8 @@ exports.read_an_address = function(req, res) {
               if (has_trx) {
                 trx['timestamp'] = block_decoded.timestamp
                 trx['block_id'] = block_decoded.id
+                trx.from.amount = trx.from.amount / AMOUNT_DIVIDER
+                trx.fee = trx.fee / AMOUNT_DIVIDER
                 miner.transactions.push(trx)
               }
             })
