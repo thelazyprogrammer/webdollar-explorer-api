@@ -6,14 +6,23 @@ var atob = require('atob'),
   BlockchainDB = require('nano')('http://localhost:5984').use('blockjs'),
   blockchainUtils = require('../blockchain/utils');
 
-let AMOUNT_DIVIDER = 10000
-let REWARD = AMOUNT_DIVIDER * 6000
+const NodeCouchDb = require('node-couchdb');
+const couchAuth = new NodeCouchDb({
+    auth: {
+        user: 'admin',
+        pass: 'Passw0rd'
+    }
+});
 
-exports.read_an_address = function(req, res) {
-  var miner_address = req.params.address
-  var miner = {
+const AMOUNT_DIVIDER = 10000
+const REWARD = AMOUNT_DIVIDER * 6000
+const ADDRESS_CACHE_DB = "address"
+
+function getEmptyAddress(miner_address) {
+  return {
     'address': miner_address,
     'balance': 0,
+    'last_block': 0,
     'miner_balance': 0,
     'miner_fee_balance': 0,
     'miner_fee_to_balance': 0,
@@ -22,80 +31,157 @@ exports.read_an_address = function(req, res) {
     'blocks': [],
     'transactions': []
   }
+}
+
+function computeAddress(miner, miner_address, docs) {
+  docs.forEach(function(doc) {
+    if (!doc.doc._attachments) {
+      return
+    }
+
+    var block_id = Number(doc.id.replace('block', ''))
+    if (isNaN(block_id)) {
+      return
+    }
+
+    if (miner.last_block < block_id) {
+      miner.last_block = block_id
+    }
+
+    var reward = REWARD
+    if (block_id < 41) {
+      reward = blockchainUtils.FIRST_BLOCK_REWARDS[block_id] * AMOUNT_DIVIDER
+    }
+
+    var block_decoded = blockchainUtils.decodeRawBlock(block_id, doc.doc._attachments.key.data)
+    if (!block_decoded) {
+      return
+    }
+    var is_miner = false
+    if (block_decoded.miner_address.includes(miner_address)) {
+      miner.address = block_decoded.miner_address
+      miner.blocks.push({
+        'block_id': block_decoded.id,
+        'timestamp': block_decoded.timestamp,
+        'trxs':  block_decoded.trxs.length
+      })
+      miner.miner_balance += reward
+      is_miner = true
+    }
+
+    block_decoded.trxs.forEach(function(trx) {
+      var has_trx = false
+      if (is_miner) {
+        miner.miner_fee_balance = miner.miner_fee_balance + trx.fee
+      }
+
+      if (trx.from.address.includes(miner_address)) {
+        miner.address = trx.from.address
+        miner.miner_fee_to_balance =  miner.miner_fee_to_balance + trx.fee
+        miner.trx_to_balance = miner.trx_to_balance + trx.from.amount
+        has_trx =true
+      }
+      if (trx.to.address.includes(miner_address)) {
+        miner.address = trx.to.address
+        miner.trx_from_balance = miner.trx_from_balance + trx.from.amount
+        has_trx =true
+      }
+      if (has_trx) {
+        trx['timestamp'] = block_decoded.timestamp
+        trx['block_id'] = block_decoded.id
+        trx.from.amount = trx.from.amount / AMOUNT_DIVIDER
+        trx.fee = trx.fee / AMOUNT_DIVIDER
+        miner.transactions.push(trx)
+      }
+    });
+    miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+    miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+    miner.balance = miner.miner_balance + miner.miner_fee_balance + miner.trx_from_balance - miner.trx_to_balance - miner.miner_fee_to_balance
+  });
+
+  return miner
+}
+
+function syncAddressDB(miner) {
+  couchAuth.get(ADDRESS_CACHE_DB, miner.address).then(({data, headers, status}) => {
+    couchAuth.update(ADDRESS_CACHE_DB, {
+      _id: data._id,
+      _rev: data._rev,
+      miner: miner,
+      transactions: miner.transactions,
+      blocks: miner.blocks
+    }).then(({data, headers, status}) => {}, err => {});
+  }, err => {
+    couchAuth.insert(ADDRESS_CACHE_DB, {
+      _id: miner.address,
+      miner: miner,
+      transactions: miner.transactions,
+      blocks: miner.blocks
+    }).then(({data, headers, status}) => {}, err => {});
+  });
+}
+
+exports.read_an_address = function(req, res) {
+  var miner_address = req.params.address
+  var miner = getEmptyAddress(miner_address)
+
+  res.header("Cache-Control", "public, max-age=100")
+  res.header("Access-Control-Allow-Origin", "*");
 
   if (miner_address.length < 10) {
-    res.header("Access-Control-Allow-Origin", "*");
     res.json(miner);
-  } else {
-    BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
-    body.rows.forEach(function(doc) {
-      if (doc.doc._attachments) {
-        var block_id = Number(doc.id.replace('block', ''))
-        if (!isNaN(block_id)) {
-          var reward = REWARD
-          if (block_id < 41) {
-            reward = blockchainUtils.FIRST_BLOCK_REWARDS[block_id] * AMOUNT_DIVIDER
-          }
-          var block_decoded = blockchainUtils.decodeRawBlock(block_id, doc.doc._attachments.key.data)
-          if (block_decoded) {
-            var is_miner = false
-            if (block_decoded.miner_address.includes(miner_address)) {
-                miner.address = block_decoded.miner_address
-                miner.blocks.push({
-                  'block_id': block_decoded.id,
-                  'timestamp': block_decoded.timestamp,
-                  'trxs':  block_decoded.trxs.length
-                })
-                miner.miner_balance += reward
-                is_miner = true
-            }
-            block_decoded.trxs.forEach(function(trx) {
-              var has_trx = false
-              if (is_miner) {
-                miner.miner_fee_balance = miner.miner_fee_balance + trx.fee
-              }
-              if (trx.from.address.includes(miner_address)) {
-                miner.address = trx.from.address
-                miner.miner_fee_to_balance =  miner.miner_fee_to_balance + trx.fee
-                miner.trx_to_balance = miner.trx_to_balance + trx.from.amount
-                has_trx =true
-              }
-              if (trx.to.address.includes(miner_address)) {
-                miner.address = trx.to.address
-                miner.trx_from_balance = miner.trx_from_balance + trx.from.amount
-                has_trx =true
-              }
-              if (has_trx) {
-                trx['timestamp'] = block_decoded.timestamp
-                trx['block_id'] = block_decoded.id
-                trx.from.amount = trx.from.amount / AMOUNT_DIVIDER
-                trx.fee = trx.fee / AMOUNT_DIVIDER
-                miner.transactions.push(trx)
-              }
-            })
-            miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-            miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+    return
+  }
 
-            miner.balance = miner.miner_balance + miner.miner_fee_balance + miner.trx_from_balance - miner.trx_to_balance - miner.miner_fee_to_balance
-          }
+  couchAuth.get(ADDRESS_CACHE_DB, miner.address).then(({data, headers, status}) => {
+    var previous_miner = data.miner
+    previous_miner.blocks = data.blocks
+    previous_miner.transactions = data.transactions
+    console.log(previous_miner)
+    request.get('http://localhost:10000', function (error, response, body) {
+      try {
+        var keys = []
+        var last_block = JSON.parse(body).blocks.length - 1
+        for (var i = previous_miner.last_block; i < last_block; i++) {
+          keys.push("block" + i)
         }
-      }
-    })
+        BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
+          miner = computeAddress(miner, miner_address, body.rows)
+          miner.balance = (miner.balance + previous_miner.balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+          miner.last_block = last_block
+          miner.miner_balance = (miner.miner_balance + previous_miner.miner_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+          miner.miner_fee_balance = (miner.miner_fee_balance + previous_miner.miner_fee_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+          miner.miner_fee_to_balance = (miner.miner_fee_to_balance + previous_miner.miner_fee_to_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+          miner.trx_to_balance = (miner.trx_to_balance + previous_miner.trx_to_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+          miner.trx_from_balance = (miner.trx_from_balance + previous_miner.trx_from_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+          miner.blocks = previous_miner.blocks.concat(miner.blocks)
+          miner.transactions = previous_miner.transactions.concat(miner.transactions)
 
+          syncAddressDB(miner)
+
+          res.json(miner)
+        });
+       } catch (e) {
+         console.log(e)
+         res.json()
+       }
+    });
+  }, err => {
+
+  BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
+    miner = computeAddress(miner, miner_address, body.rows)
     miner.balance = miner.balance / AMOUNT_DIVIDER
     miner.miner_balance = miner.miner_balance / AMOUNT_DIVIDER
     miner.miner_fee_balance = miner.miner_fee_balance / AMOUNT_DIVIDER
-    miner.miner_trx_from_balance = miner.miner_trx_from_balance / AMOUNT_DIVIDER
-    miner.miner_trx_to_balance = miner.miner_trx_to_balance / AMOUNT_DIVIDER
     miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER
     miner.trx_from_balance = miner.trx_from_balance / AMOUNT_DIVIDER
     miner.miner_fee_to_balance = miner.miner_fee_to_balance / AMOUNT_DIVIDER
 
-    res.header("Cache-Control", "public, max-age=100")
-    res.header("Access-Control-Allow-Origin", "*");
+    syncAddressDB(miner)
+
     res.json(miner);
   });
-  }
+  })
 };
 
 exports.list_all_blocks = function(req, res) {
