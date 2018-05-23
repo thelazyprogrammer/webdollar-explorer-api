@@ -103,8 +103,11 @@ function computeAddress(miner, miner_address, docs) {
 }
 
 function syncAddressDB(miner) {
-  console.log("caching address " + miner.address)
-  couchAuth.get(ADDRESS_CACHE_DB, miner.address).then(({data, headers, status}) => {
+  let sha256 = crypto.createHash('sha256'); //sha256
+  sha256.update(Buffer(miner.address));
+  var address_sha256 = sha256.digest().toString('hex');
+  console.log("caching address " + address_sha256)
+  couchAuth.get(ADDRESS_CACHE_DB, address_sha256).then(({data, headers, status}) => {
     couchAuth.update(ADDRESS_CACHE_DB, {
       _id: data._id,
       _rev: data._rev,
@@ -114,7 +117,7 @@ function syncAddressDB(miner) {
     }).then(({data, headers, status}) => {}, err => {});
   }, err => {
     couchAuth.insert(ADDRESS_CACHE_DB, {
-      _id: miner.address,
+      _id: address_sha256,
       miner: miner,
       transactions: miner.transactions,
       blocks: miner.blocks
@@ -133,8 +136,13 @@ exports.read_an_address = function(req, res) {
     res.json(miner);
     return
   }
-
-  couchAuth.get(ADDRESS_CACHE_DB, miner.address).then(({data, headers, status}) => {
+  console.log(miner.address)
+  console.log(ADDRESS_CACHE_DB)
+  let sha256 = crypto.createHash('sha256'); //sha256
+  sha256.update(Buffer(miner.address));
+  let address_sha256 = sha256.digest().toString('hex');
+  console.log(address_sha256)
+  couchAuth.get(ADDRESS_CACHE_DB, address_sha256).then(({data, headers, status}) => {
     var previous_miner = data.miner
     previous_miner.blocks = data.blocks
     previous_miner.transactions = data.transactions
@@ -168,6 +176,7 @@ exports.read_an_address = function(req, res) {
        }
     });
   }, err => {
+  console.log(err)
 
   BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
     miner = computeAddress(miner, miner_address, body.rows)
