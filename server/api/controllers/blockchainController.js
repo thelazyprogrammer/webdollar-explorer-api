@@ -132,7 +132,7 @@ exports.read_an_address = function(req, res) {
   res.header("Cache-Control", "public, max-age=100")
   res.header("Access-Control-Allow-Origin", "*");
 
-  if (miner_address.length < 10) {
+  if (miner_address.length < 8) {
     res.json(miner);
     return
   }
