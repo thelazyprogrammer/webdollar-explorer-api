@@ -155,23 +155,24 @@ exports.read_an_address = function(req, res) {
           keys.push("block" + i)
         }
         BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
-          miner = computeAddress(miner, miner_address, body.rows)
-          miner.balance = (miner.balance + previous_miner.balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
-          miner.last_block = last_block
-          miner.miner_balance = (miner.miner_balance + previous_miner.miner_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
-          miner.miner_fee_balance = (miner.miner_fee_balance + previous_miner.miner_fee_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
-          miner.miner_fee_to_balance = (miner.miner_fee_to_balance + previous_miner.miner_fee_to_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
-          miner.trx_to_balance = (miner.trx_to_balance + previous_miner.trx_to_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
-          miner.trx_from_balance = (miner.trx_from_balance + previous_miner.trx_from_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+          if (body) {
+            miner = computeAddress(miner, miner_address, body.rows)
+            miner.balance = (miner.balance + previous_miner.balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+            miner.last_block = last_block
+            miner.miner_balance = (miner.miner_balance + previous_miner.miner_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+            miner.miner_fee_balance = (miner.miner_fee_balance + previous_miner.miner_fee_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+            miner.miner_fee_to_balance = (miner.miner_fee_to_balance + previous_miner.miner_fee_to_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+            miner.trx_to_balance = (miner.trx_to_balance + previous_miner.trx_to_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
+            miner.trx_from_balance = (miner.trx_from_balance + previous_miner.trx_from_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
 
-          miner.blocks = previous_miner.blocks.concat(miner.blocks)
-          miner.transactions = previous_miner.transactions.concat(miner.transactions)
+            miner.blocks = previous_miner.blocks.concat(miner.blocks)
+            miner.transactions = previous_miner.transactions.concat(miner.transactions)
 
-          miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-          miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+            miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+            miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
-          syncAddressDB(miner)
-
+            syncAddressDB(miner)
+          }
           res.json(miner)
         });
        } catch (e) {
