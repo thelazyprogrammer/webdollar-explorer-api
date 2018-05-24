@@ -164,12 +164,11 @@ exports.read_an_address = function(req, res) {
           miner.trx_to_balance = (miner.trx_to_balance + previous_miner.trx_to_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
           miner.trx_from_balance = (miner.trx_from_balance + previous_miner.trx_from_balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
 
-          miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-          miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-
           miner.blocks = previous_miner.blocks.concat(miner.blocks)
           miner.transactions = previous_miner.transactions.concat(miner.transactions)
 
+          miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+          miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
           syncAddressDB(miner)
 
