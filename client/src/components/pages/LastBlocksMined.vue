@@ -44,8 +44,3 @@ export default {
 }
 </script>
 
-<style>
-  .minedBlocksList{
-    width: 880px!important;
-  }
-</style>
