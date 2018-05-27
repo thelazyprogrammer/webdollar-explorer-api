@@ -155,7 +155,7 @@ exports.read_an_address = function(req, res) {
           keys.push("block" + i)
         }
         BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
-          if (body) {
+          if (body && body.rows) {
             miner = computeAddress(miner, miner_address, body.rows)
             miner.balance = (miner.balance + previous_miner.balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
             miner.last_block = last_block
@@ -170,8 +170,9 @@ exports.read_an_address = function(req, res) {
 
             miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-
-            syncAddressDB(miner)
+            if (miner.miner_balance || miner.trx_from_balance) {
+              syncAddressDB(miner)
+            }
           }
           res.json(miner)
         });
@@ -192,7 +193,9 @@ exports.read_an_address = function(req, res) {
     miner.trx_from_balance = miner.trx_from_balance / AMOUNT_DIVIDER
     miner.miner_fee_to_balance = miner.miner_fee_to_balance / AMOUNT_DIVIDER
 
-    syncAddressDB(miner)
+    if (miner.miner_balance || miner.trx_from_balance) {
+      syncAddressDB(miner)
+    }
 
     res.json(miner);
   });
