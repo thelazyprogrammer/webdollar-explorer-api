@@ -151,9 +151,6 @@ exports.read_an_address = function(req, res) {
     console.log("Found cached address: " + miner.address)
     if (previous_miner.miner_balance < 0.001 || previous_miner.trx_from_balance < 0.001) {
       console.log("DB entry should not be here")
-      couchAuth.del(ADDRESS_CACHE_DB, address_sha256, data._rev).then(({data, headers, status}) => {}, err => {})
-      res.json()
-      return
     }
     request.get('http://localhost:10000', function (error, response, body) {
       if (error) {
