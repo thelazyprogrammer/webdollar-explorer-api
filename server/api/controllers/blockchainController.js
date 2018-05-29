@@ -156,6 +156,11 @@ exports.read_an_address = function(req, res) {
       return
     }
     request.get('http://localhost:10000', function (error, response, body) {
+      if (error) {
+        console.error(error)
+        res.json(miner)
+        return
+      }
       try {
         var keys = []
         var last_block = JSON.parse(body).blocks.length - 1
@@ -163,7 +168,7 @@ exports.read_an_address = function(req, res) {
           keys.push("block" + i)
         }
         BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
-          if (body && body.rows) {
+          if (!err && body && body.rows) {
             miner = computeAddress(miner, miner_address, body.rows)
             miner.balance = (miner.balance + previous_miner.balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
             miner.last_block = last_block
@@ -178,14 +183,13 @@ exports.read_an_address = function(req, res) {
 
             miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-            if (miner.miner_balance > 0.001 || miner.trx_from_balance > 0.001) {
-              syncAddressDB(miner)
-            }
+
+            syncAddressDB(miner)
           }
           res.json(miner)
         });
        } catch (e) {
-         console.log(e)
+         console.error(e)
          res.json()
        }
     });
@@ -193,6 +197,11 @@ exports.read_an_address = function(req, res) {
   console.log(err)
 
   BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
+    if (err) {
+      console.error(err)
+      res.json(miner)
+      return
+    }
     miner = computeAddress(miner, miner_address, body.rows)
     miner.balance = miner.balance / AMOUNT_DIVIDER
     miner.miner_balance = miner.miner_balance / AMOUNT_DIVIDER
@@ -201,9 +210,7 @@ exports.read_an_address = function(req, res) {
     miner.trx_from_balance = miner.trx_from_balance / AMOUNT_DIVIDER
     miner.miner_fee_to_balance = miner.miner_fee_to_balance / AMOUNT_DIVIDER
 
-    if (miner.miner_balance > 0.001 || miner.trx_from_balance > 0.001) {
-      syncAddressDB(miner)
-    }
+    syncAddressDB(miner)
 
     res.json(miner);
   });
