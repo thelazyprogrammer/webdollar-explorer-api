@@ -132,21 +132,29 @@ exports.read_an_address = function(req, res) {
   res.header("Cache-Control", "public, max-age=100")
   res.header("Access-Control-Allow-Origin", "*");
 
-  if (miner_address.length < 8) {
+  if (miner_address.length != 40) {
+    console.log("Address " + miner_address + " is not 40 char long")
     res.json(miner);
     return
   }
-  console.log(miner.address)
-  console.log(ADDRESS_CACHE_DB)
+  console.log("Miner address is: " + miner.address)
+
   let sha256 = crypto.createHash('sha256'); //sha256
   sha256.update(Buffer(miner.address));
   let address_sha256 = sha256.digest().toString('hex');
-  console.log(address_sha256)
+  console.log("Miner address sha256 is: " + address_sha256)
+
   couchAuth.get(ADDRESS_CACHE_DB, address_sha256).then(({data, headers, status}) => {
     var previous_miner = data.miner
     previous_miner.blocks = data.blocks
     previous_miner.transactions = data.transactions
-    console.log("Found cached address " + miner.address)
+    console.log("Found cached address: " + miner.address)
+    if (previous_miner.miner_balance < 0.001 || previous_miner.miner_balance) {
+      console.log("DB entry should not be here")
+      couchAuth.del(ADDRESS_CACHE_DB, address_sha256, data._rev).then(({data, headers, status}) => {}, err => {})
+      res.json()
+      return
+    }
     request.get('http://localhost:10000', function (error, response, body) {
       try {
         var keys = []
@@ -170,7 +178,7 @@ exports.read_an_address = function(req, res) {
 
             miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
-            if (miner.miner_balance || miner.trx_from_balance) {
+            if (miner.miner_balance > 0.001 || miner.trx_from_balance > 0.001) {
               syncAddressDB(miner)
             }
           }
@@ -193,7 +201,7 @@ exports.read_an_address = function(req, res) {
     miner.trx_from_balance = miner.trx_from_balance / AMOUNT_DIVIDER
     miner.miner_fee_to_balance = miner.miner_fee_to_balance / AMOUNT_DIVIDER
 
-    if (miner.miner_balance || miner.trx_from_balance) {
+    if (miner.miner_balance > 0.001 || miner.trx_from_balance > 0.001) {
       syncAddressDB(miner)
     }
 
