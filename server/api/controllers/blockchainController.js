@@ -149,7 +149,7 @@ exports.read_an_address = function(req, res) {
     previous_miner.blocks = data.blocks
     previous_miner.transactions = data.transactions
     console.log("Found cached address: " + miner.address)
-    if (previous_miner.miner_balance < 0.001 || previous_miner.miner_balance) {
+    if (previous_miner.miner_balance < 0.001 || previous_miner.trx_from_balance < 0.001) {
       console.log("DB entry should not be here")
       couchAuth.del(ADDRESS_CACHE_DB, address_sha256, data._rev).then(({data, headers, status}) => {}, err => {})
       res.json()
