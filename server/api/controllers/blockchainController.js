@@ -174,7 +174,7 @@ function readAddressWithCache(miner_address, miner, res) {
         for (var i = previous_miner.last_block; i < last_block; i++) {
           keys.push("block" + i)
         }
-        BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
+        BlockchainDB.list({keys:keys, attachments:true, include_docs:true}, function (err, body) {
           if (!err && body && body.rows) {
             miner = computeAddress(miner, miner_address, body.rows)
             miner.balance = (miner.balance + previous_miner.balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
@@ -192,8 +192,10 @@ function readAddressWithCache(miner_address, miner, res) {
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
             syncAddressDB(miner)
+            res.json(miner)
+          } else {
+            readAddressWithoutCache(miner_address, miner, res)
           }
-          res.json(miner)
         });
        } catch (e) {
          console.error(e)
