@@ -125,37 +125,57 @@ function syncAddressDB(miner) {
   });
 }
 
-exports.read_an_address = function(req, res) {
-  var miner_address = req.params.address
-  var miner = getEmptyAddress(miner_address)
+function readAddressWithoutCache(miner_address, miner, res) {
+  BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
+    if (err) {
+      console.error(err)
+      res.json(miner)
+      return
+    }
+    miner = computeAddress(miner, miner_address, body.rows)
+    miner.balance = miner.balance / AMOUNT_DIVIDER
+    miner.miner_balance = miner.miner_balance / AMOUNT_DIVIDER
+    miner.miner_fee_balance = miner.miner_fee_balance / AMOUNT_DIVIDER
+    miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER
+    miner.trx_from_balance = miner.trx_from_balance / AMOUNT_DIVIDER
+    miner.miner_fee_to_balance = miner.miner_fee_to_balance / AMOUNT_DIVIDER
 
-  res.header("Cache-Control", "public, max-age=100")
-  res.header("Access-Control-Allow-Origin", "*");
-
-  if (miner_address.length < 8) {
+    syncAddressDB(miner)
     res.json(miner);
-    return
-  }
-  console.log(miner.address)
-  console.log(ADDRESS_CACHE_DB)
+   });
+}
+
+
+function readAddressWithCache(miner_address, miner, res) {
   let sha256 = crypto.createHash('sha256'); //sha256
   sha256.update(Buffer(miner.address));
   let address_sha256 = sha256.digest().toString('hex');
-  console.log(address_sha256)
+  console.log("Miner address sha256 is: " + address_sha256)
+
   couchAuth.get(ADDRESS_CACHE_DB, address_sha256).then(({data, headers, status}) => {
     var previous_miner = data.miner
     previous_miner.blocks = data.blocks
     previous_miner.transactions = data.transactions
-    console.log("Found cached address " + miner.address)
+    console.log("Found cached address: " + miner.address)
+    if (previous_miner.miner_balance < 0.0001 && previous_miner.trx_from_balance < 0.0001) {
+      console.log("DB entry should not be here. Retrying without cache")
+      readAddressWithoutCache(miner_address, miner, res)
+      return
+    }
     request.get('http://localhost:10000', function (error, response, body) {
+      if (error) {
+        console.error(error)
+        res.json(miner)
+        return
+      }
       try {
         var keys = []
         var last_block = JSON.parse(body).blocks.length - 1
         for (var i = previous_miner.last_block; i < last_block; i++) {
           keys.push("block" + i)
         }
-        BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
-          if (body) {
+        BlockchainDB.list({keys:keys, attachments:true, include_docs:true}, function (err, body) {
+          if (!err && body && body.rows) {
             miner = computeAddress(miner, miner_address, body.rows)
             miner.balance = (miner.balance + previous_miner.balance * AMOUNT_DIVIDER) / AMOUNT_DIVIDER
             miner.last_block = last_block
@@ -172,32 +192,39 @@ exports.read_an_address = function(req, res) {
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
             syncAddressDB(miner)
+            res.json(miner)
+          } else {
+            readAddressWithoutCache(miner_address, miner, res)
           }
-          res.json(miner)
         });
        } catch (e) {
-         console.log(e)
-         res.json()
+         console.error(e)
+         console.log("Failed retrying with cache. Retrying without cache")
+         readAddressWithoutCache(miner_address, miner, res)
+         return
        }
     });
   }, err => {
-  console.log(err)
-
-  BlockchainDB.list({attachments:true, include_docs:true}, function (err, body) {
-    miner = computeAddress(miner, miner_address, body.rows)
-    miner.balance = miner.balance / AMOUNT_DIVIDER
-    miner.miner_balance = miner.miner_balance / AMOUNT_DIVIDER
-    miner.miner_fee_balance = miner.miner_fee_balance / AMOUNT_DIVIDER
-    miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER
-    miner.trx_from_balance = miner.trx_from_balance / AMOUNT_DIVIDER
-    miner.miner_fee_to_balance = miner.miner_fee_to_balance / AMOUNT_DIVIDER
-
-    syncAddressDB(miner)
-
-    res.json(miner);
+    readAddressWithoutCache(miner_address, miner, res)
+    return
   });
-  })
-};
+}
+
+exports.read_an_address = function (req, res) {
+  var miner_address = req.params.address
+  var miner = getEmptyAddress(miner_address)
+
+  res.header("Cache-Control", "public, max-age=100")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  if (miner_address.length != 40) {
+    console.log("Address " + miner_address + " is not 40 char long")
+    res.json(miner);
+    return
+  }
+  console.log("Miner address is: " + miner.address)
+  readAddressWithCache(miner_address, miner, res)
+}
 
 exports.list_all_blocks = function(req, res) {
   var blocks = [];

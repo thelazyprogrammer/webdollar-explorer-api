@@ -67,6 +67,7 @@ export default {
 
     async getMiner (miner) {
       this.miner = {}
+      miner = window.location.href.substring(34,window.location.href.length)
       const response = await BlocksService.fetchMiner(miner)
       this.miner = response.data
 

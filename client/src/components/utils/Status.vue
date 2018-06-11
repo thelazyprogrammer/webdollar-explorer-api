@@ -30,11 +30,18 @@ export default {
   methods: {
     async getStatus () {
       const response = await StatusService.getStatus()
-      if (response.data) {
+
+      if (response.data && response.data.last_block) {
         this.status.message = "#" + response.data.last_block
         if (response.data.is_synchronized) {
           this.status.class = "synced"
+        } else {
+          this.status.class = "syncing"
+          this.status.message = "syncing"
         }
+      } else {
+        this.status.class = "syncing"
+        this.status.message = "syncing"
       }
     }  
   }
