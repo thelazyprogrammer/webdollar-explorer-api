@@ -19,7 +19,7 @@
             Current balance
           </span>
         <span>
-            {{ this.formatMoneyNumber(miner.balance*10000,2) }}
+            {{ this.formatMoneyNumber(miner.balance*10000,2) }} <span title='Percentage of the Total Supply'>[{{ this.miner.total_supply_ratio }}%]</span>
           </span>
       </div>
 

@@ -22,6 +22,7 @@ function getEmptyAddress(miner_address) {
   return {
     'address': miner_address,
     'balance': 0,
+    'total_supply_ratio': 0,
     'last_block': 0,
     'miner_balance': 0,
     'miner_fee_balance': 0,
@@ -134,6 +135,8 @@ function readAddressWithoutCache(miner_address, miner, res) {
     }
     miner = computeAddress(miner, miner_address, body.rows)
     miner.balance = miner.balance / AMOUNT_DIVIDER
+    var totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
+    miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(3)
     miner.miner_balance = miner.miner_balance / AMOUNT_DIVIDER
     miner.miner_fee_balance = miner.miner_fee_balance / AMOUNT_DIVIDER
     miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER
@@ -191,6 +194,8 @@ function readAddressWithCache(miner_address, miner, res) {
             miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
+            var totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
+            miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(3)
             syncAddressDB(miner)
             res.json(miner)
           } else {

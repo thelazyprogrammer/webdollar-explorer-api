@@ -5,6 +5,7 @@ var atob = require('atob'),
 
 const PREFIX_BASE64 = "584043fe"
 const SUFFIX_BASE64 = "FF"
+const BASE_REWARD = 6000
 const FIRST_BLOCK_REWARDS = [1, 1867487789, 1007804769, 552321669, 307400655, 173745886, 99728963, 58133318,
   34413271, 20688253, 12630447, 7830882, 4930598, 3152722, 2047239, 1350046, 904119,
   614893, 424689, 297878, 212180, 153485, 112752, 84116, 63728, 49032, 38311, 30400,
@@ -235,3 +236,22 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
       }
 }
 
+
+exports.getTotalSupply = function(blockNumber) {
+    var genesisSupply = 0
+    var minedSupply = 0
+    var totalSupply = 0
+
+    if (blockNumber < 0) {
+      return 0
+    }
+
+    if (blockNumber <= FIRST_BLOCK_REWARDS.length) {
+        genesisSupply = FIRST_BLOCK_REWARDS.slice(0, blockNumber + 1).reduce(function(a, b) { return a + b; }, 0);
+    } else {
+      genesisSupply = FIRST_BLOCK_REWARDS.reduce(function(a, b) { return a + b; }, 0);
+      minedSupply = (blockNumber - FIRST_BLOCK_REWARDS.length) * BASE_REWARD
+    }
+    totalSupply = genesisSupply + minedSupply
+    return totalSupply
+}
