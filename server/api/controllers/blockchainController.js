@@ -17,6 +17,7 @@ const couchAuth = new NodeCouchDb({
 const AMOUNT_DIVIDER = 10000
 const REWARD = AMOUNT_DIVIDER * 6000
 const ADDRESS_CACHE_DB = "address"
+const BALANCE_RATIO_DECIMALS = 5
 
 function getEmptyAddress(miner_address) {
   return {
@@ -136,7 +137,7 @@ function readAddressWithoutCache(miner_address, miner, res) {
     miner = computeAddress(miner, miner_address, body.rows)
     miner.balance = miner.balance / AMOUNT_DIVIDER
     var totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
-    miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(3)
+    miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
     miner.miner_balance = miner.miner_balance / AMOUNT_DIVIDER
     miner.miner_fee_balance = miner.miner_fee_balance / AMOUNT_DIVIDER
     miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER
@@ -195,7 +196,7 @@ function readAddressWithCache(miner_address, miner, res) {
             miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
             var totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
-            miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(3)
+            miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
             syncAddressDB(miner)
             res.json(miner)
           } else {
