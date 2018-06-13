@@ -10,6 +10,7 @@
         WebDollar Explorer
       </a>
       <status></status>
+      <website-menu></website-menu>
       <search></search>
 
     </div>
@@ -33,13 +34,14 @@
 <script>
 
   import Status from '@/components/utils/Status.vue'
+  import WebsiteMenu from '@/components/utils/Menu.vue'
   import Search from '@/components/utils/Search.vue'
 
   export default {
 
     name: 'App',
 
-    components: {Status,Search},
+    components: {Status,Search,WebsiteMenu},
 
     data () {
       return {
@@ -52,6 +54,18 @@
   }
 
 </script>
+
+<style>
+
+  @media screen and (max-width: 900px) {
+
+    .webdollar-explorer-link {
+
+    }
+
+  }
+
+</style>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <link id="WebdollarFont" href="https://webdollar.io/public/assets/fonts/avenir-light.woff" rel="stylesheet">

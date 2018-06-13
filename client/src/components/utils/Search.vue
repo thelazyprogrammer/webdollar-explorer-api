@@ -41,3 +41,27 @@ export default {
 
 }
 </script>
+
+<style>
+
+  #searchBox:focus{
+    width: 400px;
+  }
+
+  @media screen and (max-width: 900px){
+
+    #searchBox:focus{
+      width: 200px;
+    }
+
+  }
+
+  @media screen and (max-width: 700px){
+
+    .webdollar-explorer-link{
+      display: none;
+    }
+
+  }
+
+</style>
