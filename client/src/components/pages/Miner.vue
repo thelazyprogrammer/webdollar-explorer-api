@@ -18,7 +18,7 @@
 
           <h2 v-if="miner.transactions && miner.transactions.length">Transactions</h2>
 
-          <transactions :transactions="this.miner.transactions"></transactions>
+          <transactions :address="this.miner.address" :transactions="this.miner.transactions"></transactions>
 
         </div>
 
@@ -60,14 +60,14 @@ export default {
 
   mounted () {
     this.miner = {}
-    this.getMiner(window.location.href.substring(34,window.location.href.length))
+    this.getMiner(window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length))
   },
 
   methods: {
 
     async getMiner (miner) {
       this.miner = {}
-      miner = window.location.href.substring(34,window.location.href.length)
+      miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
       const response = await BlocksService.fetchMiner(miner)
       this.miner = response.data
 
