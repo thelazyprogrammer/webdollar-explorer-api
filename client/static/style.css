@@ -358,3 +358,7 @@ a.add_post_link {
 .dropDown{
   display: none;
 }
+
+.transactionsTable tr {
+  vertical-align:top;
+}
