@@ -37,7 +37,7 @@ function getEmptyAddress(miner_address) {
 
 function computeAddress(miner, miner_address, docs) {
   docs.forEach(function(doc) {
-    if (!doc.doc._attachments) {
+    if (!(doc && doc.doc && doc.doc._attachments)) {
       return
     }
 
