@@ -179,8 +179,8 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
               //'trx_from_signature': '',
               'trx_from_amount': 0
             }
-            trx_from.trx_from_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
-            trxs_from.address.push(decodeMinerAddress(trx_from.trx_from_address))
+            trx_from.trx_from_address = decodeMinerAddress(substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex'))
+            trxs_from.address.push(trx_from.trx_from_address)
             CURRENT_OFFSET += OFFSET_ADDRESS
 
             // trx_from.trx_from_pub_key = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_PUB_KEY).toString('hex')
@@ -212,8 +212,8 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
               'trx_to_amount': 0
             }
 
-            trx_to.trx_to_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
-            trxs_to.address.push(decodeMinerAddress(trx_to.trx_to_address))
+            trx_to.trx_to_address = decodeMinerAddress(substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex'))
+            trxs_to.address.push(trx_to.trx_to_address)
             CURRENT_OFFSET += OFFSET_ADDRESS
 
             trx_to.trx_to_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)

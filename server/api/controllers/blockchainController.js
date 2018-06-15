@@ -77,13 +77,25 @@ function computeAddress(miner, miner_address, docs) {
       }
 
       if (trx.from.address.includes(miner_address)) {
-        miner.miner_fee_to_balance =  miner.miner_fee_to_balance + trx.fee
-        miner.trx_to_balance = miner.trx_to_balance + trx.from.amount
-        has_trx =true
+        var to_amount = 0
+        trx.from.trxs.forEach(function(from_trx) {
+          if (miner_address == from_trx.trx_from_address) {
+            to_amount += from_trx.trx_from_amount
+          }
+        })
+        //miner.miner_fee_to_balance =  miner.miner_fee_to_balance + trx.fee
+        miner.trx_to_balance = miner.trx_to_balance + to_amount
+        has_trx = true
       }
       if (trx.to.address.includes(miner_address)) {
-        miner.trx_from_balance = miner.trx_from_balance + trx.from.amount
-        has_trx =true
+        var from_amount = 0
+        trx.to.trxs.forEach(function(to_trx) {
+          if (miner_address == to_trx.trx_to_address) {
+            from_amount += to_trx.trx_to_amount
+          }
+        })
+        miner.trx_from_balance = miner.trx_from_balance + from_amount
+        has_trx = true
       }
       if (has_trx) {
         trx['timestamp'] = block_decoded.timestamp
