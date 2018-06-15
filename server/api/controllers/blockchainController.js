@@ -60,8 +60,7 @@ function computeAddress(miner, miner_address, docs) {
       return
     }
     var is_miner = false
-    if (block_decoded.miner_address.includes(miner_address)) {
-      miner.address = block_decoded.miner_address
+    if (block_decoded.miner_address == miner_address) {
       miner.blocks.push({
         'block_id': block_decoded.id,
         'timestamp': block_decoded.timestamp,
@@ -78,13 +77,11 @@ function computeAddress(miner, miner_address, docs) {
       }
 
       if (trx.from.address.includes(miner_address)) {
-        miner.address = trx.from.address
         miner.miner_fee_to_balance =  miner.miner_fee_to_balance + trx.fee
         miner.trx_to_balance = miner.trx_to_balance + trx.from.amount
         has_trx =true
       }
       if (trx.to.address.includes(miner_address)) {
-        miner.address = trx.to.address
         miner.trx_from_balance = miner.trx_from_balance + trx.from.amount
         has_trx =true
       }

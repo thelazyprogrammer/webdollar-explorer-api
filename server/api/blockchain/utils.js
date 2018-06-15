@@ -133,7 +133,7 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
       var trxs_number = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_NUMBER))
       CURRENT_OFFSET += OFFSET_TRX_NUMBER
-      
+
       var trxs_container = []
       if (trxs_number > 0) {
         for(var i=0;i<trxs_number;i++) {
@@ -160,59 +160,84 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
           CURRENT_OFFSET += OFFSET_TRX_TIME_LOCK
 
           // Deserialize from trx data
-          //var trx_from_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_LENGTH))
+          var trx_from_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_LENGTH))
           CURRENT_OFFSET += OFFSET_TRX_LENGTH
-          var trx_from_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
-          CURRENT_OFFSET += OFFSET_ADDRESS
 
-          // var trx_from_pub_key = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_PUB_KEY).toString('hex')
-          CURRENT_OFFSET += OFFSET_TRX_PUB_KEY
-          // var trx_from_signature = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_SIGN).toString('hex')
-          CURRENT_OFFSET += OFFSET_TRX_SIGN
-          var trx_from_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
-          CURRENT_OFFSET += OFFSET_NUMBER
+          if (trx_from_length < 0) {
+              console.log("trx_from_length should be greater than 0.")
+              continue
+          }
+          var trxs_from = {
+            'trxs': [],
+            'address': [],
+            'amount': 0,
+          }
+          for (var from_address_index=0;from_address_index<trx_from_length; from_address_index++) {
+            var trx_from = {
+              'trx_from_address': '',
+              //'trx_from_pub_key': '',
+              //'trx_from_signature': '',
+              'trx_from_amount': 0
+            }
+            trx_from.trx_from_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
+            trxs_from.address.push(decodeMinerAddress(trx_from.trx_from_address))
+            CURRENT_OFFSET += OFFSET_ADDRESS
+
+            // trx_from.trx_from_pub_key = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_PUB_KEY).toString('hex')
+            CURRENT_OFFSET += OFFSET_TRX_PUB_KEY
+            // trx_from.trx_from_signature = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_SIGN).toString('hex')
+            CURRENT_OFFSET += OFFSET_TRX_SIGN
+            trx_from.trx_from_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
+            trxs_from.amount += trx_from.trx_from_amount
+            CURRENT_OFFSET += OFFSET_NUMBER
+            trxs_from.trxs.push(trx_from)
+          }
           var trx_from_currency_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_LENGTH))
           CURRENT_OFFSET += OFFSET_TRX_LENGTH
           // var trx_from_currency_token = substr(block_hex, CURRENT_OFFSET, trx_from_currency_length).toString('hex')
           CURRENT_OFFSET += trx_from_currency_length
 
-          var trx_from = {
-              // 'address': trx_from_address,
-              'address': decodeMinerAddress(trx_from_address),
-              // 'public_key': trx_from_pub_key,
-              // 'signature': trx_from_signature,
-              'amount': trx_from_amount / amountDivider,
-              // 'currency_length': trx_from_currency_length,
-              // 'currency_token': trx_from_currency_token
+          // Deserialize to trx data
+          var trx_to_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_LENGTH))
+          CURRENT_OFFSET += OFFSET_TRX_LENGTH
+
+          var trxs_to = {
+            'trxs': [],
+            'address': [],
+            'amount': 0
+          }
+          for (var to_address_index=0;to_address_index<trx_to_length; to_address_index++) {
+            var trx_to = {
+              'trx_to_address': '',
+              'trx_to_amount': 0
             }
 
-            // Deserialize to trx data
-            //var trx_to_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_LENGTH))
-            CURRENT_OFFSET += OFFSET_TRX_LENGTH
-            var trx_to_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
+            trx_to.trx_to_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
+            trxs_to.address.push(decodeMinerAddress(trx_to.trx_to_address))
             CURRENT_OFFSET += OFFSET_ADDRESS
-            var trx_to_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
+
+            trx_to.trx_to_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
+            trxs_to.amount += trx_to.trx_to_amount
             CURRENT_OFFSET += OFFSET_NUMBER
-            var trx_to = {
-              //'trx_to_length': trx_to_length,
-              //'address_base': trx_to_address,
-              'address': decodeMinerAddress(trx_to_address),
-              //'amount': trx_to_amount/1000
-            }
-            trx_from['amount'] = trx_to_amount / amountDivider
-            var trx_fee = trx_from_amount - trx_to_amount
-            var trx = {
+            trxs_to.trxs.push(trx_to)
+          }
+
+          var fee = (trxs_from.amount - trxs_to.amount) / amountDivider
+          trxs_from.amount = trxs_from.amount / amountDivider
+          trxs_to.amount = trxs_to.amount / amountDivider
+
+          var trx = {
               //'version' : trx_version,
               //'nonce' : trx_nonce,
               //'time_lock' : trx_time_lock,
               //'from_length' : trx_from_length,
-              'from': trx_from,
-              'to': trx_to,
-              'fee': trx_fee / amountDivider,
+              'from': trxs_from,
+              'to': trxs_to,
+              'fee': fee,
               'block_id': block_id,
               'timestamp': human_timestamp.toUTCString()
-            }
-            trxs_container.push(trx)
+          }
+          trxs_container.push(trx)
         }
       }
 
