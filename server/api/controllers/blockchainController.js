@@ -403,7 +403,6 @@ exports.read_an_address = function (req, res) {
       var miner_received = JSON.parse(body)
       miner.balance = miner_received.balance
       miner.last_block = miner_received.last_block
-      miner.transactions = miner_received.transactions
       if (miner.last_block) {
         var totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
         miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
@@ -424,6 +423,40 @@ exports.read_an_address = function (req, res) {
       miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
       var transactions_parsed = []
+      miner_received.transactions.forEach(function(transaction) {
+        var transaction_parsed = transaction
+        transaction_parsed.block_id = transaction.blockId
+        transaction_parsed.id = transaction.blockId
+        var date = new Date((transaction.timestamp + 1524742312) * 1000)
+        transaction_parsed.timestamp = date.toUTCString()
+        transaction_parsed.fee = 0
+        var to_amount = 0
+
+        transaction_parsed.from = {
+          amount: 0,
+          address: []
+        }
+        transaction_parsed.transaction.from.addresses.forEach(function(from) {
+          transaction_parsed.from.address.push(from.address)
+          transaction_parsed.from.amount += parseInt(from.amount)
+        })
+
+        transaction_parsed.to = {
+          address: []
+        }
+        transaction_parsed.transaction.to.addresses.forEach(function(to) {
+          transaction_parsed.to.address.push(to.address)
+          to_amount += parseInt(to.amount)
+        })
+
+        transaction_parsed.fee = transaction_parsed.from.amount - to_amount
+        transaction_parsed.fee = transaction_parsed.fee / AMOUNT_DIVIDER
+        transaction_parsed.from.amount = transaction_parsed.from.amount / AMOUNT_DIVIDER
+
+        transactions_parsed.push(transaction_parsed)
+      })
+      miner.transactions = transactions_parsed
+      miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
       res.json(miner)
       return
