@@ -403,12 +403,28 @@ exports.read_an_address = function (req, res) {
       var miner_received = JSON.parse(body)
       miner.balance = miner_received.balance
       miner.last_block = miner_received.last_block
-      miner.blocks = miner_received.minedBlocks
       miner.transactions = miner_received.transactions
       if (miner.last_block) {
         var totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
         miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
       }
+
+      var blocks_parsed = []
+      miner_received.minedBlocks.forEach(function(block) {
+        var block_parsed = block
+        block_parsed.block_id = block_parsed.blockId
+        block_parsed.id = block_parsed.blockId
+        var date = new Date((block_parsed.timestamp + 1524742312) * 1000)
+        block_parsed.timestamp = date.toUTCString()
+        block_parsed.trxs = block_parsed.transactions
+
+        blocks_parsed.push(block_parsed)
+      })
+      miner.blocks = blocks_parsed
+      miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+
+      var transactions_parsed = []
+
       res.json(miner)
       return
     } catch (exception) {
