@@ -4,6 +4,7 @@ var atob = require('atob'),
   crypto = require('crypto'),
   request = require('request'),
   BlockchainDB = require('nano')('http://localhost:5984').use('blockjs'),
+  BlockchainSyncerDB = require('nano')('http://localhost:5984').use('syncer'),
   blockchainUtils = require('../blockchain/utils');
 
 const NodeCouchDb = require('node-couchdb');
@@ -225,7 +226,7 @@ function readAddressWithCache(miner_address, miner, res) {
   });
 }
 
-exports.read_an_address = function (req, res) {
+exports.read_an_address_1 = function (req, res) {
   var miner_address = req.params.address
   var miner = getEmptyAddress(miner_address)
 
@@ -241,7 +242,7 @@ exports.read_an_address = function (req, res) {
   readAddressWithCache(miner_address, miner, res)
 }
 
-exports.list_all_blocks = function(req, res) {
+exports.list_all_blocks1 = function(req, res) {
   var blocks = [];
   var max_block_length;
   var max_blocks = 14;
@@ -300,7 +301,7 @@ function getBlocksFallback(res) {
   });
 }
 
-exports.read_a_block = function(req, res) {
+exports.read_a_block1 = function(req, res) {
   var blockId = 'block' + parseInt(req.params.blockId);
   BlockchainDB.get(blockId, {attachments:true, include_docs:true}, function (err, body) {
     if (!(body)) {
@@ -313,3 +314,107 @@ exports.read_a_block = function(req, res) {
     }
   })
 };
+
+
+exports.list_all_blocks = function(req, res) {
+  var blocks = [];
+  var max_block_length;
+  var max_blocks = 14;
+
+  res.header("Cache-Control", "public, max-age=100")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  BlockchainSyncerDB.view('blocks', 'ordered_blocks', {
+      'limit': max_blocks,
+      'descending': true,
+      'include_docs': true
+    },
+    function(err, body) {
+      if (!err) {
+        body.rows.forEach(function(block) {
+          blocks.push(block.value)
+        })
+        res.json(blocks)
+        return
+      } else {
+        console.log(err)
+        res.json(blocks)
+        return
+      }
+  });
+}
+
+exports.read_a_block = function(req, res) {
+  var blockId = parseInt(req.params.blockId);
+
+  res.header("Cache-Control", "public, max-age=100")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  BlockchainSyncerDB.view('blocks', 'ordered_blocks', {
+      'key': blockId,
+      'include_docs': true
+    },
+    function(err, body) {
+      if (!err) {
+        if (body.rows.length == 1) {
+          var block = body.rows[0].value
+          var block_trxs = []
+          block.trxs.forEach(function(trx) {
+            var block_trx = trx
+            block_trx.from.amount = trx.from.amount / AMOUNT_DIVIDER
+            block_trx.to.amount = trx.to.amount / AMOUNT_DIVIDER
+            block_trx.fee = trx.fee / AMOUNT_DIVIDER
+            block_trxs.push(block_trx)
+          })
+          block.trxs = block_trxs
+          res.json(block)
+        } else {
+          console.log(body)
+          res.status(404).send('Not found');
+          return
+        }
+      } else {
+        console.log(err)
+        res.status(404).send('Not found');
+        return
+      }
+  });
+}
+
+exports.read_an_address = function (req, res) {
+  var miner_address = req.params.address
+  var miner = getEmptyAddress(miner_address)
+
+  res.header("Cache-Control", "public, max-age=100")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  if (miner_address.length != 40) {
+    console.log("Address " + miner_address + " is not 40 char long")
+    res.json(miner);
+    return
+  }
+  request.get('http://localhost:3333/address/' + encodeURIComponent(miner_address), function (error, response, body) {
+    if (error) {
+      console.error(error)
+      res.json(miner)
+      return
+    }
+    try {
+      var miner_received = JSON.parse(body)
+      miner.balance = miner_received.balance
+      miner.last_block = miner_received.last_block
+      miner.blocks = miner_received.minedBlocks
+      miner.transactions = miner_received.transactions
+      if (miner.last_block) {
+        var totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
+        miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
+      }
+      res.json(miner)
+      return
+    } catch (exception) {
+      console.log(exception.message)
+      res.json(miner)
+      return
+    }
+  })
+}
