@@ -274,9 +274,11 @@ function syncDB(from, to, callback, callback_err) {
   }
 
   BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
-    if (err || !body.rows) {
+    if (err || !body.rows || !(body.rows.length == keys.length)) {
       callback_err(err)
       callback_err(body)
+      callback_err(body.rows.length)
+      callback_err(keys.length)
       return
     }
     body.rows.forEach(function(row) {

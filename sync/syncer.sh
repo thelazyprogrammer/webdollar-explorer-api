@@ -3,9 +3,17 @@ set -e
 
 FROM=$1
 TO=$2
-STEP=100
+STEP=10
 
-for i in `seq ${FROM} ${TO}`; do
+CURRENT_OFFSET=$FROM
+
+
+function sync() {
+FROM1=$1
+TO1=$2
+
+
+for i in `seq ${FROM1} ${TO1}`; do
   from=$((($i - 1) * $STEP))
   to=$(($i * $STEP))
   output_full=$(node syncer.js $from $to)
@@ -15,6 +23,13 @@ for i in `seq ${FROM} ${TO}`; do
   if [[ "${output_not_first_line}" != '' ]];then
     echo "Failed to sync"
     echo "${output_full}"
-    exit 1
+    CURRENT_OFFSET=$i
+    return
   fi
+done
+}
+
+while true; do
+  sync $CURRENT_OFFSET $TO
+  sleep 100
 done
