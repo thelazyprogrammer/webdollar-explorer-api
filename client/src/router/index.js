@@ -4,6 +4,7 @@ import Blocks from '@/components/pages/LastBlocksMined'
 import Block from '@/components/pages/Block'
 import Miner from '@/components/pages/Miner'
 import Search from '@/components/utils/Search'
+import Fame from '@/components/pages/Fame'
 
 Vue.use(Router)
 
@@ -33,6 +34,11 @@ export default new Router({
       path: '/search/:miner_address',
       name: 'Search',
       component: Search
+    },
+    {
+      path: '/fame',
+      name: 'Fame',
+      component: Fame
     }
   ]
 })
