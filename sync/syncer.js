@@ -1,7 +1,10 @@
 'use strict';
 var atob = require('atob'),
   bs58 = require('bs58'),
-  crypto = require('crypto');
+  crypto = require('crypto'),
+  request = require('request'),
+  BlockchainDB = require('nano')('http://localhost:5984').use('blockjs'),
+  BlockchainSyncer = require('nano')('http://localhost:5984').use('syncer');
 
 const PREFIX_BASE64 = "584043fe"
 const SUFFIX_BASE64 = "FF"
@@ -84,7 +87,7 @@ function decodeMinerAddress(miner_address) {
     return encodeBase64(Buffer.concat([ Buffer.from(PREFIX_BASE64, 'hex'), address, checksum, Buffer.from(SUFFIX_BASE64, 'hex')]))
 }
 
-exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
+function decodeRawBlock(block_id, block_raw, divide_amounts) {
       var block_hex = Buffer.from(atob(Buffer.from(block_raw, 'base64')), "hex")
       const AMOUNT_DIVIDER = 10000
       var amountDivider = 1
@@ -109,27 +112,27 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
       var OFFSET_TRX_NUMBER = OFFSET_4
 
       var CURRENT_OFFSET = 0
-      //var block_hash = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      var block_hash = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
-      //var block_nonce = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_NONCE))
+      var block_nonce = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_NONCE))
       CURRENT_OFFSET += OFFSET_BLOCK_NONCE
-      //var block_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_VERSION))
+      var block_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_VERSION))
       CURRENT_OFFSET += OFFSET_BLOCK_VERSION
-      //var block_hashPrev = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      var block_hashPrev = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
       var block_timestamp = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_TIMESTAMP)) + 1524742312
       CURRENT_OFFSET += OFFSET_BLOCK_TIMESTAMP
       var human_timestamp = new Date(block_timestamp * 1000)
 
       // Secondary data
-      //var block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      var block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
       var miner_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
       CURRENT_OFFSET += OFFSET_ADDRESS
       var miner_address_decoded = decodeMinerAddress(miner_address)
 
       // TRX data
-      //var trxs_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      var trxs_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
       var trxs_number = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_NUMBER))
       CURRENT_OFFSET += OFFSET_TRX_NUMBER
@@ -146,17 +149,17 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
           var OFFSET_TRX_SIGN = OFFSET_64
           var OFFSET_NUMBER = OFFSET_7
           
-          //var trx_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_VERSION))
+          var trx_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_VERSION))
           CURRENT_OFFSET += OFFSET_TRX_VERSION
           
           // HARD FORK change for TRX NONCE
           if (block_id > TRX_NONCE_V2_BLOCK) {
             OFFSET_TRX_NONCE = OFFSET_TRX_NONCE_V2
           }
-          //var trx_nonce = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_NONCE))
+          var trx_nonce = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_NONCE))
           CURRENT_OFFSET += OFFSET_TRX_NONCE
 
-          //var trx_time_lock = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_TIME_LOCK))
+          var trx_time_lock = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_TIME_LOCK))
           CURRENT_OFFSET += OFFSET_TRX_TIME_LOCK
 
           // Deserialize from trx data
@@ -175,17 +178,17 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
           for (var from_address_index=0;from_address_index<trx_from_length; from_address_index++) {
             var trx_from = {
               'trx_from_address': '',
-              //'trx_from_pub_key': '',
-              //'trx_from_signature': '',
+              'trx_from_pub_key': '',
+              'trx_from_signature': '',
               'trx_from_amount': 0
             }
             trx_from.trx_from_address = decodeMinerAddress(substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex'))
             trxs_from.address.push(trx_from.trx_from_address)
             CURRENT_OFFSET += OFFSET_ADDRESS
 
-            // trx_from.trx_from_pub_key = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_PUB_KEY).toString('hex')
+            trx_from.trx_from_pub_key = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_PUB_KEY).toString('hex')
             CURRENT_OFFSET += OFFSET_TRX_PUB_KEY
-            // trx_from.trx_from_signature = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_SIGN).toString('hex')
+            trx_from.trx_from_signature = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_SIGN).toString('hex')
             CURRENT_OFFSET += OFFSET_TRX_SIGN
             trx_from.trx_from_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
             trxs_from.amount += trx_from.trx_from_amount
@@ -194,7 +197,7 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
           }
           var trx_from_currency_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_LENGTH))
           CURRENT_OFFSET += OFFSET_TRX_LENGTH
-          // var trx_from_currency_token = substr(block_hex, CURRENT_OFFSET, trx_from_currency_length).toString('hex')
+           var trx_from_currency_token = substr(block_hex, CURRENT_OFFSET, trx_from_currency_length).toString('hex')
           CURRENT_OFFSET += trx_from_currency_length
 
           // Deserialize to trx data
@@ -227,10 +230,10 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
           trxs_to.amount = trxs_to.amount / amountDivider
 
           var trx = {
-              //'version' : trx_version,
-              //'nonce' : trx_nonce,
-              //'time_lock' : trx_time_lock,
-              //'from_length' : trx_from_length,
+              'version' : trx_version,
+              'nonce' : trx_nonce,
+              'time_lock' : trx_time_lock,
+              'from_length' : trx_from_length,
               'from': trxs_from,
               'to': trxs_to,
               'fee': fee,
@@ -244,39 +247,64 @@ exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
       return {
         'id' : block_id,
         'block_id' : block_id,
-        //'hash' : block_hash,
-        //'nonce' : block_nonce,
-        //'version' : block_version,
-        //'previous_hash' : block_hashPrev,
+        'hash' : block_hash,
+        'nonce' : block_nonce,
+        'version' : block_version,
+        'previous_hash' : block_hashPrev,
         'timestamp' : human_timestamp.toUTCString(),
-        //'hash_data' : block_hash_data,
-        //'miner_address' : miner_address,
-        //'miner_address_bs58' : miner_address_encoded,
+        'hash_data' : block_hash_data,
+        'miner_address' : miner_address,
         'miner_address' : miner_address_decoded,
-        //'trxs_hash_data': trxs_hash_data,
-        //'trxs_number': trxs_number,
-        'trxs': trxs_container
-        //'block_hex' : block_hex.toString('hex'),
-        //'block_raw' : block_raw
+        'trxs_hash_data': trxs_hash_data,
+        'trxs_number': trxs_number,
+        'trxs': trxs_container,
+        'block_raw' : block_raw
       }
 }
 
 
-exports.getTotalSupply = function(blockNumber) {
-    var genesisSupply = 0
-    var minedSupply = 0
-    var totalSupply = 0
+function syncDB(from, to, callback, callback_err) {
+  console.log("Syncing DB from " + from + " to " + to)
+  var keys_number_from = from
+  var keys_number_to = to
+  var keys = []
 
-    if (blockNumber < 0) {
-      return 0
-    }
+  for (var i=keys_number_from;i<keys_number_to;i++) {
+    keys.push("block" + i)
+  }
 
-    if (blockNumber <= FIRST_BLOCK_REWARDS.length) {
-        genesisSupply = FIRST_BLOCK_REWARDS.slice(0, blockNumber + 1).reduce(function(a, b) { return a + b; }, 0);
-    } else {
-      genesisSupply = FIRST_BLOCK_REWARDS.reduce(function(a, b) { return a + b; }, 0);
-      minedSupply = (blockNumber - FIRST_BLOCK_REWARDS.length) * BASE_REWARD
+  BlockchainDB.list({keys: keys, attachments:true, include_docs:true}, function (err, body) {
+    if (err || !body.rows || !(body.rows.length == keys.length)) {
+      callback_err(err)
+      callback_err(body)
+      callback_err(body.rows.length)
+      callback_err(keys.length)
+      return
     }
-    totalSupply = genesisSupply + minedSupply
-    return totalSupply
+    body.rows.forEach(function(row) {
+      if (!row || !row.doc || !row.doc._attachments) {
+        callback_err(row)
+        return
+      }
+      var block_id = Number(row.id.replace('block', ''))
+      var block = decodeRawBlock(block_id, row.doc._attachments.key.data)
+      //console.log(block)
+      block._id = "" + block_id
+      BlockchainSyncer.get(block._id, function(err, body) {
+        if (!err) {
+          block._rev = body._rev
+        }
+        BlockchainSyncer.insert(block, function(err, body) {
+          if (!err) {
+            //callback_err(body)
+          } else {
+            callback_err(err)
+          }
+        });
+      });
+    });
+  });
+
 }
+
+syncDB(process.argv[2], process.argv[3], function(from, to) { syncDB (from, to) }, function(err) {console.log(err)})

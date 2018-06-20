@@ -24,12 +24,16 @@
        <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_id }}">{{ trx.block_id}}</router-link>
       </td>
 
-      <td align="left">
-       <a :href="'#/miner/' + trx.from.address">{{ trx.from.address.substring(0,10)}}..{{ trx.from.address.substring(trx.from.address.length-5) }}</a>
+      <td align="left" style="max-width:170px!important">
+       <span v-for="from_address in trx.from.address">
+         <a :href="'#/miner/' + from_address">{{ from_address.substring(0,10)}}..{{ from_address.substring(from_address.length-5) }} </a>
+       </span>
       </td>
 
-      <td align="left">
-       <a :href="'#/miner/' + trx.to.address">{{ trx.to.address.substring(0,10)}}..{{ trx.to.address.substring(trx.to.address.length-5) }}</a>
+      <td align="left" style="max-width:170px!important">
+       <span v-for="to_address in trx.to.address">
+         <a :href="'#/miner/' + to_address">{{ to_address.substring(0,10)}}..{{ to_address.substring(to_address.length-5) }} </a>
+       </span>
       </td>
 
       <td align="left">
