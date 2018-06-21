@@ -3,7 +3,7 @@
   <div id="app">
 
     <div id="header">
-      <a class="logoLink" href="https://webdollar.io">
+      <a class="logoLink" href="https://webdollar.network">
         <img src="https://webdollar.io/public/assets/images/WebDollar-logo-white.png" alt="webDollar logo" id="logo" title="webDollar logo">
       </a>
       <a class="webdollar-explorer-link" href="#/">

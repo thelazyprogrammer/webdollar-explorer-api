@@ -14,7 +14,7 @@
       <td>Timestamp</td>
     </tr>
 
-    <tr v-for="(trx,index) in transactions" :class=" isRecivingMoney(address,trx.from.address,trx.to.address) ">
+    <tr v-for="(trx,index) in transactions" :class=" isReceivingMoney(address,trx.from.address,trx.to.address)">
 
       <td align="left">
        {{ transactions.length - index}}
@@ -74,10 +74,10 @@ export default {
       return Utils.formatMoneyNumber(number, decimals);
     },
 
-    isRecivingMoney(mainAddress,compareAddressFrom,compareAddressTo){
+    isReceivingMoney(mainAddress,compareAddressFrom,compareAddressTo){
 
-      if (mainAddress===compareAddressFrom) return 'toColor';
-      if (mainAddress===compareAddressTo) return 'fromColor';
+      if (compareAddressFrom.includes(mainAddress)) return 'toColor';
+      if (compareAddressTo.includes(mainAddress)) return 'fromColor';
 
       return '';
 
