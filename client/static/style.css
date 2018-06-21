@@ -333,6 +333,7 @@ a.add_post_link {
 }
 
 #menu{
+  z-index: 1000;
   display: block;
   position: relative;
   float:right
