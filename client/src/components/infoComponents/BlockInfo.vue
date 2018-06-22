@@ -3,7 +3,9 @@
 
     <div v-if="block" class="minerTable">
 
-      <h2>Block Details</h2>
+      <h2>
+        Block Details
+      </h2>
 
       <div>
           <span>
@@ -15,11 +17,47 @@
       </div>
 
       <div>
-          <span >
+          <span>
             Miner Address
           </span>
         <span>
             <a :href="'#/miner/' + block.miner_address">{{ block.miner_address }}</a>
+          </span>
+      </div>
+
+      <div>
+          <span>
+            Hash
+          </span>
+        <span v-if="block.hash" >
+            {{ block.hash.substring(0,20) }}..
+          </span>
+      </div>
+
+      <div>
+          <span>
+            Previous Hash
+          </span>
+        <span v-if="block.previous_hash">
+            {{ block.previous_hash.substring(0,20) }}..
+          </span>
+      </div>
+
+      <div>
+          <span>
+            Nonce
+          </span>
+        <span>
+            {{ block.nonce }}
+          </span>
+      </div>
+
+      <div>
+          <span>
+            Version
+          </span>
+        <span>
+            {{ block.version }}
           </span>
       </div>
 
