@@ -32,7 +32,7 @@
           Block Reward
         </span>
         <span>
-            {{ block.reward }}
+            {{ formatMoneyNumber(block.reward,0) }}
         </span>
       </div>
 
@@ -41,7 +41,7 @@
             Nonce
           </span>
         <span>
-            {{ block.nonce }}
+            {{ formatMoneyNumber(block.nonce,0) }}
           </span>
       </div>
 
@@ -101,7 +101,7 @@ export default {
   methods: {
 
     formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number, decimals);
+      return Utils.formatMoneyNumber(number * 10000, decimals);
     }
   }
 
