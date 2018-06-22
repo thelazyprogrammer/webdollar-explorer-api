@@ -423,6 +423,8 @@ exports.read_an_address = function (req, res) {
       miner.blocks = miner.blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
 
       var transactions_parsed = []
+      miner.trx_to_balance = 0
+      miner.trx_from_balance = 0
       miner_received.transactions.forEach(function(transaction) {
         var transaction_parsed = transaction
         transaction_parsed.block_id = transaction.blockId
@@ -439,6 +441,9 @@ exports.read_an_address = function (req, res) {
         transaction_parsed.transaction.from.addresses.forEach(function(from) {
           transaction_parsed.from.address.push(from.address)
           transaction_parsed.from.amount += parseInt(from.amount)
+          if (miner.address == from.address) {
+            miner.trx_to_balance += parseInt(from.amount)
+          }
         })
 
         transaction_parsed.to = {
@@ -447,6 +452,9 @@ exports.read_an_address = function (req, res) {
         transaction_parsed.transaction.to.addresses.forEach(function(to) {
           transaction_parsed.to.address.push(to.address)
           to_amount += parseInt(to.amount)
+          if (miner.address == to.address) {
+            miner.trx_from_balance += parseInt(to.amount)
+          }
         })
 
         transaction_parsed.fee = transaction_parsed.from.amount - to_amount
@@ -457,6 +465,9 @@ exports.read_an_address = function (req, res) {
       })
       miner.transactions = transactions_parsed
       miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+      miner.miner_balance = (miner.balance * AMOUNT_DIVIDER + miner.trx_to_balance - miner.trx_from_balance) / AMOUNT_DIVIDER
+      miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER
+      miner.trx_from_balance = miner.trx_from_balance / AMOUNT_DIVIDER
 
       res.json(miner)
       return
