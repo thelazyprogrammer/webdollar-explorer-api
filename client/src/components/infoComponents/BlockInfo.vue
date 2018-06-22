@@ -1,7 +1,7 @@
 <template>
   <div >
 
-    <div v-if="block" class="minerTable">
+    <div v-if="block.block_id" class="minerTable">
 
       <h2>
         <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id - 1 }}"> &lt;&lt; </router-link>
@@ -78,8 +78,8 @@
 
     </div>
 
-    <div v-else>
-      There are no blocks <br /><br />
+    <div v-else class="minerTable">
+      <h2 class="toColor"> Block {{ this.$route.params.block_id }} not found </h2>
     </div>
 
   </div>
