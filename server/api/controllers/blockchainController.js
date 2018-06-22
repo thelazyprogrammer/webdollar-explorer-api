@@ -367,6 +367,11 @@ exports.read_a_block = function(req, res) {
             block_trxs.push(block_trx)
           })
           block.trxs = block_trxs
+          var reward = REWARD
+          if (block.block_id < 41) {
+            reward = blockchainUtils.FIRST_BLOCK_REWARDS[block.block_id] * AMOUNT_DIVIDER
+          }
+          block.reward = reward / AMOUNT_DIVIDER
           res.json(block)
         } else {
           console.log(body)

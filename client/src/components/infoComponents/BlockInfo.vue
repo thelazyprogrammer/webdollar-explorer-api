@@ -4,12 +4,14 @@
     <div v-if="block" class="minerTable">
 
       <h2>
+        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id - 1 }}"> &lt;&lt; </router-link>
         Block Details
+        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id + 1 }}"> &gt;&gt;  </router-link>
       </h2>
 
       <div>
           <span>
-             Block number
+             Block Number
           </span>
         <span>
             <router-link v-bind:to="{ name: 'Block', params: { id: block.id }}">{{ block.id }} </router-link>
@@ -26,21 +28,12 @@
       </div>
 
       <div>
-          <span>
-            Hash
-          </span>
-        <span v-if="block.hash" >
-            {{ block.hash.substring(0,20) }}..
-          </span>
-      </div>
-
-      <div>
-          <span>
-            Previous Hash
-          </span>
-        <span v-if="block.previous_hash">
-            {{ block.previous_hash.substring(0,20) }}..
-          </span>
+        <span>
+          Block Reward
+        </span>
+        <span>
+            {{ block.reward }}
+        </span>
       </div>
 
       <div>
