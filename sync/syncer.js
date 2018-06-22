@@ -114,7 +114,7 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
       var CURRENT_OFFSET = 0
       var block_hash = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
-      var block_nonce = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_NONCE))
+      var block_nonce = parseInt(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_NONCE).toString('hex'), 16)
       CURRENT_OFFSET += OFFSET_BLOCK_NONCE
       var block_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_VERSION))
       CURRENT_OFFSET += OFFSET_BLOCK_VERSION
