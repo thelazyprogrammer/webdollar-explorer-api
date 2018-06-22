@@ -1,7 +1,7 @@
 <template>
   <div >
 
-    <div v-if="block.block_id" class="minerTable">
+    <div v-if="block.nonce" class="minerTable">
 
       <h2>
         <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id - 1 }}"> &lt;&lt; </router-link>
