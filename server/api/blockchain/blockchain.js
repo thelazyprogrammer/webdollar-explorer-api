@@ -2,14 +2,14 @@ var atob = require('atob'),
   bs58 = require('bs58'),
   crypto = require('crypto'),
   request = require('request'),
-  blockchainDB = require('nano')('http://localhost:5984').use('blockjs');
+  config = require('../../config'),
+  blockchainDB = require('nano')(config.couchdb.host).use(config.couchdb.db_name);
   blockchainUtils = require('./utils');
 
-var BLOCKCHAIN_STATUS_URL = 'http://localhost:10000'
 
 exports.getSyncInfo = function (callback) {
   try {
-    request.get(BLOCKCHAIN_STATUS_URL, function (error, response, body) {
+    request.get(config.webdollar.couchdb_sync_url, function (error, response, body) {
       try {
         max_block_length = JSON.parse(body).blocks.length - 1
         blockchainDB.get('block' + max_block_length, {attachments:true, include_docs:true}, function (err, body) {
