@@ -33,4 +33,3 @@ while true; do
   sync $CURRENT_OFFSET $TO
   sleep 100
 done
-
