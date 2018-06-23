@@ -37,7 +37,7 @@ exports.list_all_blocks = function(req, res) {
   res.header("Cache-Control", "public, max-age=100")
   res.header("Access-Control-Allow-Origin", "*");
 
-  BlockchainSyncerDB.view('blocks', 'ordered_blocks', {
+  BlockchainSyncerDB.view(config.couchdb.syncer.view_name, config.couchdb.syncer.view_doc_name, {
       'limit': max_blocks,
       'descending': true,
       'include_docs': true
