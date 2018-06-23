@@ -1,13 +1,17 @@
 <template>
   <div >
 
-    <div v-if="block" class="minerTable">
+    <div v-if="block.nonce" class="minerTable">
 
-      <h2>Block Details</h2>
+      <h2>
+        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id - 1 }}"> &lt;&lt; </router-link>
+        Block Details
+        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id + 1 }}"> &gt;&gt;  </router-link>
+      </h2>
 
       <div>
           <span>
-             Block number
+             Block Number
           </span>
         <span>
             <router-link v-bind:to="{ name: 'Block', params: { id: block.id }}">{{ block.id }} </router-link>
@@ -15,11 +19,38 @@
       </div>
 
       <div>
-          <span >
+          <span>
             Miner Address
           </span>
         <span>
             <a :href="'#/miner/' + block.miner_address">{{ block.miner_address }}</a>
+          </span>
+      </div>
+
+      <div>
+        <span>
+          Block Reward
+        </span>
+        <span>
+            {{ formatMoneyNumber(block.reward,0) }}
+        </span>
+      </div>
+
+      <div>
+          <span>
+            Nonce
+          </span>
+        <span>
+            {{ formatMoneyNumber(block.nonce,0) }}
+          </span>
+      </div>
+
+      <div>
+          <span>
+            Version
+          </span>
+        <span>
+            {{ block.version }}
           </span>
       </div>
 
@@ -47,8 +78,8 @@
 
     </div>
 
-    <div v-else>
-      There are no blocks <br /><br />
+    <div v-else class="minerTable">
+      <h2 class="toColor"> Block {{ this.$route.params.block_id }} not found </h2>
     </div>
 
   </div>
@@ -70,7 +101,7 @@ export default {
   methods: {
 
     formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number, decimals);
+      return Utils.formatMoneyNumber(number * 10000, decimals);
     }
   }
 

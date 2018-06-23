@@ -39,12 +39,18 @@ export default {
       block: []
     }
   },
+  beforeRouteUpdate (to) {
+    this.getBlock(to.params.block_id)
+  },
   mounted () {
     this.getBlock()
   },
   methods: {
-    async getBlock () {
-      const response = await BlocksService.fetchBlock(this.$route.params.block_id)
+    async getBlock (block_id) {
+      if (!block_id) {
+        block_id = this.$route.params.block_id
+      }
+      const response = await BlocksService.fetchBlock(block_id)
       this.block = response.data
     },
 

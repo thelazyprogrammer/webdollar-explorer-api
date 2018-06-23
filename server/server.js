@@ -1,6 +1,7 @@
 var express = require('express'),
+  config = require('./config')
   app = express(),
-  port = process.env.PORT || 3000,
+  port = process.env.PORT || config.server.port,
   bodyParser = require('body-parser'),
   expressSanitized = require('express-sanitize-escape');
 

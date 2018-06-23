@@ -1,8 +1,8 @@
 <template>
 
-  <div>
+  <div class="transactionsWrapper">
 
-    <table class="transactionsTable" v-if="transactions && transactions.length">
+    <table v-if="transactions && transactions.length">
 
     <tr>
       <td>No.</td>
@@ -24,13 +24,13 @@
        <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_id }}">{{ trx.block_id}}</router-link>
       </td>
 
-      <td align="left" style="max-width:170px!important">
+      <td align="left" style="max-width:140px!important">
        <span v-for="from_address in trx.from.address">
          <a :href="'#/miner/' + from_address">{{ from_address.substring(0,10)}}..{{ from_address.substring(from_address.length-5) }} </a>
        </span>
       </td>
 
-      <td align="left" style="max-width:170px!important">
+      <td align="left" style="max-width:140px!important">
        <span v-for="to_address in trx.to.address">
          <a :href="'#/miner/' + to_address">{{ to_address.substring(0,10)}}..{{ to_address.substring(to_address.length-5) }} </a>
        </span>
