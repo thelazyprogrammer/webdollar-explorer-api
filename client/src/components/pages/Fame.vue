@@ -57,6 +57,12 @@ export default {
             address: 'WEBD$gD5dvw68wBDv@oT9FMUs1aW0Fb@aJPkc0P$',
             amount: 200000,
             label: 'WebDollar Team',
+            block_id: 119956
+          },
+          {
+            address: 'WEBD$gD5dvw68wBDv@oT9FMUs1aW0Fb@aJPkc0P$',
+            amount: 200000,
+            label: 'WebDollar Team',
             block_id: 86855
           },
           {
