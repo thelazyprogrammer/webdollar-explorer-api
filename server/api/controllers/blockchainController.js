@@ -82,6 +82,38 @@ exports.read_a_block = function(req, res) {
         block.miner_address = blockchainUtils.decodeMinerAddress(block.miner_address)
         var date = new Date((block.raw_timestamp + 1524742312) * 1000)
         block.timestamp = date.toUTCString()
+        var transactions_parsed = []
+
+        block.trxs.forEach(function(transaction) {
+          var transaction_parsed = transaction
+          transaction_parsed.block_id = block.id
+          transaction_parsed.id = block.id
+          transaction_parsed.timestamp = block.timestamp
+          transaction_parsed.fee = 0
+          var to_amount = 0
+
+          transaction_parsed.from.address = []
+          transaction_parsed.from.amount = 0
+
+          transaction_parsed.from.addresses.forEach(function(from) {
+            transaction_parsed.from.address.push(from.address)
+            transaction_parsed.from.amount += parseInt(from.amount)
+          })
+
+          transaction_parsed.to.address = []
+          transaction_parsed.to.addresses.forEach(function(to) {
+            transaction_parsed.to.address.push(to.address)
+            to_amount += parseInt(to.amount)
+          })
+
+          transaction_parsed.fee = transaction_parsed.from.amount - to_amount
+          transaction_parsed.fee = transaction_parsed.fee / AMOUNT_DIVIDER
+          transaction_parsed.from.amount = transaction_parsed.from.amount / AMOUNT_DIVIDER
+
+          transactions_parsed.push(transaction_parsed)
+        })
+
+        block.trxs = transactions_parsed
       } catch(ex) {
         console.error(body)
         console.error(ex.message)
