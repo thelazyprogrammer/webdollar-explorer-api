@@ -15,7 +15,8 @@ exports.get_status = function(req, res) {
     }
     let is_synchronized = false
     let currentTimestamp = new Date().getTime()
-    let blockTimestamp = new Date(block.timestamp).getTime()
+    let date = new Date((block.raw_timestamp + 1524742312) * 1000)
+    let blockTimestamp = date.getTime()
     if (currentTimestamp - blockTimestamp < MAX_SYNC_OFFSET) {
       is_synchronized = true
     }

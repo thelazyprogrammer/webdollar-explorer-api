@@ -34,68 +34,61 @@ exports.list_all_blocks = function(req, res) {
   var max_block_length;
   var max_blocks = 14;
 
-  res.header("Cache-Control", "public, max-age=100")
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=10")
 
-  BlockchainSyncerDB.view(config.couchdb.syncer.view_name, config.couchdb.syncer.view_doc_name, {
-      'limit': max_blocks,
-      'descending': true,
-      'include_docs': true
-    },
-    function(err, body) {
-      if (!err) {
-        body.rows.forEach(function(block) {
-          blocks.push(block.value)
+  request.get(config.webdollar.pouchdb_sync_url + '/blocks/' + max_blocks, function (error, response, body) {
+    if (error) {
+      console.error(error)
+      console.error(body)
+    } else {
+      try {
+        var raw_blocks = JSON.parse(body).blocks
+        raw_blocks.forEach(function(block) {
+          block.reward = block.reward / AMOUNT_DIVIDER
+          var date = new Date((block.raw_timestamp + 1524742312) * 1000)
+          block.timestamp = date.toUTCString()
+          block.reward = block.reward / AMOUNT_DIVIDER
+          block.miner_address = blockchainUtils.decodeMinerAddress(block.miner_address)
+          blocks.push(block)
         })
-        res.json(blocks)
-        return
-      } else {
-        console.log(err)
-        res.json(blocks)
-        return
+      } catch(ex) {
+        console.error(body)
+        console.error(ex.message)
       }
+    }
+
+    blocks = blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+    res.json(blocks)
+    return
   });
 }
 
 exports.read_a_block = function(req, res) {
   var blockId = parseInt(req.params.blockId);
+  var block = {}
 
-  res.header("Cache-Control", "public, max-age=100")
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=10")
 
-  BlockchainSyncerDB.view(config.couchdb.syncer.view_name, config.couchdb.syncer.view_doc_name, {
-      'key': blockId,
-      'include_docs': true
-    },
-    function(err, body) {
-      if (!err) {
-        if (body.rows.length == 1) {
-          var block = body.rows[0].value
-          var block_trxs = []
-          block.trxs.forEach(function(trx) {
-            var block_trx = trx
-            block_trx.from.amount = trx.from.amount / AMOUNT_DIVIDER
-            block_trx.to.amount = trx.to.amount / AMOUNT_DIVIDER
-            block_trx.fee = trx.fee / AMOUNT_DIVIDER
-            block_trxs.push(block_trx)
-          })
-          block.trxs = block_trxs
-          var reward = REWARD
-          if (block.block_id < 41) {
-            reward = blockchainUtils.FIRST_BLOCK_REWARDS[block.block_id] * AMOUNT_DIVIDER
-          }
-          block.reward = reward / AMOUNT_DIVIDER
-          res.json(block)
-        } else {
-          console.log(body)
-          res.status(404).send('Not found');
-          return
-        }
-      } else {
-        console.log(err)
-        res.status(404).send('Not found');
-        return
+  request.get(config.webdollar.pouchdb_sync_url + '/block/' + blockId, function (error, response, body) {
+    if (error) {
+      console.error(error)
+      console.error(body)
+    } else {
+      try {
+        block = JSON.parse(body).block
+        block.reward = block.reward / AMOUNT_DIVIDER
+        block.miner_address = blockchainUtils.decodeMinerAddress(block.miner_address)
+        var date = new Date((block.raw_timestamp + 1524742312) * 1000)
+        block.timestamp = date.toUTCString()
+      } catch(ex) {
+        console.error(body)
+        console.error(ex.message)
       }
+    }
+    res.json(block)
+    return
   });
 }
 

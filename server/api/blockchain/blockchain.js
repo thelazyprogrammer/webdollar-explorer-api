@@ -9,25 +9,27 @@ var atob = require('atob'),
 
 exports.getSyncInfo = function (callback) {
   try {
-    request.get(config.webdollar.couchdb_sync_url, function (error, response, body) {
-      try {
-        max_block_length = JSON.parse(body).blocks.length - 1
-        blockchainDB.get('block' + max_block_length, {attachments:true, include_docs:true}, function (err, body) {
-          if (err || !body._attachments) {
-            callback()
-            return
-          }
-          var decodedBlock = blockchainUtils.decodeRawBlock(max_block_length, body._attachments.key.data)
-          callback(decodedBlock)
-        });
-       } catch (e) {
-         console.log(e)
-         callback()
-       }
+    request.get(config.webdollar.pouchdb_sync_url + '/blocks/' + 1, function (error, response, body) {
+      if (error) {
+        console.error(error)
+        console.error(body)
+        callback()
+        return
+      } else {
+        try {
+          var raw_blocks = JSON.parse(body).blocks
+          callback(raw_blocks[0])
+          return
+        } catch (e) {
+          console.log(e)
+          callback()
+          return
+        }
+      }
     });
-   } catch (e) {
-     console.log(e)
-     callback()
-   }
+  } catch (e) {
+    console.log(e)
+    callback()
+  }
 }
 

@@ -77,11 +77,16 @@ function SHA256(bytes) {
   return sha256.digest();
 }
 
+
 function decodeMinerAddress(miner_address) {
     var address = Buffer.concat([Buffer.from('00', "hex"), Buffer.from(miner_address, 'hex')])
     var checksum = SHA256(SHA256(address))
     checksum = substr(checksum, 0, 4)
     return encodeBase64(Buffer.concat([ Buffer.from(PREFIX_BASE64, 'hex'), address, checksum, Buffer.from(SUFFIX_BASE64, 'hex')]))
+}
+
+exports.decodeMinerAddress = function(miner_address) {
+  return decodeMinerAddress(miner_address)
 }
 
 exports.decodeRawBlock = function(block_id, block_raw, divide_amounts) {
