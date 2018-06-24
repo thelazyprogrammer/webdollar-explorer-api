@@ -13,7 +13,7 @@ exports.getSyncInfo = function (callback) {
       try {
         max_block_length = JSON.parse(body).blocks.length - 1
         blockchainDB.get('block' + max_block_length, {attachments:true, include_docs:true}, function (err, body) {
-          if (err) {
+          if (err || !body._attachments) {
             callback()
             return
           }
