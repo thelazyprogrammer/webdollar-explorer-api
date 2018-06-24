@@ -37,7 +37,7 @@ export default {
           this.status.class = "synced"
         } else {
           this.status.class = "syncing"
-          this.status.message = "syncing"
+          this.status.message = "#" + response.data.last_block
         }
       } else {
         this.status.class = "syncing"
