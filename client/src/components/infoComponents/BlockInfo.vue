@@ -79,7 +79,10 @@
     </div>
 
     <div v-else class="minerTable">
-      <h2 class="toColor"> Block {{ this.$route.params.block_id }} not found </h2>
+      <h2> <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id - 1 }}"> &lt;&lt; </router-link>
+        <span class="toColor"> Block {{ block.block_id }} not found </span>
+        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id + 1 }}"> &gt;&gt;  </router-link>
+      </h2>
     </div>
 
   </div>
