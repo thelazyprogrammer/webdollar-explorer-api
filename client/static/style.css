@@ -75,6 +75,7 @@ table thead {
 }
 
 table tr td {
+  vertical-align: top;
   padding: 10px;
 }
 
