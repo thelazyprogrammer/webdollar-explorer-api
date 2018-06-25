@@ -28,16 +28,36 @@ h2{
 }
 
 #donate{
-  border-top: solid 1px #5f5f5f;
-  margin-top: 50px;
-  color: #fff!important;
-  text-align: center;
-  bottom: 0;
-  width: 100%;
-  font-size: 14px;
-  position: fixed;
-  background-color: #404040;
+    margin-bottom: auto;
+    border-top: solid 1px #5f5f5f;
+    margin-top: 1em;
+    /* margin-bottom: 50px; */
+    color: #fff!important;
+    text-align: center;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+    background-color: #404040;
+    /* display: block; */
+    position: fixed;
+    float: left;
+    min-width: 450px;
 }
+
+/* If the screen size is 601px wide or more, set the font-size of <div> to 80px */
+@media screen and (min-width: 601px) {
+  #donate p {
+    font-size: 14px;
+  }
+}
+
+/* If the screen size is 600px wide or less, set the font-size of <div> to 30px */
+@media screen and (max-width: 600px) {
+  #donate p {
+    font-size: 10px;
+  }
+}
+
 
 #app{
   width: 100% !important;
