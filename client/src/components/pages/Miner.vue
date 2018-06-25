@@ -68,7 +68,45 @@ export default {
     async getMiner (miner) {
       this.miner = {}
       miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
-      const response = await BlocksService.fetchMiner(miner)
+      let response = await BlocksService.fetchMiner(miner)
+      if (response.data.transactions) {
+        let trxs_parsed = []
+        var miner_address = response.data.address
+        response.data.transactions.forEach(function(trx) {
+          var index_from = -1
+          var index_to = -1
+
+          trx.transaction.from.addresses = trx.transaction.from.addresses.sort( function(a,b) {
+            return (Number(b.amount) - Number(a.amount))
+          })
+          trx.transaction.from.addresses.forEach(function(trx, index) {
+            if (trx.address == miner_address) {
+              index_from = index
+            }
+          })
+
+          if (index_from != -1) {
+            trx.transaction.from.addresses.unshift(trx.transaction.from.addresses[index_from])
+            trx.transaction.from.addresses.splice(index_from + 1, 1)
+          }
+
+          trx.transaction.to.addresses = trx.transaction.to.addresses.sort(function (a,b) {
+            return (Number(b.amount) - Number(a.amount))
+          })
+          trx.transaction.to.addresses.forEach(function(trx, index) {
+            if (trx.address == miner_address) {
+              index_to = index
+            }
+          })
+          if (index_to != -1) {
+            trx.transaction.to.addresses.unshift(trx.transaction.to.addresses[index_to])
+            trx.transaction.to.addresses.splice(index_to + 1, 1)
+          }
+
+          trxs_parsed.push(trx)
+        })
+        response.data.transactions = trxs_parsed
+      }
       this.miner = response.data
 
       console.log(this.miner);
@@ -165,4 +203,10 @@ export default {
     border-radius: 15px;
     overflow: hidden;
 }
+
+.transactionsWrapper table span:first-child {
+  font-weight: bold;
+  text-shadow: 0 0 3px #0804f3;
+}
+
 </style>

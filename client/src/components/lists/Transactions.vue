@@ -26,23 +26,23 @@
 
       <td v-if="trx.transaction" align="left" style="max-width:140px!important">
        <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.transaction.from.addresses">
-         <a :href="'#/miner/' + from_address.address">{{ from_address.address.substring(0,10)}}..{{ from_address.address.substring(from_address.address.length-5) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} WEBD</a> 
+         <a :href="'#/miner/' + from_address.address">{{ from_address.address.substring(0,10)}}..{{ from_address.address.substring(from_address.address.length-5) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
        </span>
       </td>
       <td v-else align="left" style="max-width:140px!important">
        <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.from.addresses">
-         <a :href="'#/miner/' + from_address.address">{{ from_address.address.substring(0,10)}}..{{ from_address.address.substring(from_address.address.length-5) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} WEBD</a> 
+         <a :href="'#/miner/' + from_address.address">{{ from_address.address.substring(0,10)}}..{{ from_address.address.substring(from_address.address.length-5) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
        </span>
       </td>
 
       <td v-if="trx.transaction" align="left" style="max-width:140px!important">
        <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.transaction.to.addresses">
-         <a :href="'#/miner/' + to_address.address">{{ to_address.address.substring(0,10)}}..{{ to_address.address.substring(to_address.address.length-5) }}</br>{{ formatMoneyNumber(to_address.amount,4)}} WEBD </a> </br>
+         <a :href="'#/miner/' + to_address.address">{{ to_address.address.substring(0,10)}}..{{ to_address.address.substring(to_address.address.length-5) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
        </span>
       </td>
       <td v-else align="left" style="max-width:140px!important">
        <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.to.addresses">
-         <a :href="'#/miner/' + to_address.address">{{ to_address.address.substring(0,10)}}..{{ to_address.address.substring(to_address.address.length-5) }}</br>{{ formatMoneyNumber(to_address.amount,4)}} WEBD </a> </br>
+         <a :href="'#/miner/' + to_address.address">{{ to_address.address.substring(0,10)}}..{{ to_address.address.substring(to_address.address.length-5) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
        </span>
       </td>
 

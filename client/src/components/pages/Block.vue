@@ -53,7 +53,16 @@ export default {
       }
       this.block_loaded = false
       try {
-        const response = await BlocksService.fetchBlock(block_id)
+        let response = await BlocksService.fetchBlock(block_id)
+        if (response.data.trxs) {
+          let trxs_parsed = []
+          response.data.trxs.forEach(function(trx) {
+            trx.from.addresses = trx.from.addresses.sort((a,b) => Number(b.amount) - Number(a.amount))
+            trx.to.addresses = trx.to.addresses.sort((a,b) => Number(b.amount) - Number(a.amount))
+            trxs_parsed.push(trx)
+          })
+          response.data.trxs = trxs_parsed
+        }
         this.block = response.data
       } catch (exception) {
         this.block =  { block_id: parseInt(block_id) }
@@ -88,6 +97,11 @@ export default {
     box-sizing: border-box;
     padding: 10px 0;
     display: block;
+  }
+
+  .transactionsWrapper table span:first-child {
+     font-weight: normal;
+     text-shadow: none;
   }
 
 </style>
