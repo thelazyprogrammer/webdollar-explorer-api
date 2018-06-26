@@ -93,7 +93,10 @@ export default {
 
   methods: {
 
-    formatMoneyNumber(number, decimals){
+    formatMoneyNumber(number, decimals) {
+      if (number < 0 || !number) {
+        return 0
+      }
       return Utils.formatMoneyNumber(number, decimals);
     }
   }
