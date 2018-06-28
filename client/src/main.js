@@ -6,6 +6,9 @@ import router from './router'
 import VueAnalytics from 'vue-analytics'
 
 Vue.config.productionTip = false
+
+Vue.use(require('vue-moment'));
+
 Vue.use(VueAnalytics, {
   id: 'UA-118897279-1',
   router

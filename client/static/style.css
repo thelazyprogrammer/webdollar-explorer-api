@@ -27,7 +27,7 @@ h2{
   margin-top: 30px;
 }
 
-#donate{
+#donate {
     margin-bottom: auto;
     border-top: solid 1px #5f5f5f;
     margin-top: 1em;
@@ -44,17 +44,28 @@ h2{
     min-width: 450px;
 }
 
-/* If the screen size is 601px wide or more, set the font-size of <div> to 80px */
-@media screen and (min-width: 601px) {
-  #donate p {
-    font-size: 14px;
-  }
+.webdAddress {
+  font-size: 1em;
+}
+
+.minedBlocksList{
+  width: 680px;
+}
+
+
+#donate p {
+  font-size: 0.8em;
 }
 
 /* If the screen size is 600px wide or less, set the font-size of <div> to 30px */
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 680px) {
+  .webdAddress {
+    font-size: 0.8em;
+    overflow-x: auto;
+  }
+
   #donate p {
-    font-size: 10px;
+    font-size: 0.7em;
   }
 }
 
@@ -202,7 +213,7 @@ a.add_post_link {
   height: 70px;
   border-bottom: solid 1px #fec02c;
   width: 100%;
-  min-width: 630px;
+  min-width: 680px;
   background-color: #292929;
 }
 
@@ -215,7 +226,7 @@ a.add_post_link {
 .minerTable{
   border:solid 1px #5f5f5f;
   text-align: left;
-  width: 670px;
+  width: 680px;
   padding: 0 0 10px 0;
   margin: 0 auto;
   border-radius: 15px;
@@ -225,7 +236,7 @@ a.add_post_link {
 
 .transactionsWrapper {
   text-align: left;
-  width: 670px;
+  width: 680px;
   padding: 0 0 10px 0;
   margin: 0 auto;
   border-radius: 15px;

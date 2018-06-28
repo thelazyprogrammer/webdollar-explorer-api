@@ -6,7 +6,8 @@
 
       <tr>
         <td>Block</td>
-        <td> {{ showMiner === true ? 'Miner' : 'Timestamp' }} </td>
+        <td v-if="showMiner"> Miner </td>
+        <td> Age </td>
         <td>Txs</td>
       </tr>
 
@@ -17,13 +18,14 @@
           <router-link v-else v-bind:to="{ name: 'Block', params: { block_id: block.block_id }}">{{ block.block_id}}</router-link>
         </td>
 
-        <td align="left">
-          <a v-if="showMiner" :href="'#/miner/' + block.miner_address">
+        <td v-if="showMiner" align="left">
+          <a :href="'#/miner/' + block.miner_address">
             {{ block.miner_address }}
           </a>
-          <span v-else>
-            {{ block.timestamp }}
-          </span>
+        </td>
+
+        <td align="center">
+          {{ formatDate(block.timestamp, showMiner) }}
         </td>
 
         <td align="left">
@@ -47,6 +49,8 @@
 
 import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
+var moment = require('moment');
+
 export default {
 
   name: 'transactions',
@@ -60,6 +64,14 @@ export default {
 
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number, decimals);
+    },
+    formatDate(timestamp, showMiner){
+      let fromNow = moment(timestamp).fromNow()
+      if (showMiner) {
+        return fromNow
+      } else {
+        return fromNow + " (" + timestamp +  ")"
+      }
     }
   }
 

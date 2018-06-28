@@ -23,7 +23,7 @@
             Miner Address
           </span>
         <span>
-            <a :href="'#/miner/' + block.miner_address">{{ block.miner_address }}</a>
+            <a class="webdAddress" :href="'#/miner/' + block.miner_address">{{ block.miner_address }}</a>
           </span>
       </div>
 
@@ -38,15 +38,6 @@
 
       <div>
           <span>
-            Nonce
-          </span>
-        <span>
-            {{ formatMoneyNumber(block.nonce,0) }}
-          </span>
-      </div>
-
-      <div>
-          <span>
             Version
           </span>
         <span>
@@ -56,7 +47,7 @@
 
       <div>
           <span>
-            Time Stamp
+            Timestamp
           </span>
         <span>
             {{ block.timestamp }}

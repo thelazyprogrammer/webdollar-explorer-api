@@ -10,7 +10,7 @@
             Address
           </span>
         <span>
-            <a :href="'#/miner/' + miner.address">{{ miner.address }}</a>
+            <a class="webdAddress" :href="'#/miner/' + miner.address">{{ miner.address }}</a>
           </span>
       </div>
 

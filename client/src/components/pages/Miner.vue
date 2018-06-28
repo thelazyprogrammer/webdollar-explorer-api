@@ -146,10 +146,6 @@ export default {
  display:none;
 }
 
-.minedBlocksList{
-  width: 450px!important;
-}
-
 .spinner {
   width: 40px;
   height: 40px;
