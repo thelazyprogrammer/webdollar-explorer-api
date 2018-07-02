@@ -27,10 +27,10 @@
           <span>
             Total Mined amount
           </span>
-        <span>
-            <!--TODO add fee to mined amount-->
-            {{ this.formatMoneyNumber(miner.miner_balance*10000,4) }}
-          </span>
+        <span v-if="miner.blocks && miner.blocks.length">
+          {{ this.formatMoneyNumber(miner.miner_balance*10000,4) }}
+        </span>
+        <span v-else> 0 </span>
       </div>
 
       <div>
@@ -51,22 +51,24 @@
           </span>
       </div>
 
-      <div v-if="miner.blocks && miner.blocks.length" >
+      <div>
           <span>
             Blocks mined
           </span>
-        <span>
+          <span v-if="miner.blocks && miner.blocks.length">
             {{ miner.blocks.length }}
           </span>
+          <span v-else> 0 </span>
       </div>
 
-      <div v-if="miner.transactions && miner.transactions.length" >
+      <div>
           <span>
             Transactions
           </span>
-        <span>
+          <span v-if="miner.transactions && miner.transactions.length">
             {{ miner.transactions.length }}
           </span>
+          <span v-else> 0 </span>
       </div>
 
     </div>
