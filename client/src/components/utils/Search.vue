@@ -1,7 +1,7 @@
 <template>
 
   <div id="search_wrapper">
-    <input v-model="searchAddress" id="searchBox" v-on:enter="onSearchAddress" type="text" placeholder="Search by Address/Block" autocomplete="off">
+    <input v-model="searchAddress" id="searchBox" v-on:keyup.enter="onSearchAddress" type="text" placeholder="Search by Address/Block" autocomplete="off">
     <button v-on:click="onSearchAddress" type="submit">GO</button>
   </div>
 
