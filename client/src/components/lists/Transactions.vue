@@ -26,23 +26,23 @@
 
       <td v-if="trx.transaction" align="left" style="max-width:140px!important">
        <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.transaction.from.addresses">
-         <a :href="'#/miner/' + from_address.address">{{ from_address.address.substring(0,10)}}..{{ from_address.address.substring(from_address.address.length-5) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
+         <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
        </span>
       </td>
       <td v-else align="left" style="max-width:140px!important">
        <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.from.addresses">
-         <a :href="'#/miner/' + from_address.address">{{ from_address.address.substring(0,10)}}..{{ from_address.address.substring(from_address.address.length-5) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
+         <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
        </span>
       </td>
 
       <td v-if="trx.transaction" align="left" style="max-width:140px!important">
        <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.transaction.to.addresses">
-         <a :href="'#/miner/' + to_address.address">{{ to_address.address.substring(0,10)}}..{{ to_address.address.substring(to_address.address.length-5) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
+         <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
        </span>
       </td>
       <td v-else align="left" style="max-width:140px!important">
        <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.to.addresses">
-         <a :href="'#/miner/' + to_address.address">{{ to_address.address.substring(0,10)}}..{{ to_address.address.substring(to_address.address.length-5) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
+         <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
        </span>
       </td>
 
@@ -79,6 +79,14 @@ export default {
   },
 
   methods: {
+
+    mapAddress(address) {
+      address = Utils.mapAddress(address)
+      if (address.length > 15) {
+       return (address).substring(0,10) + ".." + address.substring(address.length - 5)
+      }
+      return address
+    },
 
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number, decimals);

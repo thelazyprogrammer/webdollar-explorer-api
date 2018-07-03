@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import SpecialAddresses from '@/services/SpecialAddresses'
 
 export default {
   name: 'pools',
@@ -50,22 +51,7 @@ export default {
 
   data () {
     return {
-      pools: [
-        {
-          name: 'Experimental Pool 1',
-          address: 'WEBD$gDU+tP3@42@L9$Is463vDJi4IKrabPNNn$$',
-          status: 'up',
-          fee: 2,
-          min_amount: 10
-        },
-        {
-          name: 'Experimental Pool 2',
-          address: 'WEBD$gCGdPQLohdeHQqa+ptoJ@QK2LCvN7IS5JX$',
-          status: 'up',
-          fee: 2,
-          min_amount: 10
-        },
-      ]
+      pools: SpecialAddresses.pools
     }
   },
   mounted () {

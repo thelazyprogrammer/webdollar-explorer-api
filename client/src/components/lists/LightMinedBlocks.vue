@@ -18,9 +18,9 @@
           <router-link v-else v-bind:to="{ name: 'Block', params: { block_id: block.block_id }}">{{ block.block_id}}</router-link>
         </td>
 
-        <td v-if="showMiner" align="left">
+        <td v-if="showMiner" align="center">
           <a :href="'#/miner/' + block.miner_address">
-            {{ block.miner_address }}
+            {{ mapAddress(block.miner_address) }}
           </a>
         </td>
 
@@ -49,6 +49,7 @@
 
 import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
+
 var moment = require('moment');
 
 export default {
@@ -61,7 +62,9 @@ export default {
   },
 
   methods: {
-
+    mapAddress(address) {
+      return Utils.mapAddress(address)
+    },
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number, decimals);
     },

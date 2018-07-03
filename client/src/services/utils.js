@@ -1,3 +1,4 @@
+import SpecialAddresses from '@/services/SpecialAddresses'
 
 export default {
 
@@ -50,6 +51,17 @@ export default {
 
     return newNumber.substring(0, decimals);
 
+  },
+
+  mapAddress(address) {
+    let label = address
+    SpecialAddresses.pools.forEach(function (pool) {
+      if (pool.address == address) {
+        label = pool.name
+        return
+      }
+    })
+    return label
   }
 
 }

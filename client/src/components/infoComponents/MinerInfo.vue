@@ -14,6 +14,15 @@
           </span>
       </div>
 
+      <div v-if="getLabel(miner.address)">
+          <span>
+            Label
+          </span>
+        <span>
+            <a class="webdAddress" :href="'#/miner/' + miner.address">{{ getLabel(miner.address) }}</a>
+          </span>
+      </div>
+
       <div>
           <span >
             Current balance
@@ -94,7 +103,13 @@ export default {
   },
 
   methods: {
-
+    getLabel(address) {
+      let label = Utils.mapAddress(address)
+      if (label != address) {
+        return label
+      }
+      return
+    },
     formatMoneyNumber(number, decimals) {
       if (number < 0 || !number) {
         return 0
