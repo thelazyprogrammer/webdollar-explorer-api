@@ -2,7 +2,7 @@
   <div class="pools">
   <h2> Public Pools for WebDollar </h2>
 
-  <table class="transactionsTable" style="font-size:0.84em;">
+  <table class="poolsTable" style="font-size:0.84em;">
 
     <tr>
       <td>Name</td>

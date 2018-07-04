@@ -3,7 +3,7 @@
   <h2> Thank you for donating to the WebDollar Explorer.</h2>
   <h2> Total donations: {{ fame.total_donations}} WEBD</h2>
   <h2> Donors:</h2>
-  <table class="transactionsTable" v-if="fame.donors && fame.donors.length">
+  <table class="fameTable" v-if="fame.donors && fame.donors.length">
 
     <tr>
       <td>No.</td>
