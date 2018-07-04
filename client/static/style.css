@@ -446,3 +446,11 @@ a.add_post_link {
     background: #fec02c;
     border-radius: 5px;
 }
+
+.poolsTable {
+  width: 680px;
+}
+
+.fameTable {
+  width: 680px;
+}
