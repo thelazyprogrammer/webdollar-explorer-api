@@ -11,7 +11,7 @@
       <td>To</td>
       <td>Total Amount</td>
       <td>Fee</td>
-      <td>Timestamp</td>
+      <td>Age</td>
     </tr>
 
     <tr v-for="(trx,index) in transactions" :class=" isReceivingMoney(address,trx.from.address,trx.to.address)">
@@ -24,26 +24,35 @@
        <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_id }}">{{ trx.block_id}}</router-link>
       </td>
 
-      <td v-if="trx.transaction" align="left" style="max-width:140px!important">
-       <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.transaction.from.addresses">
-         <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
-       </span>
-      </td>
-      <td v-else align="left" style="max-width:140px!important">
-       <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.from.addresses">
-         <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
-       </span>
+      <td v-if="trx.transaction">
+        <div class="poolTransactions">
+          <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.transaction.from.addresses">
+            <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
+          </span>
+        </div>
       </td>
 
-      <td v-if="trx.transaction" align="left" style="max-width:140px!important">
-       <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.transaction.to.addresses">
-         <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
-       </span>
+      <td v-else>
+        <div class="poolTransactions">
+          <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.from.addresses">
+            <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
+          </span>
+        </div>
       </td>
-      <td v-else align="left" style="max-width:140px!important">
-       <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.to.addresses">
-         <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
-       </span>
+
+      <td v-if="trx.transaction">
+        <div class="poolTransactions">
+          <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.transaction.to.addresses">
+           <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
+          </span>
+        </div>
+      </td>
+      <td v-else>
+        <div class="poolTransactions">
+          <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.to.addresses">
+            <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
+          </span>
+        </div>
       </td>
 
       <td align="left">
@@ -55,7 +64,7 @@
       </td>
 
       <td align="left">
-       {{ trx.timestamp }}
+       {{ formatDate(trx.timestamp) }}
       </td>
     </tr>
 
@@ -69,6 +78,8 @@
 
 import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
+let moment = require('moment')
+
 export default {
 
   name: 'transactions',
@@ -99,6 +110,10 @@ export default {
 
       return '';
 
+    },
+    formatDate(timestamp){
+      let fromNow = moment(timestamp).fromNow()
+      return fromNow + " (" + timestamp +  ")"
     }
 
   }
@@ -107,13 +122,4 @@ export default {
 </script>
 
 <style>
-
-  .fromColor, .fromColor a{
-    color: #35b151!important;
-  }
-
-  .toColor, .toColor a{
-    color: #da6654!important;
-  }
-
 </style>

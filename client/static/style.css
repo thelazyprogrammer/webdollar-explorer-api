@@ -95,7 +95,8 @@ h2{
 }
 
 table{
-  margin: 0 auto
+  margin: 0 auto;
+  width: 100%;
 }
 
 table th, table tr {
@@ -406,4 +407,42 @@ a.add_post_link {
 
 .transactionsTable tr {
   vertical-align:top;
+}
+
+.fromColor, .fromColor a{
+  color: #35b151!important;
+}
+
+.toColor, .toColor a{
+  color: #da6654!important;
+}
+
+.poolTransactions {
+  max-height: 10em;
+  max-width: 18em;
+  overflow-y: auto;
+  font-size: 1em;
+  font-family: monospace;
+}
+.poolTransactions span {
+  padding-right: 1em;
+  font-size: 1em;
+  font-family: monospace;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #fec02c;
+    border-radius: 5px;
 }
