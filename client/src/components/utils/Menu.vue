@@ -6,12 +6,12 @@
 
     <div class="dropDown" :style="{display: (mobileMenuOpened) ? 'block':'none'}">
 
-      <router-link to="/" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
-        <div v-on:click="this.collapseMenuBack">Explorer</div>
-      </router-link>
-
       <router-link to="/pools" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
         <div v-on:click="this.collapseMenuBack">Pools</div>
+      </router-link>
+
+      <router-link to="/genesis" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">Genesis</div>
       </router-link>
 
       <router-link to="/fame" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">

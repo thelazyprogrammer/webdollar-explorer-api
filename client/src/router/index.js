@@ -6,6 +6,7 @@ import Miner from '@/components/pages/Miner'
 import Search from '@/components/utils/Search'
 import Fame from '@/components/pages/Fame'
 import Pools from '@/components/pages/Pools'
+import Genesis from '@/components/pages/Genesis'
 
 Vue.use(Router)
 
@@ -45,6 +46,11 @@ export default new Router({
       path: '/pools',
       name: 'Pools',
       component: Pools
+    },
+    {
+      path: '/genesis',
+      name: 'Genesis',
+      component: Genesis
     }
   ]
 })
