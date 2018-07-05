@@ -15,6 +15,13 @@ export default {
        fee: 2,
        min_amount: 10
      },
+     {
+       name: 'CHUCK_POOL_1',
+       address: 'WEBD$gAN3MXFnwhwoZyoCzLy+z@pArrYdsDb8iv$',
+       'status': 'up',
+       fee: 2,
+       min_amount: 10
+     },
   ],
 
   fame: {
