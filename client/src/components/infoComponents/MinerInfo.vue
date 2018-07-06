@@ -60,25 +60,6 @@
           </span>
       </div>
 
-      <div>
-          <span>
-            Blocks mined
-          </span>
-          <span v-if="miner.blocks && miner.blocks.length">
-            {{ miner.blocks.length }}
-          </span>
-          <span v-else> 0 </span>
-      </div>
-
-      <div>
-          <span>
-            Transactions
-          </span>
-          <span v-if="miner.transactions && miner.transactions.length">
-            {{ miner.transactions.length }}
-          </span>
-          <span v-else> 0 </span>
-      </div>
 
     </div>
 

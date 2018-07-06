@@ -59,7 +59,7 @@
             Transactions
           </span>
         <span v-if="block.trxs">
-            {{ block.trxs.length }}
+            {{ block.transactions_number }}
           </span>
         <span v-else>
             0

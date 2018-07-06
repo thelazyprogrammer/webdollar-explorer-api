@@ -8,8 +8,8 @@
        <div  :class=" miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
 
         <div class="tabWrapper">
-          <button id="button_trx" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions</button>
-          <button id="button_block" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks</button>
+          <button id="button_trx" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions </br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
+          <button id="button_block" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks </br> ({{miner.blocks.length}})</button>
         </div>
 
         <div class="address_tab" id="transactions">
@@ -64,7 +64,13 @@ export default {
   },
 
   methods: {
-
+    getTrxNumber(all_trx_number, trx_received_number) {
+      if (parseInt(trx_received_number) >= parseInt(all_trx_number)) {
+        return trx_received_number
+      } else {
+        return 'latest ' + trx_received_number + ' from ' + all_trx_number
+      }
+    },
     async getMiner (miner) {
       this.miner = {}
       miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
@@ -174,11 +180,13 @@ export default {
     border: none;
     display: block;
     outline: 0;
-     user-select: none;
+    user-select: none;
+    height: 45px;
 }
 
 .w3-btn, .w3-button {
     border: none;
+    height: 45px;
     display: inline-block;
     padding: 8px 16px;
     vertical-align: middle;
@@ -205,4 +213,18 @@ export default {
   text-shadow: 0 0 3px #0804f3;
 }
 
+.latestTrx {
+    margin: 0px auto;
+    width: 680px;
+    border: none;
+    display: inline-block;
+    padding: 8px 16px;
+    vertical-align: middle;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    background-color: #00c02c;
+    text-align: center;
+    cursor: pointer;
+}
 </style>

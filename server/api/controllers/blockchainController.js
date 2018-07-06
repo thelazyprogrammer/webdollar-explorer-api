@@ -12,6 +12,7 @@ const AMOUNT_DIVIDER = 10000
 const REWARD = AMOUNT_DIVIDER * 6000
 const ADDRESS_CACHE_DB = "address"
 const BALANCE_RATIO_DECIMALS = 5
+const MAX_POOLED_TRXS = 15
 
 function getEmptyAddress(miner_address) {
   return {
@@ -114,6 +115,7 @@ exports.read_a_block = function(req, res) {
         })
 
         block.trxs = transactions_parsed
+        block.transactions_number = block.trxs.length
       } catch(ex) {
         console.error(body)
         console.error(ex.message)
@@ -168,6 +170,9 @@ exports.read_an_address = function (req, res) {
       var transactions_parsed = []
       miner.trx_to_balance = 0
       miner.trx_from_balance = 0
+
+      miner_received.transactions =  miner_received.transactions.sort((a, b) => Number(b.blockId) - Number(a.blockId))
+      miner.pooled_trxs = 0
       miner_received.transactions.forEach(function(transaction) {
         var transaction_parsed = transaction
         transaction_parsed.block_id = transaction.blockId
@@ -180,6 +185,9 @@ exports.read_an_address = function (req, res) {
         transaction_parsed.from = {
           amount: 0,
           address: []
+        }
+        if (transaction_parsed.transaction.from.addresses.length > 1 || transaction_parsed.transaction.to.addresses.length > 1) {
+          miner.pooled_trxs += 1
         }
         transaction_parsed.transaction.from.addresses.forEach(function(from) {
           transaction_parsed.from.address.push(from.address)
@@ -207,7 +215,10 @@ exports.read_an_address = function (req, res) {
         transactions_parsed.push(transaction_parsed)
       })
       miner.transactions = transactions_parsed
-      miner.transactions = miner.transactions.sort((a, b) => Number(b.block_id) - Number(a.block_id))
+      miner.transactions_number = miner.transactions.length
+      if (miner.pooled_trxs > MAX_POOLED_TRXS) {
+        miner.transactions = miner.transactions.slice(0,MAX_POOLED_TRXS)
+      }
       miner.miner_balance = (miner.balance * AMOUNT_DIVIDER + miner.trx_to_balance - miner.trx_from_balance) / AMOUNT_DIVIDER
       miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER
       miner.trx_from_balance = miner.trx_from_balance / AMOUNT_DIVIDER
