@@ -15,7 +15,7 @@
                :labels="{checked: 'LatestTransactions', unchecked: 'AllTransactions'}"/>
         </div>
 
-        <div class="address_tab" id="transactions" style="width:680px; margin: 0px auto; padding-top: 20px;">
+        <div class="address_tab" id="transactions" style="width:680px;">
           <transactions :address="this.miner.address" :transactions="this.miner.transactions"></transactions>
         </div>
 
