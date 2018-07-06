@@ -128,6 +128,13 @@ exports.read_a_block = function(req, res) {
 
 exports.read_an_address = function (req, res) {
   var miner_address = req.params.address
+  var show_all_transactions = false
+  if (req.query.show_all_transactions) {
+    if (req.query.show_all_transactions == 'true' || req.query.show_all_transactions === true) {
+      show_all_transactions = true
+      console.log('Showing all trxs for address:' + miner_address)
+    }
+  }
   var miner = getEmptyAddress(miner_address)
 
   res.header("Cache-Control", "public, max-age=100")
@@ -216,7 +223,7 @@ exports.read_an_address = function (req, res) {
       })
       miner.transactions = transactions_parsed
       miner.transactions_number = miner.transactions.length
-      if (miner.pooled_trxs > MAX_POOLED_TRXS) {
+      if (!show_all_transactions && miner.pooled_trxs > MAX_POOLED_TRXS) {
         miner.transactions = miner.transactions.slice(0,MAX_POOLED_TRXS)
       }
       miner.miner_balance = (miner.balance * AMOUNT_DIVIDER + miner.trx_to_balance - miner.trx_from_balance) / AMOUNT_DIVIDER

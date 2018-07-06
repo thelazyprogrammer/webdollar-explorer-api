@@ -11,8 +11,12 @@ export default {
     return Api().get('block/' + block_id)
   },
 
-  fetchMiner (miner_address) {
-    return Api().get('address/' + encodeURIComponent(miner_address))
+  fetchMiner (miner_address, show_all_transactions) {
+    let extraURLParams = '?show_all_transactions=false'
+    if (show_all_transactions) {
+      extraURLParams = '?show_all_transactions=true'
+    }
+    return Api().get('address/' + encodeURIComponent(miner_address) + extraURLParams)
   }
 
 }

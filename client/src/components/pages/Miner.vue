@@ -10,9 +10,12 @@
         <div class="tabWrapper">
           <button id="button_trx" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions </br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
           <button id="button_block" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks </br> ({{miner.blocks.length}})</button>
+          <toggle-button v-if="miner.transactions_number > miner.transactions.length" :value="true" :height=45 :width=155 v-model="showLatestTransactions"
+               @change="onShowLatestTrnsactions"
+               :labels="{checked: 'LatestTransactions', unchecked: 'AllTransactions'}"/>
         </div>
 
-        <div class="address_tab" id="transactions">
+        <div class="address_tab" id="transactions" style="width:680px; margin: 0px auto; padding-top: 20px;">
           <transactions :address="this.miner.address" :transactions="this.miner.transactions"></transactions>
         </div>
 
@@ -46,6 +49,7 @@ export default {
 
   data () {
     return {
+      showLatestTransactions: true,
       showMiner: 'doNotShowClass',
       showTransactions: 'showClass',
       miner: {default: function () { return { } }},
@@ -55,7 +59,7 @@ export default {
   },
 
   beforeRouteUpdate (to) {
-    this.getMiner(to.params.miner_address)
+    this.getMiner()
   },
 
   mounted () {
@@ -64,6 +68,9 @@ export default {
   },
 
   methods: {
+    async onShowLatestTrnsactions() {
+      return this.getMiner()
+    },
     getTrxNumber(all_trx_number, trx_received_number) {
       if (parseInt(trx_received_number) >= parseInt(all_trx_number)) {
         return trx_received_number
@@ -74,7 +81,7 @@ export default {
     async getMiner (miner) {
       this.miner = {}
       miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
-      let response = await BlocksService.fetchMiner(miner)
+      let response = await BlocksService.fetchMiner(miner, !this.showLatestTransactions)
       if (response.data.transactions) {
         let trxs_parsed = []
         var miner_address = response.data.address
