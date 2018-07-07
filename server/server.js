@@ -3,8 +3,10 @@ var express = require('express'),
   app = express(),
   port = process.env.PORT || config.server.port,
   bodyParser = require('body-parser'),
-  expressSanitized = require('express-sanitize-escape');
+  expressSanitized = require('express-sanitize-escape'),
+  compression = require('compression')
 
+app.use(compression())
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
