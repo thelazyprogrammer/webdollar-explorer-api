@@ -29,6 +29,13 @@ export default {
        fee: 2,
        min_amount: 10
      },
+     {
+       name: 'WBD_WIN',
+       address: 'WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$',
+       'status': 'up',
+       fee: 1,
+       min_amount: 10
+     },
   ],
 
   fame: {
