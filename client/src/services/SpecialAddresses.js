@@ -22,6 +22,13 @@ export default {
        fee: 2,
        min_amount: 10
      },
+     {
+       name: 'WMP_1',
+       address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
+       'status': 'up',
+       fee: 2,
+       min_amount: 10
+     },
   ],
 
   fame: {
