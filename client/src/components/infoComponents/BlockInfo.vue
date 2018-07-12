@@ -37,12 +37,21 @@
       </div>
 
       <div>
-          <span>
-            Version
-          </span>
         <span>
-            {{ block.version }}
-          </span>
+          Version
+        </span>
+        <span>
+          {{ block.version }}
+        </span>
+      </div>
+
+      <div>
+        <span>
+          Hash
+        </span>
+        <span>
+          {{ block.hash.substring(0, 30) }}...
+        </span>
       </div>
 
       <div>
