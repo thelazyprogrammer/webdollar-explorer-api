@@ -23,8 +23,8 @@ export default {
        min_amount: 10
      },
      {
-       name: 'WMP_1',
-       address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
+       name: 'WMP',
+       address: 'WEBD$gAPa@tBU41xAyP6WuFVB79PLGqZHIh48K7$',
        'status': 'up',
        fee: 2,
        min_amount: 10
