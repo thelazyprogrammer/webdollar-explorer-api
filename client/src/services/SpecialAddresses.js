@@ -36,6 +36,13 @@ export default {
        fee: 1,
        min_amount: 10
      },
+     {
+       name: 'BACMpool',
+       address: 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
+       'status': 'up',
+       fee: 1,
+       min_amount: 10
+     },
   ],
 
   fame: {
