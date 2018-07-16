@@ -7,9 +7,21 @@ export default {
     var number = parseInt(n / 10000);
     var decimalNumber = this.getNumberRest(n);
 
-    if (decimals === 0) return this.formatIntNumber(number);
-    else return this.formatIntNumber(number) + '.' + this.getFirstDigits(decimalNumber, decimals);
-
+    var result = ''
+    if (decimals === 0) {
+      result = this.formatIntNumber(number)
+    } else {
+      result = this.formatIntNumber(number) + '.' + this.getFirstDigits(decimalNumber, decimals)
+    }
+    let splitDecimals = result.split('.')
+    if (splitDecimals[1]) {
+      let afterDecimals = parseFloat('0.' + splitDecimals[1]).toString()
+      result = splitDecimals[0]
+      if (afterDecimals != '0') {
+        result += afterDecimals
+      }
+    }
+    return result
   },
 
   formatIntNumber(number) {
