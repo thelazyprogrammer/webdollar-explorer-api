@@ -18,7 +18,7 @@ export default {
       let afterDecimals = parseFloat('0.' + splitDecimals[1]).toString()
       result = splitDecimals[0]
       if (afterDecimals != '0') {
-        result += afterDecimals
+        result += afterDecimals.replace('0.', '.')
       }
     }
     return result
