@@ -12,7 +12,7 @@
       <td>Status</td>
     </tr>
 
-    <tr v-for="(pool, index) in pools">
+    <tr v-for="(pool, index) in pools" :class="pool.status + 'Pool'">
 
       <td align="left">
        <a :href="'#/miner/' + pool.address">{{ pool.name }} </a>
@@ -51,7 +51,13 @@ export default {
 
   data () {
     return {
-      pools: SpecialAddresses.pools
+      pools: SpecialAddresses.pools.sort(function(a, b) {
+        let mapStatus = {
+          up: -1,
+          down: 1
+        }
+        return mapStatus[a.status] - mapStatus[b.status]
+      })
     }
   },
   mounted () {

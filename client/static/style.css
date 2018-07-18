@@ -454,3 +454,12 @@ a.add_post_link {
 .fameTable {
   width: 680px;
 }
+
+.genesisChanged, .downPool {
+  color:#da6654!important;
+}
+
+.genesisUnchanged, .upPool {
+  color:#35b151!important;
+}
+
