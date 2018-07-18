@@ -38,19 +38,10 @@
 
       <div>
         <span>
-          Version
+          Difficulty
         </span>
         <span>
-          {{ block.version }}
-        </span>
-      </div>
-
-      <div>
-        <span>
-          Hash
-        </span>
-        <span>
-          {{ block.hash.substring(0, 30) }}...
+          {{ getDifficulty(block.hash) }}
         </span>
       </div>
 
@@ -105,9 +96,17 @@ export default {
 
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number * 10000, decimals);
-    }
-  }
+    },
 
+    getDifficulty(hash) {
+      for (var i=0; i < hash.length; i++) {
+        if (hash[i] !== '0') {
+          break
+        }
+      }
+      return i
+    },
+  }
 }
 </script>
 <style type="text/css">
