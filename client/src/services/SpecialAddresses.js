@@ -18,7 +18,7 @@ export default {
      {
        name: 'CHUCK_POOL_1',
        address: 'WEBD$gAN3MXFnwhwoZyoCzLy+z@pArrYdsDb8iv$',
-       'status': 'up',
+       'status': 'down',
        fee: 2,
        min_amount: 10
      },
@@ -46,7 +46,7 @@ export default {
      {
        name: 'WMP_2',
        address: 'WEBD$gAPa@tBU41xAyP6WuFVB79PLGqZHIh48K7$',
-       'status': 'up',
+       'status': 'down',
        fee: 2,
        min_amount: 10
      },
