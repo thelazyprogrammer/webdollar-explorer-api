@@ -122,7 +122,6 @@ export default {
       }
       this.miner = response.data
 
-      console.log(this.miner);
     },
 
     formatMoneyNumber(number, decimals){
