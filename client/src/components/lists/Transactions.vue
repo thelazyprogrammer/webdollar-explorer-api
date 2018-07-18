@@ -14,7 +14,7 @@
       <td>Age</td>
     </tr>
 
-    <tr v-for="(trx,index) in transactions" :class=" isReceivingMoney(address,trx.from.address,trx.to.address)">
+    <tr v-bind:key="trx.block_id" v-for="(trx,index) in transactions" :class=" isReceivingMoney(address,trx.from.address,trx.to.address)">
 
       <td align="left">
        {{ transactions.length - index}}
@@ -26,31 +26,31 @@
 
       <td v-if="trx.transaction">
         <div class="poolTransactions">
-          <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.transaction.from.addresses">
-            <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
+          <span style="padding-bottom:5px;display: block;" v-bind:key="from_address.address" v-for="from_address in trx.transaction.from.addresses">
+            <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}<br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
           </span>
         </div>
       </td>
 
       <td v-else>
         <div class="poolTransactions">
-          <span style="padding-bottom:5px;display: block;" v-for="from_address in trx.from.addresses">
-            <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}</br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
+          <span style="padding-bottom:5px;display: block;" v-bind:key="from_address.address" v-for="from_address in trx.from.addresses">
+            <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}<br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
           </span>
         </div>
       </td>
 
       <td v-if="trx.transaction">
         <div class="poolTransactions">
-          <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.transaction.to.addresses">
-           <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
+          <span  style="padding-bottom:5px;display: block;"  v-bind:key="to_address.address" v-for="to_address in trx.transaction.to.addresses">
+           <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}<br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> <br>
           </span>
         </div>
       </td>
       <td v-else>
         <div class="poolTransactions">
-          <span  style="padding-bottom:5px;display: block;"  v-for="to_address in trx.to.addresses">
-            <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}</br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> </br>
+          <span  style="padding-bottom:5px;display: block;" v-bind:key="to_address.address" v-for="to_address in trx.to.addresses">
+            <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}<br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> <br>
           </span>
         </div>
       </td>

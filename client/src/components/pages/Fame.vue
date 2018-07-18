@@ -13,7 +13,7 @@
       <td>Amount</td>
     </tr>
 
-    <tr v-for="(donor,index) in fame.donors">
+    <tr v-bind:key="donor.address" v-for="(donor,index) in fame.donors">
 
       <td align="left">
        {{ fame.donors.length - index}}

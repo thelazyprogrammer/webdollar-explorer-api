@@ -12,7 +12,7 @@
       <td>Owner</td>
     </tr>
 
-    <tr v-for="genesis in genesis_addresses" :class="genesisChange(genesis.reward, genesis.current_reward)">
+    <tr v-bind:key="genesis.miner_address" v-for="genesis in genesis_addresses" :class="genesisChange(genesis.reward, genesis.current_reward)">
       <td align="left">
        {{ genesis.id }}
       </td>

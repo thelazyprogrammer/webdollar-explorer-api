@@ -11,7 +11,7 @@
         <td>Txs</td>
       </tr>
 
-      <tr v-for="block in blocks">
+      <tr v-bind:key="block.block_id" v-for="block in blocks">
 
         <td align="left">
           <router-link v-if="showMiner" v-bind:to="{ name: 'Block', params: { block_id: block.id }}">{{ block.id}}</router-link>

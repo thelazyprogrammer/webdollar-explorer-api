@@ -12,7 +12,7 @@
       <td>Status</td>
     </tr>
 
-    <tr v-for="(pool, index) in pools" :class="pool.status + 'Pool'">
+    <tr v-bind:key='pool.address' v-for="pool in pools" :class="pool.status + 'Pool'">
 
       <td align="left">
        <a :href="'#/miner/' + pool.address">{{ pool.name }} </a>
