@@ -24,11 +24,12 @@
       </div>
 
       <div>
-          <span >
+          <span>
             Current balance
           </span>
         <span>
-            {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span title='Percentage of the Total Supply'>[{{ this.miner.total_supply_ratio }}%]</span>
+            {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span title='Percentage of the Total Supply'>[{{ this.miner.total_supply_ratio }}%] </span>
+            <a class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
           </span>
       </div>
 
@@ -59,7 +60,6 @@
             {{ this.formatMoneyNumber(miner.trx_from_balance*10000,4) }}
           </span>
       </div>
-
 
     </div>
 

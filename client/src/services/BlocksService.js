@@ -17,6 +17,9 @@ export default {
       extraURLParams = '?show_all_transactions=true'
     }
     return Api().get('address/' + encodeURIComponent(miner_address) + extraURLParams)
-  }
+  },
 
+  fetchStars(star_url) {
+    return Api().get('stars/' + star_url)
+  }
 }

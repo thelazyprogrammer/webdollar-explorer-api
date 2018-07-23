@@ -14,4 +14,7 @@ module.exports = function(app) {
 
   app.route('/status')
     .get(statusController.get_status)
+
+  app.route('/stars/:address*')
+    .get(blockchain.get_stars)
 };

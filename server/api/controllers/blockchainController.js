@@ -3,6 +3,7 @@ var atob = require('atob'),
   bs58 = require('bs58'),
   crypto = require('crypto'),
   request = require('request'),
+  requestPromise = require('request-promise'),
   config = require('../../config'),
   BlockchainDB = require('nano')(config.couchdb.host).use(config.couchdb.db_name),
   BlockchainSyncerDB = require('nano')(config.couchdb.host).use(config.couchdb.syncer.db_name),
@@ -13,6 +14,7 @@ const REWARD = AMOUNT_DIVIDER * 6000
 const ADDRESS_CACHE_DB = "address"
 const BALANCE_RATIO_DECIMALS = 5
 const MAX_POOLED_TRXS = 15
+const MAX_DEPTH = 1
 
 function getEmptyAddress(miner_address) {
   return {
@@ -238,4 +240,105 @@ exports.read_an_address = function (req, res) {
       return
     }
   })
+}
+
+async function getStars(address, depth, addresses, stars, first) {
+
+  let first_depth = depth * 13
+  if (first || depth == MAX_DEPTH + 1) {
+    first_depth = 1001
+  }
+  if (!addresses.includes(address)) {
+    addresses.push(address)
+    stars.nodes.push({
+      id: address,
+      group: first_depth
+    })
+  }
+
+  var options = {
+    uri: config.webdollar.pouchdb_sync_url + '/address/' + encodeURIComponent(address),
+    json: true
+  };
+
+  let address_info = await requestPromise(options)
+    try {
+      let current_addresses = []
+      address_info.transactions.forEach(function(transaction) {
+        let is_from = false
+        let is_to = false
+        let from_addresses = []
+        let to_addresses = []
+        transaction.transaction.from.addresses.forEach(function(from) {
+          if (!addresses.includes(from.address)) {
+            from_addresses.push(from.address)
+          }
+          if (from.address == address) {
+            is_from = true
+          }
+        })
+        transaction.transaction.to.addresses.forEach(function(to) {
+          if (!addresses.includes(to.address)) {
+            to_addresses.push(to.address)
+          }
+          if (to.address == address) {
+            is_to = true
+          }
+        })
+        if (is_from) {
+          current_addresses = current_addresses.concat(to_addresses)
+        }
+        if (is_to) {
+          current_addresses = current_addresses.concat(from_addresses)
+        }
+      })
+
+      current_addresses.forEach(function(curr_address) {
+        if (!addresses.includes(curr_address)) {
+          console.log("Found star: " + curr_address)
+          addresses.push(curr_address)
+          stars.nodes.push({
+            id: curr_address,
+            group: (depth + 1) * 13
+          });
+          stars.links.push({
+            source: address,
+            target: curr_address,
+            value: 1
+          });
+        }
+      })
+      if (depth == 1) {
+        return Promise.resolve(stars)
+      } else {
+        let stars1 = []
+        current_addresses.forEach(function(curr_address) {
+          stars1 = Promise.resolve(getStars(curr_address, depth - 1, addresses, stars))
+        })
+        return Promise.resolve(stars1)
+      }
+    } catch (exception) {
+      console.log(exception.message)
+      return stars
+    }
+}
+
+exports.get_stars = async function (req, res) {
+  res.header("Cache-Control", "public, max-age=1000")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  let address = req.params.address;
+  let depth = 1;
+  if (req.query.depth) {
+    depth = parseInt(req.query.depth);
+  }
+
+  if (address.length != 40 || depth > MAX_DEPTH + 1) {
+    res.json(false);
+    return
+  }
+  console.log("Getting stars for address: " + address + ", depth: " + depth)
+  let stars = await getStars(address, depth, [], { nodes: [], links: []}, true)
+  res.json(stars);
+  return;
 }

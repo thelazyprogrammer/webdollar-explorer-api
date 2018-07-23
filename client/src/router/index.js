@@ -7,6 +7,7 @@ import Search from '@/components/utils/Search'
 import Fame from '@/components/pages/Fame'
 import Pools from '@/components/pages/Pools'
 import Genesis from '@/components/pages/Genesis'
+import Stars from '@/components/pages/Stars'
 
 Vue.use(Router)
 
@@ -51,6 +52,11 @@ export default new Router({
       path: '/genesis',
       name: 'Genesis',
       component: Genesis
+    },
+    {
+      path: '/stars/:address',
+      name: 'Stars',
+      component: Stars
     }
   ]
 })
