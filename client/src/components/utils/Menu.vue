@@ -22,6 +22,10 @@
         <div v-on:click="this.collapseMenuBack">WebDollar</div>
       </a>
 
+      <a href="https://www.webdscan.io" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' " target="_blank" >
+        <div v-on:click="this.collapseMenuBack">webdscan.io</div>
+      </a>
+
     </div>
 
   </div>
