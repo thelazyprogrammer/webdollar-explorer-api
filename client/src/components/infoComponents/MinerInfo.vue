@@ -6,12 +6,12 @@
       <h2>Address Details</h2>
 
       <div>
-          <span>
-            Address
-          </span>
         <span>
-            <a class="webdAddress" :href="'#/miner/' + miner.address">{{ miner.address }}</a>
-          </span>
+          Address
+        </span>
+        <span>
+          <a class="webdAddress" :href="'#/miner/' + miner.address">{{ miner.address }}</a>
+        </span>
       </div>
 
       <div v-if="getLabel(miner.address)">
@@ -25,11 +25,12 @@
 
       <div>
           <span>
-            Current balance
+            Balance
           </span>
         <span>
             {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span title='Percentage of the Total Supply'>[{{ this.miner.total_supply_ratio }}%] </span>
-            <a class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
+            <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
+            <span v-clipboard:copy="miner.address" title="Copy address to clipboard" style="cursor: pointer; color: #fec02c!important; padding: 0px;"> &Xi; </span>
           </span>
       </div>
 
@@ -79,8 +80,14 @@ import BlocksService from '@/services/BlocksService'
 export default {
   name: 'block',
 
+  data () {
+    return {
+      copyText: "Address copied to clipboard"
+    }
+  },
+
   props:{
-    miner:{ default:()=>{return [] }},
+    miner: { default:()=>{return [] }}
   },
 
   methods: {

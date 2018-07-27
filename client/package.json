@@ -23,6 +23,7 @@
     "morgan": "^1.9.0",
     "vue": "^2.5.2",
     "vue-analytics": "^5.10.4",
+    "vue-clipboard2": "^0.2.1",
     "vue-js-toggle-button": "^1.2.3",
     "vue-moment": "^4.0.0",
     "vue-router": "^3.0.1"

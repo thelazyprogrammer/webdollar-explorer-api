@@ -3,18 +3,24 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+
 import VueAnalytics from 'vue-analytics'
+import VueClipboard from 'vue-clipboard2'
 import ToggleButton from 'vue-js-toggle-button'
 
 Vue.config.productionTip = false
 
 Vue.use(require('vue-moment'));
+
 Vue.use(ToggleButton)
+
+Vue.use(VueClipboard)
 
 Vue.use(VueAnalytics, {
   id: 'UA-118897279-1',
   router
 })
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
