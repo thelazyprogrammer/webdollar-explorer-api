@@ -1,7 +1,10 @@
 <template>
   <div class="blocks">
     <div v-if="trxs_loaded">
-      <transactions v-if="trxs.length != 0" :transactions="trxs" :address="no_addr"></transactions>
+      <div v-if="trxs.length != 0">
+        <h2> Pending transactions </h2>
+        <transactions :transactions="trxs" :address="no_addr"></transactions>
+      </div>
       <h2 v-else> No pending transactions found. </h2>
     </div>
     <loading v-else></loading>
