@@ -18,6 +18,10 @@
         <div v-on:click="this.collapseMenuBack">Hall of Fame</div>
       </router-link>
 
+      <router-link to="/pending_trx" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">Pending Transactions</div>
+      </router-link>
+
       <a href="https://webdollar.io" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' " target="_blank" >
         <div v-on:click="this.collapseMenuBack">WebDollar</div>
       </a>

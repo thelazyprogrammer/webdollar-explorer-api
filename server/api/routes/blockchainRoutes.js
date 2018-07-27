@@ -17,4 +17,7 @@ module.exports = function(app) {
 
   app.route('/stars/:address*')
     .get(blockchain.get_stars)
+
+  app.route('/pending_trx')
+    .get(blockchain.get_pending_trx)
 };

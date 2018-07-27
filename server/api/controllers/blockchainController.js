@@ -342,3 +342,62 @@ exports.get_stars = async function (req, res) {
   res.json(stars);
   return;
 }
+
+exports.get_pending_trx = async function (req, res) {
+  res.header("Cache-Control", "public, max-age=1")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  request.get(config.webdollar.pouchdb_sync_url + '/pending_trx', function (error, response, body) {
+    if (error) {
+      console.error(error)
+      res.json({
+        trxs: [],
+        trxs_number: 0
+      })
+      return
+    }
+    let transactions = []
+
+    JSON.parse(body).trxs.forEach(function(transaction) {
+      try {
+        let transaction_parsed = {
+          fee: 0,
+          from: {
+            amount: 0,
+            address: [],
+            addresses: transaction.from.addresses
+          },
+          to: {
+            address: [],
+            addresses: transaction.to.addresses
+          }
+        }
+        var to_amount = 0
+
+        transaction.from.addresses.forEach(function(from) {
+          transaction_parsed.from.address.push(from.address)
+          transaction_parsed.from.amount += parseInt(from.amount)
+        })
+
+        transaction.to.addresses.forEach(function(to) {
+          transaction_parsed.to.address.push(to.address)
+          to_amount += parseInt(to.amount)
+        })
+
+        transaction_parsed.fee = transaction_parsed.from.amount - to_amount
+        transaction_parsed.fee = transaction_parsed.fee / AMOUNT_DIVIDER
+        transaction_parsed.from.amount = transaction_parsed.from.amount / AMOUNT_DIVIDER
+
+        transactions.push(transaction_parsed)
+    } catch (ex) {
+      console.log(ex)
+    }
+
+    })
+    res.json({
+      trxs: transactions,
+      trxs_number: transactions.length
+    })
+    return
+  })
+}

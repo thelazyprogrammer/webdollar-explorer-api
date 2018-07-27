@@ -8,6 +8,7 @@ import Fame from '@/components/pages/Fame'
 import Pools from '@/components/pages/Pools'
 import Genesis from '@/components/pages/Genesis'
 import Stars from '@/components/pages/Stars'
+import pendingTransactions from '@/components/pages/PendingTransactions'
 
 Vue.use(Router)
 
@@ -57,6 +58,11 @@ export default new Router({
       path: '/stars/:address',
       name: 'Stars',
       component: Stars
+    },
+    {
+      path: '/pending_trx',
+      name: 'Pending Transactions',
+      component: pendingTransactions
     }
   ]
 })

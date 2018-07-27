@@ -21,5 +21,9 @@ export default {
 
   fetchStars(star_url) {
     return Api().get('stars/' + star_url)
+  },
+
+  fetchPendingTransactions() {
+    return  Api().get('pending_trx')
   }
 }

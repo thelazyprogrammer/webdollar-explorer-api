@@ -104,16 +104,20 @@ export default {
     },
 
     isReceivingMoney(mainAddress,compareAddressFrom,compareAddressTo){
-
-      if (compareAddressFrom.includes(mainAddress)) return 'toColor';
-      if (compareAddressTo.includes(mainAddress)) return 'fromColor';
-
+      if (mainAddress && compareAddressFrom && compareAddressTo) {
+        if (compareAddressFrom.includes(mainAddress)) return 'toColor';
+        if (compareAddressTo.includes(mainAddress)) return 'fromColor';
+      }
       return '';
 
     },
-    formatDate(timestamp){
-      let fromNow = moment(timestamp).fromNow()
-      return fromNow + " (" + timestamp +  ")"
+    formatDate(timestamp) {
+      if (timestamp) {
+        let fromNow = moment(timestamp).fromNow()
+        return fromNow + " (" + timestamp +  ")"
+      } else {
+        return 'not mined yet'
+      }
     }
 
   }
