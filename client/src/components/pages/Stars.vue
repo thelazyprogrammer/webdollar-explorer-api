@@ -64,6 +64,8 @@ export default {
     }
 
     if (this.stars.nodes.length > STEP_INCREASE_MAX) {
+      let result = confirm("The network of this address has a very large number of connections (" + this.stars.nodes.length + "). Displaying all of them may render your browser unusable. Are you sure you want to continue?")
+      if (!result) { return; }
       width = width * this.stars.nodes.length / STEP_INCREASE * 0.45 * 3 / 5
       height = width * 3 / 5 / 2
       width = width / 2
