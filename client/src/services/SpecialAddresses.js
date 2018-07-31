@@ -6,50 +6,57 @@ export default {
        address: 'WEBD$gDU+tP3@42@L9$Is463vDJi4IKrabPNNn$$',
        'status': 'up',
        fee: 2,
-       min_amount: 10
+       min_amount: 20
      },
      {
        name: 'WEBD_POOL_2',
        address: 'WEBD$gCGdPQLohdeHQqa+ptoJ@QK2LCvN7IS5JX$',
        'status': 'up',
        fee: 2,
-       min_amount: 10
+       min_amount: 20
      },
      {
        name: 'CHUCK_POOL_1',
        address: 'WEBD$gAN3MXFnwhwoZyoCzLy+z@pArrYdsDb8iv$',
        'status': 'down',
        fee: 2,
-       min_amount: 10
+       min_amount: 20
      },
      {
        name: 'WMP_1',
        address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
        'status': 'down',
        fee: 2,
-       min_amount: 10
+       min_amount: 20
      },
      {
        name: 'WBD_WIN',
        address: 'WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$',
        'status': 'up',
        fee: 1,
-       min_amount: 10
+       min_amount: 20
      },
      {
        name: 'BACMpool',
        address: 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
        'status': 'up',
        fee: 1,
-       min_amount: 10
+       min_amount: 20
      },
      {
        name: 'WMP_2',
        address: 'WEBD$gAPa@tBU41xAyP6WuFVB79PLGqZHIh48K7$',
        'status': 'down',
        fee: 2,
-       min_amount: 10
+       min_amount: 20
      },
+     {
+       name: 'InfinityPool',
+       address: 'WEBD$gAd7esyzrkepdYj#DNDSfJy02aqDCPm5Pj$',
+       'status': 'up',
+       fee: 1,
+       min_amount: 20
+     }
   ],
 
   fame: {
