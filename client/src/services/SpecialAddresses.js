@@ -23,9 +23,9 @@ export default {
        min_amount: 20
      },
      {
-       name: 'WMP_1',
+       name: 'WMP',
        address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
-       'status': 'down',
+       'status': 'up',
        fee: 2,
        min_amount: 20
      },
@@ -41,13 +41,6 @@ export default {
        address: 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
        'status': 'up',
        fee: 1,
-       min_amount: 20
-     },
-     {
-       name: 'WMP_2',
-       address: 'WEBD$gAPa@tBU41xAyP6WuFVB79PLGqZHIh48K7$',
-       'status': 'down',
-       fee: 2,
        min_amount: 20
      },
      {
