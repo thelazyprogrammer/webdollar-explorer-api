@@ -25,7 +25,7 @@ export default {
      {
        name: 'WMP_1',
        address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
-       'status': 'down',
+       'status': 'up',
        fee: 2,
        min_amount: 20
      },
