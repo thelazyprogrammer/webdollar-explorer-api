@@ -45,8 +45,15 @@ export default {
      },
      {
        name: 'InfinityPool',
-       address: 'WEBD$gAd7esyzrkepdYj#DNDSfJy02aqDCPm5Pj$',
+       address: 'WEBD$gBMQp$yXWiZjHUvkrR7u7uqM7g8wUn6TTj$',
        'status': 'up',
+       fee: 1,
+       min_amount: 20
+     },
+     {
+       name: 'InfinityPool-Old',
+       address: 'WEBD$gAd7esyzrkepdYj#DNDSfJy02aqDCPm5Pj$',
+       'status': 'down',
        fee: 1,
        min_amount: 20
      }
