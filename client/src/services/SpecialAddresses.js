@@ -11,7 +11,7 @@ export default {
      {
        name: 'WEBD_POOL_2',
        address: 'WEBD$gCGdPQLohdeHQqa+ptoJ@QK2LCvN7IS5JX$',
-       'status': 'up',
+       'status': 'down',
        fee: 2,
        min_amount: 20
      },
@@ -30,7 +30,7 @@ export default {
        min_amount: 20
      },
      {
-       name: 'WBD_WIN',
+       name: 'Roxana',
        address: 'WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$',
        'status': 'up',
        fee: 1,
@@ -55,6 +55,13 @@ export default {
        address: 'WEBD$gAd7esyzrkepdYj#DNDSfJy02aqDCPm5Pj$',
        'status': 'down',
        fee: 1,
+       min_amount: 20
+     },
+     {
+       name: 'CoffeePool',
+       address: 'WEBD$gCMxAKX96yhmaygo@NG+vnb4cz1eYoYpMv$',
+       'status': 'up',
+       fee: 2,
        min_amount: 20
      }
   ],
