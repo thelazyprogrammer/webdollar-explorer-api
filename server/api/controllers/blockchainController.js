@@ -14,6 +14,7 @@ const REWARD = AMOUNT_DIVIDER * 6000
 const ADDRESS_CACHE_DB = "address"
 const BALANCE_RATIO_DECIMALS = 5
 const MAX_POOLED_TRXS = 15
+const MAX_BLOCKS = 300
 const MAX_DEPTH = 1
 
 function getEmptyAddress(miner_address) {
@@ -225,8 +226,12 @@ exports.read_an_address = function (req, res) {
       })
       miner.transactions = transactions_parsed
       miner.transactions_number = miner.transactions.length
+      miner.blocks_number = miner.blocks.length
       if (!show_all_transactions && miner.pooled_trxs > MAX_POOLED_TRXS) {
-        miner.transactions = miner.transactions.slice(0,MAX_POOLED_TRXS)
+         miner.transactions = miner.transactions.slice(0,MAX_POOLED_TRXS)
+      }
+      if (!show_all_transactions && miner.blocks.length > MAX_BLOCKS) {
+          miner.blocks = miner.blocks.slice(0,MAX_BLOCKS)
       }
       miner.miner_balance = (miner.balance * AMOUNT_DIVIDER + miner.trx_to_balance - miner.trx_from_balance) / AMOUNT_DIVIDER
       miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER

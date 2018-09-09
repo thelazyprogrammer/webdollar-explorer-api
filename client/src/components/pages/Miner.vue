@@ -5,14 +5,14 @@
 
      <miner-info :miner="this.miner"></miner-info>
 
-       <div  :class=" miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
+       <div  :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
 
         <div class="tabWrapper">
           <button id="button_trx" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
-          <button id="button_block" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{miner.blocks.length}})</button>
-          <toggle-button v-if="miner.transactions_number > miner.transactions.length" :value="true" :height=45 :width=155 v-model="showLatestTransactions"
+          <button id="button_block" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{ getTrxNumber(miner.blocks_number, miner.blocks.length)}})</button>
+          <toggle-button v-if="miner.transactions_number > miner.transactions.length || miner.blocks_number > miner.blocks.length" :value="true" :height=45 :width=155 v-model="showLatestTransactions"
                @change="onShowLatestTrnsactions"
-               :labels="{checked: 'LatestTransactions', unchecked: 'AllTransactions'}"/>
+               :labels="{checked: 'Show All', unchecked: 'Show Latest'}"/>
         </div>
 
         <div class="address_tab" id="transactions">
