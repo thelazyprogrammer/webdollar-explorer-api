@@ -1,12 +1,8 @@
 'use strict';
-var atob = require('atob'),
-  bs58 = require('bs58'),
-  crypto = require('crypto'),
+var crypto = require('crypto'),
   request = require('request'),
   requestPromise = require('request-promise'),
   config = require('../../config'),
-  BlockchainDB = require('nano')(config.couchdb.host).use(config.couchdb.db_name),
-  BlockchainSyncerDB = require('nano')(config.couchdb.host).use(config.couchdb.syncer.db_name),
   blockchainUtils = require('../blockchain/utils');
 
 const AMOUNT_DIVIDER = 10000
@@ -362,8 +358,11 @@ exports.get_pending_trx = async function (req, res) {
       return
     }
     let transactions = []
-
-    JSON.parse(body).trxs.forEach(function(transaction) {
+    let pending_transactions = []
+    try {
+      pending_transactions = JSON.parse(body).trxs
+    } catch (ex) {}
+    pending_transactions.forEach(function(transaction) {
       try {
         let transaction_parsed = {
           fee: 0,

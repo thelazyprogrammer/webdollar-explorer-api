@@ -1,10 +1,5 @@
-var atob = require('atob'),
-  bs58 = require('bs58'),
-  crypto = require('crypto'),
-  request = require('request'),
-  config = require('../../config'),
-  blockchainDB = require('nano')(config.couchdb.host).use(config.couchdb.db_name);
-  blockchainUtils = require('./utils');
+var request = require('request'),
+  config = require('../../config');
 
 
 exports.getSyncInfo = function (callback) {
