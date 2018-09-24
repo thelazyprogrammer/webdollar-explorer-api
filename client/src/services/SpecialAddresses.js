@@ -70,6 +70,18 @@ export default {
         total_donations: 0,
         donors: [
           {
+            address: 'WEBD$gCjRn47UztKwvVvdkNUq#U9cuQYLfBLjHv$',
+            amount: 2000000,
+            label: 'Webdollar Team',
+            block_id: 265164
+          },
+          {
+            address: 'WEBD$gBMQp$yXWiZjHUvkrR7u7uqM7g8wUn6TTj$',
+            amount: 22000,
+            label: 'Webdollar Infinity Pool',
+            block_id: 263524
+          },
+          {
             address: 'WEBD$gBC8XecMz1Zh2K$reiEFTwp9gLeGH@eR$n$',
             amount: 7000,
             label: 'Webdollar Infinity Pool',
