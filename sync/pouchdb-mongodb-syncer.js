@@ -2,10 +2,20 @@
 // how to install mongodb
 // https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-16-04
 //
-// pouchdb does not to be installed
-// blockchainDB3 needs to be in this folder
+// pouchdb does not need to be installed
+// blockchainDB3 needs to be in the folder
 //
-
+// Example to sync blocks from 0 to 1000
+//   # install mongodb
+//   npm install
+//   node pouchdb-mongodb-syncer.js 0 1000
+//
+// It syncs only the block information to the
+// blocks collections in the MongoDB blockchainDB3 database
+//
+// To do:
+//   1. If a block has transactions, compute involved_addresses and fee fields
+//   2. Create transactions collection
 const atob = require('atob'),
   bs58 = require('bs58'),
   crypto = require('crypto'),
