@@ -1,3 +1,11 @@
+//
+// how to install mongodb
+// https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-16-04
+//
+// pouchdb does not to be installed
+// blockchainDB3 needs to be in this folder
+//
+
 const atob = require('atob'),
   bs58 = require('bs58'),
   crypto = require('crypto'),
@@ -93,6 +101,21 @@ function SHA256(bytes) {
   return sha256.digest();
 }
 
+function RIPEMD160(bytes){
+  let ripemd160 = crypto.createHash('ripemd160'); // RIPEMD160
+  ripemd160.update(bytes);
+  return ripemd160.digest();
+}
+
+function generateUnencodedAddressFromPublicKey(publicKey) {
+  return RIPEMD160(SHA256(publicKey));
+}
+
+function generateAddressFromPublicKey(publicKey) {
+  let unencodedAddress = generateUnencodedAddressFromPublicKey(Buffer.from(publicKey, 'hex'));
+  return decodeMinerAddress(unencodedAddress.toString('hex'));
+}
+
 function decodeMinerAddress(miner_address) {
     var address = Buffer.concat([Buffer.from('00', "hex"), Buffer.from(miner_address, 'hex')])
     var checksum = SHA256(SHA256(address))
@@ -164,7 +187,6 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
           
           var trx_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_VERSION))
           CURRENT_OFFSET += OFFSET_TRX_VERSION
-          
           // HARD FORK change for TRX NONCE
           if (block_id > TRX_NONCE_V2_BLOCK) {
             OFFSET_TRX_NONCE = OFFSET_TRX_NONCE_V2
@@ -195,12 +217,15 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
               'trx_from_signature': '',
               'trx_from_amount': 0
             }
-            trx_from.trx_from_address = decodeMinerAddress(substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex'))
-            trxs_from.address.push(trx_from.trx_from_address)
-            CURRENT_OFFSET += OFFSET_ADDRESS
+            if (trx_version <= 1) {
+              trx_from.trx_from_address = decodeMinerAddress(substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex'))
+              CURRENT_OFFSET += OFFSET_ADDRESS
+            }
 
             trx_from.trx_from_pub_key = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_PUB_KEY).toString('hex')
             CURRENT_OFFSET += OFFSET_TRX_PUB_KEY
+            trx_from.trx_from_address = generateAddressFromPublicKey(trx_from.trx_from_pub_key)
+            trxs_from.address.push(trx_from.trx_from_address)
             trx_from.trx_from_signature = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_SIGN).toString('hex')
             CURRENT_OFFSET += OFFSET_TRX_SIGN
             trx_from.trx_from_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
@@ -210,7 +235,7 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
           }
           var trx_from_currency_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_LENGTH))
           CURRENT_OFFSET += OFFSET_TRX_LENGTH
-           var trx_from_currency_token = substr(block_hex, CURRENT_OFFSET, trx_from_currency_length).toString('hex')
+          var trx_from_currency_token = substr(block_hex, CURRENT_OFFSET, trx_from_currency_length).toString('hex')
           CURRENT_OFFSET += trx_from_currency_length
 
           // Deserialize to trx data
@@ -222,7 +247,7 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
             'address': [],
             'amount': 0
           }
-          for (var to_address_index=0;to_address_index<trx_to_length; to_address_index++) {
+          for (var to_address_index=0; to_address_index<trx_to_length; to_address_index++) {
             var trx_to = {
               'trx_to_address': '',
               'trx_to_amount': 0
@@ -256,9 +281,8 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
           trxs_container.push(trx)
         }
       }
-
       return {
-        'number' : block_id,
+        'number' : parseInt(block_id),
         'hash' : block_hash,
         'nonce' : block_nonce,
         'version' : block_version,
@@ -288,12 +312,12 @@ async function sync(from, to) {
 
   try {
     let pouchDB = new PouchClient(pouchdbBlockDB)
-    for (var i=from; i<=to;i++) {
+    for (var i=from; i<=to; i++) {
       let response = await pouchDB.get('block' + i, {attachments: true, include_docs: true});
       let decoded_block = decodeRawBlock(i, response._attachments.key.data)
 
       let badBlocks = await blockChainDB.collection(mongodbBlockCollection).find({
-        number: i,
+        number: decoded_block.number,
         hash: { $ne: decoded_block.hash }
       }).toArray()
       if (badBlocks.length > 0) {
@@ -305,15 +329,15 @@ async function sync(from, to) {
       }
 
       let goodBlock = await blockChainDB.collection(mongodbBlockCollection).find({
-        number: i,
+        number: decoded_block.number,
         hash: decoded_block.hash
       }).toArray()
       if (goodBlock.length == 0) {
-        await blockChainDB.collection(mongodbBlockCollection).insertOne(decoded_block)
         logger.log({
           level: 'info',
           message: decoded_block
         });
+        await blockChainDB.collection(mongodbBlockCollection).insertOne(decoded_block)
       } else {
         logger.log({
           level: 'info',
