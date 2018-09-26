@@ -2,6 +2,7 @@ const BigInteger = require('big-integer');
 import WebDollarCrypto from 'common/crypto/WebDollar-Crypto'
 import BlockchainGenesis from 'common/blockchain/global/Blockchain-Genesis'
 import BlockchainMiningReward from 'common/blockchain/global/Blockchain-Mining-Reward'
+import MongodbSavingManager from 'common/blockchain/utils/saving-manager/MongoSavingManager.js'
 import consts from 'consts/const_global'
 
 import Serialization from "common/utils/Serialization";
@@ -33,6 +34,7 @@ class InterfaceBlockchainBlock {
 
         this.blockValidation = blockValidation;
         
+        this.mongodbSavingManager = new MongodbSavingManager()
         if ( timeStamp === undefined  || timeStamp === null) {
 
             timeStamp = this.blockchain.timestamp.networkAdjustedTime - BlockchainGenesis.timeStampOffset;
@@ -418,6 +420,7 @@ class InterfaceBlockchainBlock {
         }
     
         try{
+            this.mongodbSavingManager.saveBlock(this.height, bufferValue)
             return (await this.db.save(key, bufferValue));
         }
         catch (exception){
