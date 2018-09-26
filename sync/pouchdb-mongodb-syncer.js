@@ -140,6 +140,8 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
       if (divide_amounts) {
         amountDivider = AMOUNT_DIVIDER
       }
+      var total_fee = 0
+      var addresses = []
 
       const OFFSET_1 = 1
       const OFFSET_2 = 2
@@ -176,6 +178,7 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
       var miner_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
       CURRENT_OFFSET += OFFSET_ADDRESS
       var miner_address_decoded = decodeMinerAddress(miner_address)
+      addresses.push(miner_address_decoded)
 
       // TRX data
       var trxs_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
@@ -236,6 +239,9 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
             CURRENT_OFFSET += OFFSET_TRX_PUB_KEY
             trx_from.trx_from_address = generateAddressFromPublicKey(trx_from.trx_from_pub_key)
             trxs_from.address.push(trx_from.trx_from_address)
+            if (addresses.indexOf(trx_from.trx_from_address) == -1) {
+              addresses.push(trx_from.trx_from_address)
+            }
             trx_from.trx_from_signature = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_SIGN).toString('hex')
             CURRENT_OFFSET += OFFSET_TRX_SIGN
             trx_from.trx_from_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
@@ -265,6 +271,9 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
 
             trx_to.trx_to_address = decodeMinerAddress(substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex'))
             trxs_to.address.push(trx_to.trx_to_address)
+            if (addresses.indexOf(trx_to.trx_to_address) == -1) {
+              addresses.push(trx_to.trx_to_address)
+            }
             CURRENT_OFFSET += OFFSET_ADDRESS
 
             trx_to.trx_to_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
@@ -273,6 +282,7 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
             trxs_to.trxs.push(trx_to)
           }
 
+          total_fee += trxs_from.amount - trxs_to.amount
           var fee = (trxs_from.amount - trxs_to.amount) / amountDivider
           trxs_from.amount = trxs_from.amount / amountDivider
           trxs_to.amount = trxs_to.amount / amountDivider
@@ -299,7 +309,9 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
         'previous_hash' : block_hashPrev,
         'timestamp' : human_timestamp,
         'miner' : miner_address_decoded,
-        'trxs_number': trxs_number
+        'trxs_number': trxs_number,
+        'fee': total_fee,
+        'addresses': addresses
       }
 }
 
@@ -318,6 +330,26 @@ async function sync(from, to) {
   let blockChainDB = mongoDB.db(mongodbBlockchainDB);
 
   await blockChainDB.createCollection(mongodbBlockCollection)
+  await blockChainDB.collection(mongodbBlockCollection).createIndex(
+    { number: 1 },
+    { unique: true }
+  )
+  await blockChainDB.collection(mongodbBlockCollection).createIndex(
+    { hash: 1 },
+    { unique: true }
+  )
+  await blockChainDB.collection(mongodbBlockCollection).createIndex(
+    { miner: 1 },
+    { unique: false }
+  )
+  await blockChainDB.collection(mongodbBlockCollection).createIndex(
+    { addresses: 1 },
+    { unique: false }
+  )
+  await blockChainDB.collection(mongodbBlockCollection).createIndex(
+    { number: 1, hash: 1 },
+    { unique: false }
+  )
   let pouchDB = new PouchClient(pouchdbBlockDB)
 
   try {
