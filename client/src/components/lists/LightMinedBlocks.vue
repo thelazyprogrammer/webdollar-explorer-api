@@ -69,11 +69,12 @@ export default {
       return Utils.formatMoneyNumber(number, decimals);
     },
     formatDate(timestamp, showMiner){
-      let fromNow = moment(new Date(timestamp * 1000)).fromNow()
+      let blockDate = new Date(timestamp * 1000)
+      let fromNow = moment(blockDate).fromNow()
       if (showMiner) {
         return fromNow
       } else {
-        return fromNow + " (" + timestamp +  ")"
+        return fromNow + " (" + blockDate.toGMTString() +  ")"
       }
     }
   }
