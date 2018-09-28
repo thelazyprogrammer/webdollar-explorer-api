@@ -100,6 +100,7 @@ exports.read_a_block = function(req, res) {
         block = JSON.parse(body).block
         block.reward = block.reward / AMOUNT_DIVIDER
         block.miner_address = blockchainUtils.decodeMinerAddress(block.miner_address)
+        block.miner = blockchainUtils.decodeMinerAddress(block.miner_address)
         var date = new Date((block.raw_timestamp + 1524742312) * 1000)
         block.timestamp = date.toUTCString()
         var transactions_parsed = []
@@ -183,9 +184,9 @@ exports.read_an_address = function (req, res) {
       miner_received.minedBlocks.forEach(function(block) {
         var block_parsed = block
         block_parsed.block_id = block_parsed.blockId
+        block_parsed.number = block_parsed.blockId
         block_parsed.id = block_parsed.blockId
-        var date = new Date((block_parsed.timestamp + 1524742312) * 1000)
-        block_parsed.timestamp = date.toUTCString()
+        block_parsed.timestamp = block_parsed.timestamp + 1524742312
         block_parsed.trxs = block_parsed.transactions
 
         blocks_parsed.push(block_parsed)
