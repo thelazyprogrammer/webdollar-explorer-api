@@ -13,6 +13,7 @@ const MAX_POOLED_TRXS = 15
 const MAX_BLOCKS = 300
 const MAX_DEPTH = 1
 
+const MAX_LATEST_BLOCKS = 14
 function getEmptyAddress(miner_address) {
   return {
     'address': miner_address,
@@ -29,15 +30,34 @@ function getEmptyAddress(miner_address) {
   }
 }
 
-exports.list_all_blocks = function(req, res) {
+exports.latest_blocks_mongo = async function(req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=10")
+
+  let blocks = []
+  try {
+    MongoClient = require('mongodb').MongoClient;
+    let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+    let blockChainDB = mongoDB.db(config.mongodb.db);
+
+    blocks = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 }).limit(MAX_LATEST_BLOCKS).toArray()
+    res.json(blocks)
+    return
+  } catch (ex) {
+    console.log(ex)
+    res.json()
+    return
+  }
+}
+
+exports.latest_blocks = function(req, res) {
   var blocks = [];
   var max_block_length;
-  var max_blocks = 14;
 
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cache-Control", "public, max-age=10")
 
-  request.get(config.webdollar.pouchdb_sync_url + '/blocks/' + max_blocks, function (error, response, body) {
+  request.get(config.webdollar.pouchdb_sync_url + '/blocks/' + MAX_LATEST_BLOCKS, function (error, response, body) {
     if (error) {
       console.error(error)
       console.error(body)
@@ -46,10 +66,10 @@ exports.list_all_blocks = function(req, res) {
         var raw_blocks = JSON.parse(body).blocks
         raw_blocks.forEach(function(block) {
           block.reward = block.reward / AMOUNT_DIVIDER
-          var date = new Date((block.raw_timestamp + 1524742312) * 1000)
-          block.timestamp = date.toUTCString()
+          block.number = block.id
+          block.timestamp = parseInt(block.raw_timestamp) + 1524742312
           block.reward = block.reward / AMOUNT_DIVIDER
-          block.miner_address = blockchainUtils.decodeMinerAddress(block.miner_address)
+          block.miner = blockchainUtils.decodeMinerAddress(block.miner_address)
           blocks.push(block)
         })
       } catch(ex) {
