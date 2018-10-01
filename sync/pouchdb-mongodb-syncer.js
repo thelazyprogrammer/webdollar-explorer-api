@@ -35,6 +35,7 @@ const logger = winston.createLogger({
 const pouchdbBlockDB = "blockchainDB3"
 const mongodbBlockchainDB = "blockchainDB3"
 const mongodbBlockCollection = "blocks"
+const mongodbTransactionCollection = "transactions"
 const mongodbUrl = "mongodb://localhost:27017"
 
 const PREFIX_BASE64 = "584043fe"
@@ -193,6 +194,7 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
       var trxs_container = []
       if (trxs_number > 0) {
         for(var i=0;i<trxs_number;i++) {
+          var trx_addresses = []
           var OFFSET_TRX_VERSION = OFFSET_1
           var OFFSET_TRX_NONCE = OFFSET_1
           var OFFSET_TRX_LENGTH = OFFSET_1
@@ -246,6 +248,9 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
             if (addresses.indexOf(trx_from.trx_from_address) == -1) {
               addresses.push(trx_from.trx_from_address)
             }
+            if (trx_addresses.indexOf(trx_from.trx_from_address) == -1) {
+              trx_addresses.push(trx_from.trx_from_address)
+            }
             trx_from.trx_from_signature = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_SIGN).toString('hex')
             CURRENT_OFFSET += OFFSET_TRX_SIGN
             trx_from.trx_from_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
@@ -278,6 +283,9 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
             if (addresses.indexOf(trx_to.trx_to_address) == -1) {
               addresses.push(trx_to.trx_to_address)
             }
+            if (trx_addresses.indexOf(trx_to.trx_to_address) == -1) {
+              trx_addresses.push(trx_to.trx_to_address)
+            }
             CURRENT_OFFSET += OFFSET_ADDRESS
 
             trx_to.trx_to_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
@@ -287,20 +295,20 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
           }
 
           total_fee += trxs_from.amount - trxs_to.amount
-          var fee = (trxs_from.amount - trxs_to.amount) / amountDivider
-          trxs_from.amount = trxs_from.amount / amountDivider
-          trxs_to.amount = trxs_to.amount / amountDivider
+          var fee = trxs_from.amount - trxs_to.amount
 
           var trx = {
               'version' : trx_version,
               'nonce' : trx_nonce,
               'time_lock' : trx_time_lock,
-              'from_length' : trx_from_length,
               'from': trxs_from,
               'to': trxs_to,
+              'from_amount': trxs_from.amount,
+              'to_amount': trxs_to.amount,
               'fee': fee,
-              'block_id': block_id,
-              'timestamp': human_timestamp
+              'block_number': block_id,
+              'timestamp': human_timestamp,
+              'addresses': trx_addresses
           }
           trxs_container.push(trx)
         }
@@ -313,11 +321,12 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
         'previous_hash' : block_hashPrev,
         'timestamp' : human_timestamp,
         'miner' : miner_address_decoded,
-        'trxs_number': trxs_number,
+        'trxs_number': trxs_container.length,
         'fee': total_fee,
         'addresses': addresses,
         'base_reward': base_reward,
-        'reward': base_reward + total_fee
+        'reward': base_reward + total_fee,
+        'trxs': trxs_container
       }
 }
 
@@ -371,7 +380,8 @@ async function sync(from, to) {
           level: 'info',
           message: 'Removing bad blocks'
         })
-        await blockChainDB.collection(mongodbBlockCollection).deleteMany({ number: i})
+        await blockChainDB.collection(mongodbBlockCollection).deleteMany({ number: decoded_block.number})
+        await blockChainDB.collection(mongodbTransactionCollection).deleteMany({ block_number: decoded_block.number})
       }
 
       let goodBlock = await blockChainDB.collection(mongodbBlockCollection).find({
@@ -383,8 +393,20 @@ async function sync(from, to) {
           level: 'info',
           message: decoded_block
         });
+        if (decoded_block.trxs.length > 0) {
+          for(let i=0; i<decoded_block.trxs.length;i++) {
+            await blockChainDB.collection(mongodbTransactionCollection).insertOne(decoded_block.trxs[i])
+          }
+        }
+        delete decoded_block.trxs
         await blockChainDB.collection(mongodbBlockCollection).insertOne(decoded_block)
       } else {
+        await blockChainDB.collection(mongodbTransactionCollection).deleteMany({ block_number: decoded_block.number})
+        if (decoded_block.trxs.length > 0) {
+          for(let i=0; i<decoded_block.trxs.length;i++) {
+            await blockChainDB.collection(mongodbTransactionCollection).insertOne(decoded_block.trxs[i])
+          }
+        }
         logger.log({
           level: 'info',
           message: 'Block ' + decoded_block.number + ' is already in the db'
