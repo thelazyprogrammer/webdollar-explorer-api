@@ -143,6 +143,10 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
       var total_fee = 0
       var addresses = []
 
+      var base_reward = BASE_REWARD * AMOUNT_DIVIDER
+      if (block_id < FIRST_BLOCK_REWARDS.length) {
+        base_reward = FIRST_BLOCK_REWARDS[block_id] * AMOUNT_DIVIDER
+      }
       const OFFSET_1 = 1
       const OFFSET_2 = 2
       const OFFSET_3 = 3
@@ -311,7 +315,9 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
         'miner' : miner_address_decoded,
         'trxs_number': trxs_number,
         'fee': total_fee,
-        'addresses': addresses
+        'addresses': addresses,
+        'base_reward': base_reward,
+        'reward': base_reward + total_fee
       }
 }
 
@@ -320,7 +326,6 @@ async function sync(from, to) {
     level: 'info',
     message: 'Syncing...'
   });
-
   let mongoDB = await MongoClient.connect(mongodbUrl, { useNewUrlParser: true })
   logger.log({
     level: 'info',
@@ -350,7 +355,6 @@ async function sync(from, to) {
     { number: 1, hash: 1 },
     { unique: false }
   )
-  let pouchDB = new PouchClient(pouchdbBlockDB)
 
   try {
     let pouchDB = new PouchClient(pouchdbBlockDB)
