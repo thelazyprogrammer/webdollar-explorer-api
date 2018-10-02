@@ -6,10 +6,12 @@ import router from './router'
 
 import VueAnalytics from 'vue-analytics'
 import VueClipboard from 'vue-clipboard2'
+import ToggleButton from 'vue-js-toggle-button'
 
 Vue.config.productionTip = false
 
 Vue.use(VueClipboard)
+Vue.use(ToggleButton)
 
 Vue.use(VueAnalytics, {
   id: 'UA-118897279-1',
