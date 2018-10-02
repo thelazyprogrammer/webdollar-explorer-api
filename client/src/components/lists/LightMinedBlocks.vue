@@ -30,10 +30,10 @@
 
         <td align="left">
           <a v-if="showMiner" :href="'#/miner/' + block.miner">
-            {{ block.trxs_number || block.transactions }}
+            {{ block.trxs_number}} {{ block.transactions }}
           </a>
           <span v-else>
-            {{ block.trxs || block.trxs_number || block.transactions}}
+            {{ block.trxs_number}} {{ block.transactions }}
           </span>
         </td>
 
