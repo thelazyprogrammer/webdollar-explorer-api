@@ -24,7 +24,7 @@
        <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_number }}">{{ trx.block_number}}</router-link>
       </td>
 
-      <td>
+      <td v-if="trx.from.trxs">
         <div class="poolTransactions">
           <span style="padding-bottom:5px;display: block;" v-bind:key="from_address_trx.trx_from_address" v-for="from_address_trx in trx.from.trxs">
             <a :href="'#/miner/' + from_address_trx.trx_from_address">{{ mapAddress(from_address_trx.trx_from_address) }}<br>{{ formatMoneyNumber(from_address_trx.trx_from_amount,4)}} </a>
@@ -32,10 +32,26 @@
         </div>
       </td>
 
-      <td>
+      <td v-else>
+        <div class="poolTransactions">
+          <span  style="padding-bottom:5px;display: block;" v-bind:key="to_address_trx.trx_to_address" v-for="to_address_trx in trx.from.addresses">
+            <a :href="'#/miner/' + to_address_trx.address">{{ mapAddress(to_address_trx.address) }}<br>{{ formatMoneyNumber(to_address_trx.amount,4)}}  </a> <br>
+          </span>
+        </div>
+      </td>
+
+      <td v-if="trx.to.trxs">
         <div class="poolTransactions">
           <span  style="padding-bottom:5px;display: block;" v-bind:key="to_address_trx.trx_to_address" v-for="to_address_trx in trx.to.trxs">
             <a :href="'#/miner/' + to_address_trx.trx_to_address">{{ mapAddress(to_address_trx.trx_to_address) }}<br>{{ formatMoneyNumber(to_address_trx.trx_to_amount,4)}}  </a> <br>
+          </span>
+        </div>
+      </td>
+
+      <td v-else>
+        <div class="poolTransactions">
+          <span  style="padding-bottom:5px;display: block;" v-bind:key="to_address_trx.trx_to_address" v-for="to_address_trx in trx.to.addresses">
+            <a :href="'#/miner/' + to_address_trx.address">{{ mapAddress(to_address_trx.address) }}<br>{{ formatMoneyNumber(to_address_trx.amount,4)}}  </a> <br>
           </span>
         </div>
       </td>
