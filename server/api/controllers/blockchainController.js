@@ -209,7 +209,7 @@ exports.read_an_address_mongo = async function (req, res) {
 
     let trx_from_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
-           adress: miner.address,
+           address: miner.address,
            type: 1
         }
       },
@@ -222,9 +222,23 @@ exports.read_an_address_mongo = async function (req, res) {
       }
     ]).toArray()
 
-    miner.miner_balance = miner_balance[0].balance / 10000
-    //miner.trx_to_balance = trx_to_balance[0].balance / 10000
-    //miner.trx_from_balance = trx_from_balance[0].balance / 10000
+    miner.miner_balance = miner_balance[0].balance
+    if (trx_to_balance.length == 1) {
+      miner.trx_to_balance = trx_to_balance[0].balance
+    }
+    if (trx_from_balance.length == 1) {
+      miner.trx_from_balance = trx_from_balance[0].balance
+    }
+    miner.balance = (miner.miner_balance - miner.trx_to_balance + miner.trx_from_balance) /10000
+    miner.miner_balance = miner.miner_balance / 10000
+    miner.trx_to_balance = miner.trx_to_balance / 10000
+    miner.trx_from_balance = miner.trx_from_balance / 10000
+
+    let last_block = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 }).limit(1).toArray()
+    miner.last_block= last_block[0].number
+    let totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
+    miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
+
     miner.blocks = await blockChainDB.collection(config.mongodb.collection).find({miner: miner.address}).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
     let transactions = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).sort( { block_number: -1 }).limit(MAX_BLOCKS).toArray()
   } catch (ex) {
