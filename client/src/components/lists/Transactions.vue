@@ -21,46 +21,31 @@
       </td>
 
       <td align="left">
-       <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_id }}">{{ trx.block_id}}</router-link>
+       <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_number }}">{{ trx.block_number}}</router-link>
       </td>
 
-      <td v-if="trx.transaction">
+      <td>
         <div class="poolTransactions">
-          <span style="padding-bottom:5px;display: block;" v-bind:key="from_address.address" v-for="from_address in trx.transaction.from.addresses">
-            <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}<br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
+          <span style="padding-bottom:5px;display: block;" v-bind:key="from_address_trx.trx_from_address" v-for="from_address_trx in trx.from.trxs">
+            <a :href="'#/miner/' + from_address_trx.trx_from_address">{{ mapAddress(from_address_trx.trx_from_address) }}<br>{{ formatMoneyNumber(from_address_trx.trx_from_amount,4)}} </a>
           </span>
         </div>
       </td>
 
-      <td v-else>
+      <td>
         <div class="poolTransactions">
-          <span style="padding-bottom:5px;display: block;" v-bind:key="from_address.address" v-for="from_address in trx.from.addresses">
-            <a :href="'#/miner/' + from_address.address">{{ mapAddress(from_address.address) }}<br>{{ formatMoneyNumber(from_address.amount,4)}} </a>
-          </span>
-        </div>
-      </td>
-
-      <td v-if="trx.transaction">
-        <div class="poolTransactions">
-          <span  style="padding-bottom:5px;display: block;"  v-bind:key="to_address.address" v-for="to_address in trx.transaction.to.addresses">
-           <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}<br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> <br>
-          </span>
-        </div>
-      </td>
-      <td v-else>
-        <div class="poolTransactions">
-          <span  style="padding-bottom:5px;display: block;" v-bind:key="to_address.address" v-for="to_address in trx.to.addresses">
-            <a :href="'#/miner/' + to_address.address">{{ mapAddress(to_address.address) }}<br>{{ formatMoneyNumber(to_address.amount,4)}}  </a> <br>
+          <span  style="padding-bottom:5px;display: block;" v-bind:key="to_address_trx.trx_to_address" v-for="to_address_trx in trx.to.trxs">
+            <a :href="'#/miner/' + to_address_trx.trx_to_address">{{ mapAddress(to_address_trx.trx_to_address) }}<br>{{ formatMoneyNumber(to_address_trx.trx_to_amount,4)}}  </a> <br>
           </span>
         </div>
       </td>
 
       <td align="left">
-       {{ formatMoneyNumber(trx.from.amount*10000,4) }}
+       {{ formatMoneyNumber(trx.from.amount,4) }}
       </td>
 
       <td align="left">
-       {{ formatMoneyNumber(trx.fee*10000,4) }}
+       {{ formatMoneyNumber(trx.fee,4) }}
       </td>
 
       <td align="left">
@@ -112,9 +97,10 @@ export default {
 
     },
     formatDate(timestamp) {
+      timestamp = new Date(timestamp * 1000)
       if (timestamp) {
         let fromNow = moment(timestamp).fromNow()
-        return fromNow + " (" + timestamp +  ")"
+        return fromNow + " (" + timestamp.toGMTString() +  ")"
       } else {
         return 'not mined yet'
       }

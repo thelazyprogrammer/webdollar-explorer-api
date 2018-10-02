@@ -33,7 +33,7 @@
             {{ block.trxs_number }}
           </a>
           <span v-else>
-            {{ block.trxs }}
+            {{ block.trxs || block.trxs_number}}
           </span>
         </td>
 

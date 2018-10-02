@@ -89,31 +89,31 @@ export default {
           var index_from = -1
           var index_to = -1
 
-          trx.transaction.from.addresses = trx.transaction.from.addresses.sort( function(a,b) {
+          trx.from.address = trx.from.address.sort( function(a,b) {
             return (Number(b.amount) - Number(a.amount))
           })
-          trx.transaction.from.addresses.forEach(function(trx, index) {
+          trx.from.address.forEach(function(trx, index) {
             if (trx.address == miner_address) {
               index_from = index
             }
           })
 
           if (index_from != -1) {
-            trx.transaction.from.addresses.unshift(trx.transaction.from.addresses[index_from])
-            trx.transaction.from.addresses.splice(index_from + 1, 1)
+            trx.from.address.unshift(trx.from.address[index_from])
+            trx.from.address.splice(index_from + 1, 1)
           }
 
-          trx.transaction.to.addresses = trx.transaction.to.addresses.sort(function (a,b) {
+          trx.to.address = trx.to.address.sort(function (a,b) {
             return (Number(b.amount) - Number(a.amount))
           })
-          trx.transaction.to.addresses.forEach(function(trx, index) {
+          trx.to.address.forEach(function(trx, index) {
             if (trx.address == miner_address) {
               index_to = index
             }
           })
           if (index_to != -1) {
-            trx.transaction.to.addresses.unshift(trx.transaction.to.addresses[index_to])
-            trx.transaction.to.addresses.splice(index_to + 1, 1)
+            trx.to.address.unshift(trx.to.address[index_to])
+            trx.to.address.splice(index_to + 1, 1)
           }
 
           trxs_parsed.push(trx)
