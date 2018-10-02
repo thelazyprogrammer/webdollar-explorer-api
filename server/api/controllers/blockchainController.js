@@ -222,7 +222,9 @@ exports.read_an_address_mongo = async function (req, res) {
       }
     ]).toArray()
 
-    miner.miner_balance = miner_balance[0].balance
+    if (miner_balance.length == 1) {
+      miner.miner_balance = miner_balance[0].balance
+    }
     if (trx_to_balance.length == 1) {
       miner.trx_to_balance = trx_to_balance[0].balance
     }
