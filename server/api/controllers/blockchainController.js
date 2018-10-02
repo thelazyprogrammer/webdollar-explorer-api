@@ -240,7 +240,7 @@ exports.read_an_address_mongo = async function (req, res) {
     miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
 
     miner.blocks = await blockChainDB.collection(config.mongodb.collection).find({miner: miner.address}).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
-    let transactions = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).sort( { block_number: -1 }).limit(MAX_BLOCKS).toArray()
+    miner.transactions = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).sort( { block_number: -1 }).limit(MAX_POOLED_TRXS).toArray()
   } catch (ex) {
     console.log(ex)
   }
