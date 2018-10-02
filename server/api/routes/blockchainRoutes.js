@@ -6,6 +6,7 @@ module.exports = function(app) {
 
   let status_route = config.enable_mongodb ? statusController.get_status_mongo: statusController.get_status
   let latest_blocks_route = config.enable_mongodb ? blockchain.latest_blocks_mongo : blockchain.latest_blocks
+  let read_an_address_route = config.enable_mongodb ? blockchain.read_an_address_mongo: blockchain.read_an_address
 
   app.route('/block')
     .get(latest_blocks_route)
@@ -14,7 +15,7 @@ module.exports = function(app) {
     .get(blockchain.read_a_block)
 
   app.route('/address/:address*')
-    .get(blockchain.read_an_address)
+    .get(read_an_address_route)
 
   app.route('/status')
     .get(status_route)

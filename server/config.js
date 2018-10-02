@@ -19,7 +19,9 @@ config.couchdb.syncer.view_doc_name = 'ordered_blocks'
 
 config.enable_mongodb = false
 config.mongodb.url = "mongodb://localhost:27017"
-config.mongodb.db = "blockchainDB3Sync"
+config.mongodb.db = "blockchainDB3"
 config.mongodb.collection = "blocks"
+config.mongodb.trx_collection = "transactions"
+config.mongodb.mtrx_collection = "mtransactions"
 
 module.exports = config;
