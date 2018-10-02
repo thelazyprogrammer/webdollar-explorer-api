@@ -248,7 +248,7 @@ exports.read_an_address_mongo = async function (req, res) {
 }
 
 exports.read_an_address = function (req, res) {
-  res.header("Cache-Control", "public, max-age=100")
+  res.header("Cache-Control", "public, max-age=1")
   res.header("Access-Control-Allow-Origin", "*");
 
   var miner_address = req.params.address
@@ -288,7 +288,7 @@ exports.read_an_address = function (req, res) {
         block_parsed.number = block_parsed.blockId
         block_parsed.id = block_parsed.blockId
         block_parsed.timestamp = block_parsed.timestamp + 1524742312
-        block_parsed.trxs = block_parsed.transactions
+        block_parsed.trxs_number = block_parsed.transactions.length
 
         blocks_parsed.push(block_parsed)
       })
@@ -303,10 +303,10 @@ exports.read_an_address = function (req, res) {
       miner.pooled_trxs = 0
       miner_received.transactions.forEach(function(transaction) {
         var transaction_parsed = transaction
-        transaction_parsed.block_id = transaction.blockId
+        transaction_parsed.block_number = transaction.blockId
         transaction_parsed.id = transaction.blockId
         var date = new Date((transaction.timestamp + 1524742312) * 1000)
-        transaction_parsed.timestamp = date.toUTCString()
+        transaction_parsed.timestamp = date.getTime() / 1000
         transaction_parsed.fee = 0
         var to_amount = 0
 
@@ -337,9 +337,8 @@ exports.read_an_address = function (req, res) {
         })
 
         transaction_parsed.fee = transaction_parsed.from.amount - to_amount
-        transaction_parsed.fee = transaction_parsed.fee / AMOUNT_DIVIDER
-        transaction_parsed.from.amount = transaction_parsed.from.amount / AMOUNT_DIVIDER
-
+        transaction_parsed.from.addresses = transaction_parsed.transaction.from.addresses
+        transaction_parsed.to.addresses = transaction_parsed.transaction.to.addresses
         transactions_parsed.push(transaction_parsed)
       })
       miner.transactions = transactions_parsed
