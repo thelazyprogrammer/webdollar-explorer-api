@@ -575,6 +575,8 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
 }
 
 async function sync(from, to) {
+  from = parseInt(from)
+  to = parseInt(to)
   logger.log({
     level: 'info',
     message: 'Syncing...'
@@ -634,6 +636,9 @@ async function sync(from, to) {
     { type: 1 }
   )
 
+        await blockChainDB.collection(mongodbBlockCollection).deleteMany({ number: { $gt: parseInt(from) }})
+        await blockChainDB.collection(mongodbTransactionCollection).deleteMany({ block_number: { $gt: parseInt(from) }})
+        await blockChainDB.collection(mongodbMTransactionCollection).deleteMany({ block_number: { $gt: parseInt(from) }})
   try {
     let pouchDB = new PouchClient(pouchdbBlockDB)
     for (var i=from; i<=to; i++) {
@@ -644,7 +649,7 @@ async function sync(from, to) {
         number: decoded_block.number,
         hash: { $ne: decoded_block.hash }
       }).toArray()
-      if (badBlocks.length > 0 || decoded_block.trxs.length > 0) {
+      if (badBlocks.length > 0) {
         logger.log({
           level: 'info',
           message: 'Removing bad blocks'
@@ -692,14 +697,16 @@ async function sync(from, to) {
         delete decoded_block.trxs
         await blockChainDB.collection(mongodbBlockCollection).insertOne(decoded_block)
       } else {
-        //await blockChainDB.collection(mongodbTransactionCollection).deleteMany({ block_number: decoded_block.number})
+        await blockChainDB.collection(mongodbBlockCollection).deleteMany({ number: decoded_block.number})
+        await blockChainDB.collection(mongodbTransactionCollection).deleteMany({ block_number: decoded_block.number})
+        await blockChainDB.collection(mongodbMTransactionCollection).deleteMany({ block_number: decoded_block.number})
         if (decoded_block.trxs.length > 0) {
           for(let i=0; i<decoded_block.trxs.length;i++) {
             let full_trx = decoded_block.trxs[i]
             let trxs_to = full_trx.to.trxs
             let trxs_from = full_trx.from.trxs
             await blockChainDB.collection(mongodbTransactionCollection).insertOne(decoded_block.trxs[i])
-            for (let j=0; j<=trxs_from.length; j++) {
+            for (let j=0; j<trxs_from.length; j++) {
               await blockChainDB.collection(mongodbMTransactionCollection).insertOne({
                 block_number: full_trx.block_number,
                 address: trxs_from[j].trx_from_address,
@@ -708,19 +715,19 @@ async function sync(from, to) {
                 amount: trxs_from[j].trx_from_amount,
               })
             }
-            for (let j=0; j<=trxs_to.length; j++) {
+            for (let j=0; j<trxs_to.length; j++) {
               await blockChainDB.collection(mongodbMTransactionCollection).insertOne({
                 block_number: full_trx.block_number,
                 address: trxs_to[j].trx_to_address,
-                type: 0,
+                type: 1,
                 nonce: full_trx.nonce,
                 amount: trxs_to[j].trx_to_amount,
               })
             }
           }
         }
-        //delete decoded_block.trxs
-        //await blockChainDB.collection(mongodbBlockCollection).insertOne(decoded_block)
+        delete decoded_block.trxs
+        await blockChainDB.collection(mongodbBlockCollection).insertOne(decoded_block)
         logger.log({
           level: 'info',
           message: 'Block ' + decoded_block.number + ' is already in the db'
