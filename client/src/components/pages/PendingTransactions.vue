@@ -85,9 +85,4 @@ export default {
     display: block;
   }
 
-  .transactionsWrapper table span:first-child {
-     font-weight: normal;
-     text-shadow: none;
-  }
-
 </style>
