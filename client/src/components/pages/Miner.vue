@@ -89,31 +89,33 @@ export default {
           var index_from = -1
           var index_to = -1
 
-          trx.from.address = trx.from.address.sort( function(a,b) {
-            return (Number(b.amount) - Number(a.amount))
+          trx.from.trxs = trx.from.trxs.sort( function(a,b) {
+            return (Number(b.trx_from_amount) - Number(a.trx_from_amount))
           })
-          trx.from.address.forEach(function(trx, index) {
-            if (trx.address == miner_address) {
+          trx.from.trxs.forEach(function(trx, index) {
+            if (trx.trx_from_address == miner_address) {
               index_from = index
+              return
             }
           })
 
           if (index_from != -1) {
-            trx.from.address.unshift(trx.from.address[index_from])
-            trx.from.address.splice(index_from + 1, 1)
+            trx.from.trxs.unshift(trx.from.trxs[index_from])
+            trx.from.trxs.splice(index_from + 1, 1)
           }
 
-          trx.to.address = trx.to.address.sort(function (a,b) {
-            return (Number(b.amount) - Number(a.amount))
+          trx.to.trxs = trx.to.trxs.sort(function (a,b) {
+            return (Number(b.trx_to_amount) - Number(a.trx_to_amount))
           })
-          trx.to.address.forEach(function(trx, index) {
-            if (trx.address == miner_address) {
+          trx.to.trxs.forEach(function(trx, index) {
+            if (trx.trx_to_address == miner_address) {
               index_to = index
+              return
             }
           })
           if (index_to != -1) {
-            trx.to.address.unshift(trx.to.address[index_to])
-            trx.to.address.splice(index_to + 1, 1)
+            trx.to.trxs.unshift(trx.to.trxs[index_to])
+            trx.to.trxs.splice(index_to + 1, 1)
           }
 
           trxs_parsed.push(trx)
