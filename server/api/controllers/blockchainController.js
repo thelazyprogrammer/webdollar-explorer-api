@@ -178,7 +178,8 @@ exports.read_an_address_mongo = async function (req, res) {
     let blockChainDB = mongoDB.db(config.mongodb.db);
     let miner_balance = await blockChainDB.collection(config.mongodb.collection).aggregate([
       { $match: {
-           miner: miner.address
+           miner: miner.address,
+           reward: { $gt: 0 }
         }
       },
       { $group: {
@@ -192,7 +193,8 @@ exports.read_an_address_mongo = async function (req, res) {
     let trx_to_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
            address: miner.address,
-           type: 0
+           type: 0,
+           amount: { $gt: 0 }
         }
       },
       { $group: {
@@ -207,6 +209,7 @@ exports.read_an_address_mongo = async function (req, res) {
     let trx_from_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
            address: miner.address,
+           amount: { $gt: 0 },
            type: 1
         }
       },
