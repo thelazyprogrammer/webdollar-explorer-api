@@ -32,7 +32,7 @@ function getEmptyAddress(miner_address) {
 
 exports.latest_blocks_mongo = async function(req, res) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=10")
+  res.header("Cache-Control", "public, max-age=40")
 
   let blocks = []
   try {
@@ -89,7 +89,7 @@ exports.read_a_block = function(req, res) {
   var block = {}
 
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=10")
+  res.header("Cache-Control", "public, max-age=40")
 
   request.get(config.webdollar.pouchdb_sync_url + '/block/' + blockId, function (error, response, body) {
     if (error) {
@@ -144,7 +144,7 @@ exports.read_a_block = function(req, res) {
 }
 
 exports.read_an_address_mongo = async function (req, res) {
-  res.header("Cache-Control", "public, max-age=1")
+  res.header("Cache-Control", "public, max-age=40")
   res.header("Access-Control-Allow-Origin", "*");
 
   var miner_address = req.params.address
@@ -251,7 +251,7 @@ exports.read_an_address_mongo = async function (req, res) {
 }
 
 exports.read_an_address = function (req, res) {
-  res.header("Cache-Control", "public, max-age=1")
+  res.header("Cache-Control", "public, max-age=40")
   res.header("Access-Control-Allow-Origin", "*");
 
   var miner_address = req.params.address
