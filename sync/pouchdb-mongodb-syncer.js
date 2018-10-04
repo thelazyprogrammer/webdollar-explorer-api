@@ -27,7 +27,6 @@ const MongoClient = require('mongodb').MongoClient;
 const logger = winston.createLogger({
   level: 'info',
   transports: [
-    new winston.transports.Console(),
     new winston.transports.File({ filename: __filename + '.log' })
   ]
 });
@@ -451,8 +450,11 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
           CURRENT_OFFSET += OFFSET_TRX_LENGTH
 
           if (trx_from_length < 0) {
-              console.log("trx_from_length should be greater than 0.")
-              continue
+             logger.log({
+               level: 'info',
+               message: 'trx_from_length should be greater than 0.'
+             });
+             continue
           }
           var trxs_from = {
             'trxs': [],
@@ -581,12 +583,17 @@ async function sync(from, to) {
     level: 'info',
     message: 'Syncing...'
   });
-  let mongoDB = await MongoClient.connect(mongodbUrl, { useNewUrlParser: true })
-  logger.log({
-    level: 'info',
-    message: 'MongoDB connection created'
-  });
-
+  let mongodb = undefined
+  try {
+    mongoDB = await MongoClient.connect(mongodbUrl, { useNewUrlParser: true })
+    logger.log({
+      level: 'info',
+      message: 'MongoDB connection created'
+    });
+  } catch (ex) {
+    console.log(ex)
+    throw "Fail to connect"
+  }
   let blockChainDB = mongoDB.db(mongodbBlockchainDB);
 
   // Create indexes for block collection
@@ -636,9 +643,6 @@ async function sync(from, to) {
     { type: 1 }
   )
 
-        await blockChainDB.collection(mongodbBlockCollection).deleteMany({ number: { $gt: parseInt(from) }})
-        await blockChainDB.collection(mongodbTransactionCollection).deleteMany({ block_number: { $gt: parseInt(from) }})
-        await blockChainDB.collection(mongodbMTransactionCollection).deleteMany({ block_number: { $gt: parseInt(from) }})
   try {
     let pouchDB = new PouchClient(pouchdbBlockDB)
     for (var i=from; i<=to; i++) {
@@ -666,7 +670,7 @@ async function sync(from, to) {
       if (goodBlock.length == 0) {
         logger.log({
           level: 'info',
-          message: decoded_block
+          message: "Block " + decoded_block.number + " will be added to the database"
         });
         if (decoded_block.trxs.length > 0) {
           for(let i=0; i<decoded_block.trxs.length;i++) {
