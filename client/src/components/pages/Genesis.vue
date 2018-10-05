@@ -84,6 +84,7 @@ export default {
     },
     async getGenesis() {
       for (let i=0; i<this.former_genesis_addresses.length; i++) {
+        await sleep(300)
         let genesis_address = this.former_genesis_addresses[i]
         let miner_data = await BlocksService.fetchMiner(genesis_address.address)
         let miner = miner_data.data
