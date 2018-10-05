@@ -218,6 +218,11 @@ export default {
       owner: 'WebDollar Team'
     },
     {
+      initial_amount: 35000000,
+      address: 'WEBD$gAIhBLJi6yvx#+PZtxMg5piwIW0p1#4HU3$',
+      owner: 'WebDollar Team'
+    },
+    {
       initial_amount: 30000000,
       address: 'WEBD$gAuP5uvvJo6c#hxTtor9n5GV5m1Ysd0zjT$',
       owner: 'WebDollar Team'
