@@ -65,10 +65,9 @@ exports.latest_blocks = function(req, res) {
       try {
         var raw_blocks = JSON.parse(body).blocks
         raw_blocks.forEach(function(block) {
-          block.reward = block.reward / AMOUNT_DIVIDER
+          block.reward = block.reward
           block.number = block.id
           block.timestamp = parseInt(block.raw_timestamp) + 1524742312
-          block.reward = block.reward / AMOUNT_DIVIDER
           block.miner = blockchainUtils.decodeMinerAddress(block.miner_address)
           blocks.push(block)
         })
@@ -82,6 +81,36 @@ exports.latest_blocks = function(req, res) {
     res.json(blocks)
     return
   });
+}
+
+exports.read_a_block_mongo = async function(req, res) {
+  res.header("Cache-Control", "public, max-age=40")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  var blockNumber = parseInt(req.params.blockId);
+  var block = {}
+  try {
+    let MongoClient = require('mongodb').MongoClient;
+    let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+    let blockChainDB = mongoDB.db(config.mongodb.db);
+
+    let block_db = await blockChainDB.collection(config.mongodb.collection).find({ number: blockNumber }).toArray()
+    if (block_db.length == 1) {
+      block = block_db[0]
+      let trxs = await blockChainDB.collection(config.mongodb.trx_collection).find({ block_number: blockNumber }).toArray()
+      block.trxs = trxs
+    } else {
+      console.log(block_db)
+    }
+    mongoDB.close()
+    res.json(block)
+    return
+  } catch (ex) {
+    console.log(ex)
+    res.json(block)
+    return
+  }
+  res.json(block)
 }
 
 exports.read_a_block = function(req, res) {

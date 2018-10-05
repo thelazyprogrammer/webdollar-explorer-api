@@ -1,12 +1,12 @@
 <template>
   <div >
 
-    <div v-if="block.nonce" class="minerTable">
+    <div v-if="block.number" class="minerTable">
 
       <h2>
-        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id - 1 }}"> &lt;&lt; </router-link>
+        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.number - 1 }}"> &lt;&lt; </router-link>
         Block Details
-        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id + 1 }}"> &gt;&gt;  </router-link>
+        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.number + 1 }}"> &gt;&gt;  </router-link>
       </h2>
 
       <div>
@@ -14,7 +14,7 @@
              Block Number
           </span>
         <span>
-            <router-link v-bind:to="{ name: 'Block', params: { id: block.id }}">{{ block.id }} </router-link>
+            <router-link v-bind:to="{ name: 'Block', params: { id: block.number }}">{{ block.number }} </router-link>
           </span>
       </div>
 
@@ -23,7 +23,7 @@
             Miner Address
           </span>
         <span>
-            <a class="webdAddress" :href="'#/miner/' + block.miner_address">{{ block.miner_address }}</a>
+            <a class="webdAddress" :href="'#/miner/' + block.miner">{{ block.miner }}</a>
           </span>
       </div>
 
@@ -58,8 +58,8 @@
           <span>
             Transactions
           </span>
-        <span v-if="block.trxs">
-            {{ block.transactions_number }}
+        <span v-if="block.trxs_number">
+            {{ block.trxs_number }}
           </span>
         <span v-else>
             0
@@ -70,9 +70,9 @@
     </div>
 
     <div v-else class="minerTable">
-      <h2> <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id - 1 }}"> &lt;&lt; </router-link>
-        <span class="toColor"> Block {{ block.block_id }} not found </span>
-        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.block_id + 1 }}"> &gt;&gt;  </router-link>
+      <h2> <router-link v-bind:to="{ name: 'Block', params: { block_id: block.number - 1 }}"> &lt;&lt; </router-link>
+        <span class="toColor"> Block {{ block }} not found </span>
+        <router-link v-bind:to="{ name: 'Block', params: { block_id: block.number + 1 }}"> &gt;&gt;  </router-link>
       </h2>
     </div>
 
@@ -95,7 +95,7 @@ export default {
   methods: {
 
     formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number * 10000, decimals);
+      return Utils.formatMoneyNumber(number, decimals);
     },
 
     getDifficulty(hash) {
