@@ -74,14 +74,14 @@ export default {
         await sleep(300)
         let response = await BlocksService.fetchBlock(i)
         let block_info = response.data
-        if (block_info && block_info.miner_address) {
-          let miner_data = await BlocksService.fetchMiner(block_info.miner_address)
+        if (block_info && block_info.miner) {
+          let miner_data = await BlocksService.fetchMiner(block_info.miner)
           let miner = miner_data.data
           if (miner && miner.address && miner.blocks) {
             this.genesis_addresses.push({
-              id: block_info.id,
+              id: block_info.number,
               reward: block_info.reward,
-              miner_address: block_info.miner_address,
+              miner_address: block_info.miner,
               current_reward: miner.balance
             })
           }
