@@ -46,7 +46,7 @@ export default {
      {
        name: 'InfinityPool',
        address: 'WEBD$gBMQp$yXWiZjHUvkrR7u7uqM7g8wUn6TTj$',
-       'status': 'up',
+       'status': 'down',
        fee: 1,
        min_amount: 20
      },
