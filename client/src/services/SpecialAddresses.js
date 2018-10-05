@@ -190,5 +190,67 @@ export default {
             block_id: 30311
           }
     ]
-  }
+  },
+  genesis_addresses: [
+    {
+      initial_amount: 1867485689.1922,
+      address: 'WEBD$gDZwjjD7ZE5+AE+44ITr8yo5E2aXYT3mEH$',
+      owner: 'WebDollar Team'
+    },
+    {
+      initial_amount: 580875474.0000,
+      address: 'WEBD$gD5@1VU3ZiJ1siQxib#wAb4xeQTUS2zscn$',
+      owner: 'WebDollar Team'
+    },
+    {
+      initial_amount: 450484398.9600,
+      address: 'WEBD$gCP41xykgy6K$LyGHCVNDZ44@PTp1kGufP$',
+      owner: 'WebDollar Team'
+    },
+    {
+      initial_amount: 622074519,
+      address: 'WEBD$gDx8CjURuVS+LSI91ufs@LH2QpIdSzaAxT$',
+      owner: 'WebDollar Team'
+    },
+    {
+      initial_amount: 250000000,
+      address: 'WEBD$gByeqrPHBGvZfwssFbLtFc64Tt6WQDknXP$',
+      owner: 'WebDollar Team'
+    },
+    {
+      initial_amount: 30000000,
+      address: 'WEBD$gAuP5uvvJo6c#hxTtor9n5GV5m1Ysd0zjT$',
+      owner: 'WebDollar Team'
+    },
+    {
+      initial_amount: 190000000,
+      address: 'WEBD$gAHF1r0FJjDxWvEAZe3MV8izwWKEXhNt03$',
+      owner: 'WebDollar ExTeam'
+    },
+    {
+      initial_amount: 65000000,
+      address: 'WEBD$gCSiJ0yUAV#TPnoFDYJu+opGmKCHHXDw3z$',
+      owner: 'WebDollar ExTeam'
+    },
+    {
+      initial_amount: 35000000,
+      address: 'WEBD$gAvnyWnGSVcrVu4ERMEK8PHm8WCZiwa2ET$',
+      owner: 'WebDollar ExTeam'
+    },
+    {
+      initial_amount: 10000000,
+      address: 'WEBD$gBcJMPpviZNU4PT8Y5p+ijtM@ohPc@5CGX$',
+      owner: 'WebDollar ExTeam'
+    },
+    {
+      initial_amount: 5000000,
+      address: 'WEBD$gDvYAPvIDAe+gnqByY$A2kMF21yiQiE#0j$',
+      owner: 'WebDollar ExTeam'
+    },
+    {
+      initial_amount: 5000000,
+      address: 'WEBD$gCmaUuvI8IK5Ndj2PavXre1aNyKhxH3nQD$',
+      owner: 'WebDollar ExTeam'
+    },
+  ]
 }

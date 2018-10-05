@@ -14,6 +14,10 @@
         <div v-on:click="this.collapseMenuBack">Genesis</div>
       </router-link>
 
+      <router-link to="/old-genesis" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">OldGenesis</div>
+      </router-link>
+
       <router-link to="/fame" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
         <div v-on:click="this.collapseMenuBack">Hall of Fame</div>
       </router-link>

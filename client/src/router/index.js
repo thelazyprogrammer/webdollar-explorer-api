@@ -7,6 +7,7 @@ import Search from '@/components/utils/Search'
 import Fame from '@/components/pages/Fame'
 import Pools from '@/components/pages/Pools'
 import Genesis from '@/components/pages/Genesis'
+import OldGenesis from '@/components/pages/OldGenesis'
 import Stars from '@/components/pages/Stars'
 import pendingTransactions from '@/components/pages/PendingTransactions'
 
@@ -53,6 +54,11 @@ export default new Router({
       path: '/genesis',
       name: 'Genesis',
       component: Genesis
+    },
+    {
+      path: '/old-genesis',
+      name: 'OldGenesis',
+      component: OldGenesis
     },
     {
       path: '/stars/:address',
