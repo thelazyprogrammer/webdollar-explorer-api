@@ -1,7 +1,7 @@
 <template>
   <div >
 
-    <div v-if="block.number" class="minerTable">
+    <div v-if="block.hash" class="minerTable">
 
       <h2>
         <router-link v-bind:to="{ name: 'Block', params: { block_id: block.number - 1 }}"> &lt;&lt; </router-link>
@@ -31,8 +31,11 @@
         <span>
           Block Reward
         </span>
-        <span>
-            {{ formatMoneyNumber(block.reward,0) }}
+        <span v-if="block.fee">
+            {{formatMoneyNumber(block.reward,4)}} ({{ formatMoneyNumber(block.base_reward,0) }} + {{ formatMoneyNumber(block.fee, 4)}} fee)
+        </span>
+        <span v-else>
+            {{ formatMoneyNumber(block.base_reward,4) }}
         </span>
       </div>
 
@@ -50,21 +53,17 @@
             Timestamp
           </span>
         <span>
-            {{ block.timestamp }}
+            {{ formatDate(block.timestamp) }}
           </span>
       </div>
 
-      <div>
-          <span>
-            Transactions
-          </span>
-        <span v-if="block.trxs_number">
-            {{ block.trxs_number }}
-          </span>
-        <span v-else>
-            0
-          </span>
-
+      <div v-if="block.from_amount">
+        <span>
+          Transactions amount
+        </span>
+        <span>
+          {{ formatMoneyNumber(block.from_amount,4) }} ({{block.trxs_number}} trx)
+        </span>
       </div>
 
     </div>
@@ -97,7 +96,10 @@ export default {
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number, decimals);
     },
-
+    formatDate(timestamp){
+      let blockDate = new Date(timestamp * 1000)
+      return blockDate.toGMTString()
+    },
     getDifficulty(hash) {
       for (var i=0; i < hash.length; i++) {
         if (hash[i] !== '0') {

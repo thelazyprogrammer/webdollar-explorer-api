@@ -34,9 +34,9 @@
           </span>
       </div>
 
-      <div>
+      <div v-if="miner.miner_balance">
           <span>
-            Total Mined amount
+            Mined amount
           </span>
         <span v-if="miner.blocks && miner.blocks.length">
           {{ this.formatMoneyNumber(miner.miner_balance*10000,4) }}
@@ -44,18 +44,18 @@
         <span v-else> 0 </span>
       </div>
 
-      <div>
+      <div v-if="miner.trx_to_balance">
           <span>
-            Transactions sent amount
+            Sent amount
           </span>
         <span>
             {{ this.formatMoneyNumber(miner.trx_to_balance*10000,4) }}
           </span>
       </div>
 
-      <div>
+      <div v-if="miner.trx_from_balance">
           <span>
-            Transactions received amount
+            Received amount
           </span>
         <span>
             {{ this.formatMoneyNumber(miner.trx_from_balance*10000,4) }}

@@ -9,7 +9,7 @@
       <td>Block</td>
       <td>From</td>
       <td>To</td>
-      <td>Total Amount</td>
+      <td>Amount</td>
       <td>Fee</td>
       <td>Age</td>
     </tr>
