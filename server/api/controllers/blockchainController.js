@@ -9,7 +9,7 @@ const AMOUNT_DIVIDER = 10000
 const REWARD = AMOUNT_DIVIDER * 6000
 const ADDRESS_CACHE_DB = "address"
 const BALANCE_RATIO_DECIMALS = 5
-const MAX_POOLED_TRXS = 25
+const MAX_POOLED_TRXS = 15
 const MAX_BLOCKS = 25
 const MAX_DEPTH = 1
 
@@ -271,7 +271,22 @@ exports.read_an_address_mongo = async function (req, res) {
     miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
 
     miner.blocks = await blockChainDB.collection(config.mongodb.collection).find({miner: miner.address}).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
-    miner.transactions = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).sort( { block_number: -1 }).limit(MAX_POOLED_TRXS).toArray()
+    let max_transactions = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).sort( { block_number: -1 }).limit(100).toArray()
+    miner.transactions = []
+    let pooled_transactions = 0
+    for (let i=0; i<max_transactions.length; i++) {
+      let trx = max_transactions[i]
+      if (trx.addresses.length > 10) {
+        pooled_transactions += 1
+      }
+      if (pooled_transactions <= MAX_POOLED_TRXS) {
+        miner.transactions.push(trx)
+      } else {
+        break
+      }
+    }
+    miner.blocks_number = await blockChainDB.collection(config.mongodb.collection).find({miner: miner.address}).count()
+    miner.transactions_number = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).count()
   } catch (ex) {
     console.log(ex)
   }
