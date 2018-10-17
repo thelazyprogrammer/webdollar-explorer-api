@@ -588,7 +588,7 @@ class MongoSavingManager{
         level: 'info',
         message: 'MongoDB connection created'
       });
-
+      try {
       let blockChainDB = mongoDB.db(mongodbBlockchainDB);
 
       // Create indexes for block collection
@@ -696,6 +696,10 @@ class MongoSavingManager{
           message: 'Block ' + decoded_block.number + ' is already in the db'
         });
       }
+    } catch (ex) {
+    } finally {
+      mongoDB.close()
+    }
     }
 }
 
