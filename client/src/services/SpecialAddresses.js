@@ -37,6 +37,13 @@ export default {
        min_amount: 20
      },
      {
+       name: 'Carolina',
+       address: 'WEBD$gD31okwh74pgbLBo4p8WfGpVPyLzcnX+6b$',
+       'status': 'up',
+       fee: 1,
+       min_amount: 20
+     },
+     {
        name: 'BACMpool',
        address: 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
        'status': 'up',
