@@ -7,11 +7,15 @@ let MAX_SYNC_OFFSET = 600 * 1000
 
 exports.get_status_mongo = async function(req, res) {
   res.header("Access-Control-Allow-Origin", "*");
+  var MongoClient = require('mongodb').MongoClient;
   try {
-    MongoClient = require('mongodb').MongoClient;
-    let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+    var mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  } catch (ex) {
+    res.json()
+    return
+  }
+  try {
     let blockChainDB = mongoDB.db(config.mongodb.db);
-
     let block = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 } ).limit(1).toArray()
     let isSynchronized = false
     let currentTimestamp = new Date().getTime()
@@ -28,6 +32,8 @@ exports.get_status_mongo = async function(req, res) {
     res.json(statusResult)
   } catch (ex) {
     res.json()
+  } finally {
+    mongoDB.close()
   }
 }
 

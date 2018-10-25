@@ -35,9 +35,15 @@ exports.latest_blocks_mongo = async function(req, res) {
   res.header("Cache-Control", "public, max-age=40")
 
   let blocks = []
+  let MongoClient = require('mongodb').MongoClient;
   try {
-    let MongoClient = require('mongodb').MongoClient;
-    let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+    var mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  } catch (ex) {
+    console.log(ex)
+    res.json()
+    return
+  }
+  try {
     let blockChainDB = mongoDB.db(config.mongodb.db);
 
     blocks = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 }).limit(MAX_LATEST_BLOCKS).toArray()
@@ -47,6 +53,8 @@ exports.latest_blocks_mongo = async function(req, res) {
     console.log(ex)
     res.json()
     return
+  } finally {
+    mongoDB.close()
   }
 }
 
@@ -287,6 +295,7 @@ exports.read_an_address_mongo = async function (req, res) {
     }
     miner.blocks_number = await blockChainDB.collection(config.mongodb.collection).find({miner: miner.address}).count()
     miner.transactions_number = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).count()
+    mongoDB.close()
   } catch (ex) {
     console.log(ex)
   }
@@ -557,8 +566,6 @@ exports.get_pending_trx = async function (req, res) {
         })
 
         transaction_parsed.fee = transaction_parsed.from.amount - to_amount
-        transaction_parsed.fee = transaction_parsed.fee / AMOUNT_DIVIDER
-        transaction_parsed.from.amount = transaction_parsed.from.amount / AMOUNT_DIVIDER
 
         transactions.push(transaction_parsed)
     } catch (ex) {
