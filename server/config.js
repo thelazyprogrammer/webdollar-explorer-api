@@ -17,7 +17,7 @@ config.couchdb.syncer.db_name = 'syncer'
 config.couchdb.syncer.view_name = 'block'
 config.couchdb.syncer.view_doc_name = 'ordered_blocks'
 
-config.enable_mongodb = false
+config.enable_mongodb = true
 config.mongodb.url = "mongodb://localhost:27017"
 config.mongodb.db = "blockchainDB3"
 config.mongodb.collection = "blocks"
