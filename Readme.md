@@ -1,10 +1,18 @@
-# Deploy a WebDollar Blockchain Explorer API
+# WebDollar Blockchain Explorer
+
+This project allows to deploy a complete, scalable and fast service to access WebDollar.io blockchain.
+
+## WebDollar Blockchain Explorer Architecture v1
+
+![webdollar network](https://user-images.githubusercontent.com/1412442/47714291-29fb7680-dc45-11e8-9001-0ebfe0b74487.png)
+
+## Deploy WebDollar Blockchain Explorer
 
 ### 1. Install Ubuntu 16.04 or 18.04
 
 ### 2. sudo apt update && sudo apt upgrade
 
-### 3. Install nodejs (long term support version):
+### 3. Install nodejs (long term support version) and mongodb:
 ```bash
 sudo apt update && sudo apt upgrade # reboot if needed
 
@@ -20,6 +28,15 @@ source ~/.profile
 nvm install v8.12.0
 # hack to use the latest lts
 nvm install v8.12.0
+
+# install mongodb
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+release=$(lsb_release -a 2>/dev/null | grep Codename | awk  '{print $2}')
+
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu ${release}/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+
+sudo apt update
+sudo apt-get install -y mongodb-org
 ```
 
 ### 4 Clone Node-WebDollar
