@@ -362,7 +362,10 @@ function decodeMinerAddress(miner_address) {
 }
 
 function decodeRawBlock(block_id, block_raw, divide_amounts) {
+      console.log()
+      console.log('block: ' + block_id)
       var block_hex = Buffer.from(atob(Buffer.from(block_raw, 'base64')), "hex")
+      //console.log(atob(Buffer.from(block_raw, 'base64')))
       const AMOUNT_DIVIDER = 10000
       var amountDivider = 1
       if (divide_amounts) {
@@ -403,13 +406,17 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
       var block_timestamp = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_TIMESTAMP)) + 1524742312
       CURRENT_OFFSET += OFFSET_BLOCK_TIMESTAMP
       var human_timestamp = block_timestamp
-
+      //console.log(human_timestamp)
+      console.log('hash_prev: ' + block_hashPrev)
       // Secondary data
       var block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
+      CURRENT_OFFSET += OFFSET_BLOCK_HASH
+      console.log('hash_data: ' + block_hash_data)
       var miner_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
       CURRENT_OFFSET += OFFSET_ADDRESS
       var miner_address_decoded = decodeMinerAddress(miner_address)
+      console.log('miner: ' + miner_address_decoded)
       addresses.push(miner_address_decoded)
 
       // TRX data
