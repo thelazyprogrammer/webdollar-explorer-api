@@ -606,28 +606,52 @@ function decodeRawBlockPoS(block_id, block_raw, divide_amounts) {
       var OFFSET_BLOCK_TIMESTAMP = OFFSET_4
       var OFFSET_ADDRESS = OFFSET_20
       var OFFSET_TRX_NUMBER = OFFSET_4
+      //console.log(atob(Buffer.from(block_raw, 'base64')))
 
       var CURRENT_OFFSET = 0
       var block_hash = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
-      var block_nonce = parseInt(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_NONCE).toString('hex'), 16)
-      CURRENT_OFFSET += OFFSET_BLOCK_NONCE
+
+      var block_pos_miner_pub_key = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      CURRENT_OFFSET += OFFSET_BLOCK_HASH
+      var miner_address_decoded = generateAddressFromPublicKey(block_pos_miner_pub_key)
+      addresses.push(miner_address_decoded)
+
+      var block_pos_miner_sig = substr(block_hex, CURRENT_OFFSET, OFFSET_64).toString('hex')
+      //console.log('pos_miner_address: ' + miner_address_decoded)
+      CURRENT_OFFSET += OFFSET_64
+
+      var block_miner_pos_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_1))
+      CURRENT_OFFSET += OFFSET_1
+      //console.log('block_miner_pos_length: ' + block_miner_pos_length)
+
+      if (block_miner_pos_length == 20) {
+          var miner_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
+          var miner_address_decoded = decodeMinerAddress(miner_address)
+          //console.log('pos_receiver_address: ' + miner_address_decoded)
+      }
+      CURRENT_OFFSET += block_miner_pos_length
+
       var block_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_VERSION))
       CURRENT_OFFSET += OFFSET_BLOCK_VERSION
+      //console.log('block_version: ' + block_version)
       var block_hashPrev = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
       var block_timestamp = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_TIMESTAMP)) + 1524742312
       CURRENT_OFFSET += OFFSET_BLOCK_TIMESTAMP
       var human_timestamp = block_timestamp
+      //console.log('timestamp: ' + human_timestamp)
 
       // Secondary data
       var block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
+      if (block_id > HARD_FORKS_POS) {
+          CURRENT_OFFSET += OFFSET_BLOCK_HASH
+      }
       var miner_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
       CURRENT_OFFSET += OFFSET_ADDRESS
       var miner_address_decoded = decodeMinerAddress(miner_address)
-      addresses.push(miner_address_decoded)
-
+      //console.log(miner_address_decoded)
       // TRX data
       var trxs_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
@@ -776,7 +800,7 @@ function decodeRawBlockPoS(block_id, block_raw, divide_amounts) {
       return {
         'number' : block_id,
         'hash' : block_hash,
-        'nonce' : block_nonce,
+        'nonce' : 0,
         'version' : block_version,
         'previous_hash' : block_hashPrev,
         'timestamp' : human_timestamp,
@@ -1090,8 +1114,7 @@ async function sync(from, to) {
           decoded_block = decodeRawBlock(i, response._attachments.key.data)
       } else {
           if (isPoSBlock(i)) {
-              console.log('block POS: ' + i)
-              continue
+              decoded_block = decodeRawBlockPoS(i, response._attachments.key.data)
           } else {
               decoded_block = decodeRawBlockPoW(i, response._attachments.key.data)
           }
