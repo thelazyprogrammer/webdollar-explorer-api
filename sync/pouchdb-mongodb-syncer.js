@@ -579,6 +579,7 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
 
 function decodeRawBlockPoS(block_id, block_raw, divide_amounts) {
       var block_hex = Buffer.from(atob(Buffer.from(block_raw, 'base64')), "hex")
+
       const AMOUNT_DIVIDER = 10000
       var amountDivider = 1
       if (divide_amounts) {
@@ -606,41 +607,35 @@ function decodeRawBlockPoS(block_id, block_raw, divide_amounts) {
       var OFFSET_BLOCK_TIMESTAMP = OFFSET_4
       var OFFSET_ADDRESS = OFFSET_20
       var OFFSET_TRX_NUMBER = OFFSET_4
-      //console.log(atob(Buffer.from(block_raw, 'base64')))
 
       var CURRENT_OFFSET = 0
       var block_hash = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
-
       var block_pos_miner_pub_key = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
-      var miner_address_decoded = generateAddressFromPublicKey(block_pos_miner_pub_key)
-      addresses.push(miner_address_decoded)
+      var resolver_miner_address_decoded = generateAddressFromPublicKey(block_pos_miner_pub_key)
+      addresses.push(resolver_miner_address_decoded)
 
       var block_pos_miner_sig = substr(block_hex, CURRENT_OFFSET, OFFSET_64).toString('hex')
-      //console.log('pos_miner_address: ' + miner_address_decoded)
       CURRENT_OFFSET += OFFSET_64
 
       var block_miner_pos_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_1))
       CURRENT_OFFSET += OFFSET_1
-      //console.log('block_miner_pos_length: ' + block_miner_pos_length)
 
+      resolver_2_miner_address_decoded = ''
       if (block_miner_pos_length == 20) {
           var miner_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
-          var miner_address_decoded = decodeMinerAddress(miner_address)
-          //console.log('pos_receiver_address: ' + miner_address_decoded)
+          var resolver_2_miner_address_decoded = decodeMinerAddress(miner_address)
       }
       CURRENT_OFFSET += block_miner_pos_length
 
       var block_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_VERSION))
       CURRENT_OFFSET += OFFSET_BLOCK_VERSION
-      //console.log('block_version: ' + block_version)
       var block_hashPrev = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
       var block_timestamp = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_TIMESTAMP)) + 1524742312
       CURRENT_OFFSET += OFFSET_BLOCK_TIMESTAMP
       var human_timestamp = block_timestamp
-      //console.log('timestamp: ' + human_timestamp)
 
       // Secondary data
       var block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
@@ -648,10 +643,12 @@ function decodeRawBlockPoS(block_id, block_raw, divide_amounts) {
       if (block_id > HARD_FORKS_POS) {
           CURRENT_OFFSET += OFFSET_BLOCK_HASH
       }
+
       var miner_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
       CURRENT_OFFSET += OFFSET_ADDRESS
       var miner_address_decoded = decodeMinerAddress(miner_address)
-      //console.log(miner_address_decoded)
+      addresses.push(miner_address_decoded)
+
       // TRX data
       var trxs_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
@@ -672,7 +669,7 @@ function decodeRawBlockPoS(block_id, block_raw, divide_amounts) {
           var OFFSET_TRX_PUB_KEY = OFFSET_32
           var OFFSET_TRX_SIGN = OFFSET_64
           var OFFSET_NUMBER = OFFSET_7
-          
+
           var trx_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_VERSION))
           CURRENT_OFFSET += OFFSET_TRX_VERSION
           // HARD FORK change for TRX NONCE
@@ -690,10 +687,7 @@ function decodeRawBlockPoS(block_id, block_raw, divide_amounts) {
           CURRENT_OFFSET += OFFSET_TRX_LENGTH
 
           if (trx_from_length < 0) {
-             logger.log({
-               level: 'info',
-               message: 'trx_from_length should be greater than 0.'
-             });
+             console.log('trx_from_length should be greater than 0.')
              continue
           }
           var trxs_from = {
@@ -812,7 +806,10 @@ function decodeRawBlockPoS(block_id, block_raw, divide_amounts) {
         'addresses': addresses,
         'base_reward': base_reward,
         'reward': base_reward + total_fee,
-        'trxs': trxs_container
+        'trxs': trxs_container,
+        'algorithm': 'pos',
+        'resolver': resolver_miner_address_decoded,
+        'resolver2': resolver_2_miner_address_decoded,
       }
 }
 
