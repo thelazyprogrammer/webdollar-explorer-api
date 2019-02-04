@@ -21,6 +21,9 @@ function getEmptyAddress(miner_address) {
     'total_supply_ratio': 0,
     'last_block': 0,
     'miner_balance': 0,
+    'miner_balance_pow': 0,
+    'miner_balance_pos': 0,
+    'miner_balance_res': 0,
     'miner_fee_balance': 0,
     'miner_fee_to_balance': 0,
     'trx_to_balance': 0,
@@ -227,6 +230,39 @@ exports.read_an_address_mongo = async function (req, res) {
         }
       }
     ]).toArray()
+    let miner_balance_pos = await blockChainDB.collection(config.mongodb.collection).aggregate([
+      { $match: {
+           miner: miner.address,
+           algorithm: 'pos',
+           reward: { $gt: 0 }
+        }
+      },
+      { $group: {
+          _id: 1,
+          balance: {
+             $sum: "$reward"
+          }
+        }
+      }
+    ]).toArray()
+
+    let miner_balance_res = await blockChainDB.collection(config.mongodb.collection).aggregate([
+      { $match: {
+           resolver: miner.address,
+           miner: { $ne: miner.address },
+           algorithm: 'pos',
+           reward: { $gt: 0 }
+        }
+      },
+      { $group: {
+          _id: 1,
+          balance: {
+             $sum: "$reward"
+          }
+        }
+      }
+    ]).toArray()
+
     let trx_to_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
            address: miner.address,
@@ -259,8 +295,16 @@ exports.read_an_address_mongo = async function (req, res) {
       }
     ]).toArray()
 
+    if (miner_balance_res.length == 1) {
+      miner.miner_balance_res = miner_balance_res[0].balance / 10000
+    }
     if (miner_balance.length == 1) {
       miner.miner_balance = miner_balance[0].balance
+      if (miner_balance_pos.length == 1) {
+          miner.miner_balance_pos = miner_balance_pos[0].balance
+      }
+      miner.miner_balance_pow = (miner.miner_balance - miner.miner_balance_pos) / 10000
+      miner.miner_balance_pos = miner.miner_balance_pos / 10000
     }
     if (trx_to_balance.length == 1) {
       miner.trx_to_balance = trx_to_balance[0].balance

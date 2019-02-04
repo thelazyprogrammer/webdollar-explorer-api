@@ -44,6 +44,35 @@
         <span v-else> 0 </span>
       </div>
 
+      <div v-if="miner.miner_balance_pow && miner.miner_balance != miner.miner_balance_pow">
+          <span>
+            Mined amount (PoW)
+          </span>
+        <span v-if="miner.blocks && miner.blocks.length">
+          {{ this.formatMoneyNumber(miner.miner_balance_pow*10000,4) }}
+        </span>
+        <span v-else> 0 </span>
+      </div>
+
+      <div v-if="miner.miner_balance_pos">
+          <span>
+            Mined amount (PoS)
+          </span>
+        <span v-if="miner.blocks && miner.blocks.length">
+          {{ this.formatMoneyNumber(miner.miner_balance_pos*10000,4) }}
+        </span>
+        <span v-else> 0 </span>
+      </div>
+
+      <div v-if="miner.miner_balance_res">
+          <span>
+            Resolved amount (PoS)
+          </span>
+        <span>
+          {{ this.formatMoneyNumber(miner.miner_balance_res*10000,4) }}
+        </span>
+      </div>
+
       <div v-if="miner.trx_to_balance">
           <span>
             Sent amount
