@@ -46,7 +46,7 @@ export default {
             trx.to.addresses = trx.to.addresses.sort((a,b) => Number(b.amount) - Number(a.amount))
             trxs_parsed.push(trx)
           })
-          response.data.trxs = trxs_parsed
+          response.data.trxs = trxs_parsed.sort((a, b) => Number(b.from.amount) - Number(a.from.amount))
         }
         this.trxs= response.data.trxs
       } catch (exception) {

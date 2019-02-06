@@ -113,8 +113,8 @@ export default {
 
     },
     formatDate(timestamp) {
-      timestamp = new Date(timestamp * 1000)
       if (timestamp) {
+        timestamp = new Date(timestamp * 1000)
         let fromNow = moment(timestamp).fromNow()
         return fromNow + " (" + timestamp.toGMTString() +  ")"
       } else {
