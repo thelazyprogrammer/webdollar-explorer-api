@@ -44,6 +44,17 @@
         <span v-else> 0 </span>
       </div>
 
+      <div v-if="miner.balance">
+          <span class="tooltip">
+            PoS estimate (d/m/y)
+            <span class="tooltiptext">The estimated amount of WEBD that you earn if you stake the current balance daily/monthly/yearly</span>
+          </span>
+        <span v-if="miner.balance" class="tooltip">
+          {{ this.getPossiblePoSReward(miner.balance*10000,4) }}
+        </span>
+        <span v-else> 0 </span>
+      </div>
+
       <div v-if="miner.miner_balance_pow && miner.miner_balance != miner.miner_balance_pow">
           <span>
             Mined amount (PoW)
@@ -140,6 +151,19 @@ export default {
       setTimeout(function() {
         this.copyTextClass = "showNoCopyMessage"
       }.bind(this), 2000)
+    },
+    getPossiblePoSReward(balance) {
+        let totalDailyReward = 6000 * 60 * 60 * 24 / 40
+        let daysPassed = (new Date() - new Date(1524743407 * 1000)) / (1000 * 60 * 60 * 24)
+        let currSupply = (totalDailyReward * Math.round(daysPassed) + 4156801128)
+        let posReward = 0.6666
+        let share = posReward * totalDailyReward / currSupply
+        let dailyReward = share * balance / 10000
+        let monthlyReward = dailyReward * 30
+        let yearlyReward = monthlyReward * 12
+        return this.formatMoneyNumber(dailyReward * 10000) +
+            '/' + this.formatMoneyNumber(monthlyReward * 10000) +
+            '/' + this.formatMoneyNumber(yearlyReward * 10000)
     }
   }
 
@@ -177,4 +201,49 @@ export default {
 
   .showCopyMessage {
   }
+  .tooltip {
+  position: relative;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 220px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -120px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.tooltiptext {
+  color: #fec02c!important;
+  text-decoration: none;
+  font-size: small!important;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+.tooltip-right {
+    top: -5px;
+    left: 125%;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
 </style>
