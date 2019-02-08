@@ -80,7 +80,7 @@ export default {
           if (miner && miner.address && miner.blocks) {
             this.genesis_addresses.push({
               id: block_info.number,
-              reward: block_info.reward,
+              reward: block_info.reward / 10000,
               miner_address: block_info.miner,
               current_reward: miner.balance
             })
