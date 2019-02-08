@@ -690,6 +690,18 @@ async function sync(from, to) {
           { resolver2: 1 },
           { unique: false }
       )
+      await blockChainDB.collection(mongodbBlockCollection).createIndex(
+          { algorithm: 1},
+          { unique: false }
+      )
+      await blockChainDB.collection(mongodbBlockCollection).createIndex(
+          { resolver: -1 },
+          { unique: false }
+      )
+      await blockChainDB.collection(mongodbBlockCollection).createIndex(
+          { resolver2: -1 },
+          { unique: false }
+      )
 
   // Create indexes for transaction collection
   await blockChainDB.createCollection(mongodbTransactionCollection)
