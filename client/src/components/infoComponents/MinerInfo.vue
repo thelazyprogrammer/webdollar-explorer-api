@@ -46,11 +46,11 @@
 
       <div v-if="miner.balance">
           <span class="tooltip">
-            PoS estimate (d/m/y)
-            <span class="tooltiptext">The estimated amount of WEBD that you earn if you stake the current balance daily/monthly/yearly</span>
+            Estimated revenue (PoS)
+            <span class="tooltiptext">The estimated amount of WEBD that you earn if you stake the current balance for a month</span>
           </span>
         <span v-if="miner.balance" class="tooltip">
-          {{ this.getPossiblePoSReward(miner.balance*10000,4) }}
+          {{ this.getPossiblePoSReward(miner.balance*10000,4) }} per month
         </span>
         <span v-else> 0 </span>
       </div>
@@ -159,11 +159,10 @@ export default {
         let posReward = 0.6666
         let share = posReward * totalDailyReward / currSupply
         let dailyReward = share * balance / 10000
-        let monthlyReward = dailyReward * 30
+        let monthlyReward = dailyReward * 30 * 97 / 100
+        // PoS reward decreases 3% per month and 9% per year
         let yearlyReward = monthlyReward * 12
-        return this.formatMoneyNumber(dailyReward * 10000) +
-            '/' + this.formatMoneyNumber(monthlyReward * 10000) +
-            '/' + this.formatMoneyNumber(yearlyReward * 10000)
+        return this.formatMoneyNumber(monthlyReward * 10000)
     }
   }
 
