@@ -77,6 +77,13 @@ export default {
        'status': 'up',
        fee: 'x',
        min_amount: 'x'
+     },
+     {
+       name: 'DEV_POS_POOL_0',
+       address: 'WEBD$gDxAThfTjR0ENk#5EA7j8yWq1uhQLat+FP$',
+       'status': 'down',
+       fee: 'x',
+       min_amount: 'x'
      }
   ],
 
