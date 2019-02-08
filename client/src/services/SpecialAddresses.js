@@ -4,7 +4,7 @@ export default {
      {
        name: 'WEBD_POOL_1',
        address: 'WEBD$gDU+tP3@42@L9$Is463vDJi4IKrabPNNn$$',
-       'status': 'up',
+       'status': 'down',
        fee: 2,
        min_amount: 20
      },
@@ -25,7 +25,7 @@ export default {
      {
        name: 'WMP',
        address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
-       'status': 'up',
+       'status': 'down',
        fee: 2,
        min_amount: 20
      },
@@ -39,7 +39,7 @@ export default {
      {
        name: 'Carolina',
        address: 'WEBD$gD31okwh74pgbLBo4p8WfGpVPyLzcnX+6b$',
-       'status': 'up',
+       'status': 'down',
        fee: 1,
        min_amount: 20
      },
@@ -70,12 +70,25 @@ export default {
        'status': 'up',
        fee: 2,
        min_amount: 20
+     },
+     {
+       name: 'DEV_POS_POOL_1',
+       address: 'WEBD$gAosJ5+2tFnS$q5EsZZGVHKEU#cHnPJbZz$',
+       'status': 'up',
+       fee: 'x',
+       min_amount: 'x'
      }
   ],
 
   fame: {
         total_donations: 0,
         donors: [
+          {
+            address: 'WEBD$gAt5ZbAJJKKvu7XizYZ1yeE5DyqvV7FmEL$',
+            amount: 1000000,
+            label: 'Webdollar Team',
+            block_id: 577275
+          },
           {
             address: 'WEBD$gCjRn47UztKwvVvdkNUq#U9cuQYLfBLjHv$',
             amount: 2000000,
