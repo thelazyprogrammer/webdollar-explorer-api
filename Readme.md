@@ -37,19 +37,22 @@ echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu ${release}/mo
 
 sudo apt update
 sudo apt-get install -y mongodb-org
+sudo service mongod start
 ```
 
-### 4 Clone Node-WebDollar
+### 4. Clone Node-WebDollar
 ```bash
-git clone https://github.com/thelazyprogrammer/Node-WebDollar.git
-git checkout latest_master
+git clone https://github.com/WebDollar/Node-WebDollar.git
+git remote add lazy https://github.com/thelazyprogrammer/Node-WebDollar.git
+git fetch lazy
+git cherry-pick e041e21d7bead9db005efb0412168f559b186c21
 npm install
 ```
 
 ### 5. Start WebDollar Syncer
 ```bash
 screen # press space
-npm run start
+SERVER_PORT=3333 npm run start
 # press ctrl + a and then d, to detach from screen
 # screen -ls -> view screen_host
 # screen -r screen_host <- connect to the screen
@@ -60,7 +63,7 @@ npm run start
 git clone https://github.com/thelazyprogrammer/webdollar-explorer-api.git
 ```
 
-### 7. Start REST API on port 3333
+### 7. Start REST API on port 3000
 ```bash
 cd webdollar-explorer-api/server
 npm install
