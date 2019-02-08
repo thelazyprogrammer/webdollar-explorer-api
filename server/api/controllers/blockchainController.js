@@ -569,7 +569,7 @@ exports.get_pending_trx = async function (req, res) {
   res.header("Cache-Control", "public, max-age=1")
   res.header("Access-Control-Allow-Origin", "*");
 
-  request.get(config.webdollar.pouchdb_sync_url + '/pending_trx', function (error, response, body) {
+  request.get(config.webdollar.pouchdb_sync_url + '/transactions/pending', function (error, response, body) {
     if (error) {
       console.error(error)
       res.json({
@@ -581,7 +581,7 @@ exports.get_pending_trx = async function (req, res) {
     let transactions = []
     let pending_transactions = []
     try {
-      pending_transactions = JSON.parse(body).trxs
+      pending_transactions = JSON.parse(body)
     } catch (ex) {}
     pending_transactions.forEach(function(transaction) {
       try {
