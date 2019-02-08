@@ -50,16 +50,16 @@ git cherry-pick e041e21d7bead9db005efb0412168f559b186c21
 npm install
 ```
 
-### 5. Start WebDollar Syncer
+### 5. Start WebDollar Syncer on port 3333
 ```bash
-screen # press space
+screen 
 SERVER_PORT=3333 npm run start
 # press ctrl + a and then d, to detach from screen
 # screen -ls -> view screen_host
 # screen -r screen_host <- connect to the screen
 ```
 
-### 6. Clone WebDollar-Explorer-API
+### 6. Deploy REST API and dashboard
 ```bash
 git clone https://github.com/thelazyprogrammer/webdollar-explorer-api.git
 ```
@@ -68,18 +68,13 @@ git clone https://github.com/thelazyprogrammer/webdollar-explorer-api.git
 ```bash
 cd webdollar-explorer-api/server
 npm install
+npm install -g forever
+# if you want to start the REST API on other port,
+# modify the port here: webdollar-explorer-api/server/config.js
+# set config.server.port = YOUR_REST_API_PORT
 npm run start
-```
-### 8. REST API ENDPOINTS
-```http
-# shows last 14 blocks
-GET: /block
-
-# shows block information
-GET: /block/<block-id>
-
-# shows miner information
-GET: /miner/<miner_address>
+# you should seee a forever process
+# forever list
 ```
 ### 9. Start Explorer Dashboard on port 10001
 ```bash
