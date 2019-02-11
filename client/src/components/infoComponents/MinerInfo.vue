@@ -44,20 +44,9 @@
         <span v-else> 0 </span>
       </div>
 
-      <div v-if="miner.balance">
-          <span class="tooltip">
-            Estimated revenue (PoS)
-            <span class="tooltiptext">The estimated amount of WEBD that you earn if you stake the current balance for a month</span>
-          </span>
-        <span v-if="miner.balance" class="tooltip">
-          {{ this.getPossiblePoSReward(miner.balance*10000,4) }} per month
-        </span>
-        <span v-else> 0 </span>
-      </div>
-
       <div v-if="miner.miner_balance_pow && miner.miner_balance != miner.miner_balance_pow">
           <span>
-            Mined amount (PoW)
+            PoW mined amount
           </span>
         <span v-if="miner.blocks && miner.blocks.length">
           {{ this.formatMoneyNumber(miner.miner_balance_pow*10000,4) }}
@@ -67,7 +56,7 @@
 
       <div v-if="miner.miner_balance_pos">
           <span>
-            Mined amount (PoS)
+            PoS mined amount
           </span>
         <span v-if="miner.blocks && miner.blocks.length">
           {{ this.formatMoneyNumber(miner.miner_balance_pos*10000,4) }}
@@ -77,11 +66,22 @@
 
       <div v-if="miner.miner_balance_res">
           <span>
-            Resolved amount (PoS)
+            PoS resolved amount
           </span>
         <span>
           {{ this.formatMoneyNumber(miner.miner_balance_res*10000,4) }}
         </span>
+      </div>
+
+      <div v-if="miner.balance">
+          <span class="tooltip">
+            PoS estimate
+            <span class="tooltiptext">The estimated amount of WEBD that you earn if you stake the current balance for a month</span>
+          </span>
+        <span v-if="miner.balance" class="tooltip">
+          {{ this.getPossiblePoSReward(miner.balance*10000,4) }} per month
+        </span>
+        <span v-else> 0 </span>
       </div>
 
       <div v-if="miner.trx_to_balance">
