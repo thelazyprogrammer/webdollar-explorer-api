@@ -67,9 +67,10 @@ export default {
 
   mapAddress(address) {
     let label = address
-    SpecialAddresses.pools.forEach(function (pool) {
-      if (pool.address == address) {
-        label = pool.name
+    let specialAddresses = SpecialAddresses.pools.concat(SpecialAddresses.custom)
+    specialAddresses.forEach(function (specialAddress) {
+      if (specialAddress.address == address) {
+        label = specialAddress.name
         return
       }
     })

@@ -1,5 +1,17 @@
 
 export default {
+   custom: [
+     {
+       name: 'GYMBASE_HOT_1',
+       'status': 'up',
+       address: 'WEBD$gB0EmSvxL@Jzsdaejb@Ar1ZZbfXvfSQg$z$'
+     },
+     {
+       name: 'GYMBASE_COLD_1',
+       'status': 'up',
+       address: 'WEBD$gCJDtpe$grMQ#jezcq+FdX6eMUGMa24yIT$'
+     }
+   ],
    pools: [
      {
        name: 'WEBD_POOL_1',
