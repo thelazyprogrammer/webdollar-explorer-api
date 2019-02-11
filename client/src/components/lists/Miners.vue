@@ -62,7 +62,11 @@ export default {
   methods: {
 
     mapAddress(address) {
-      return Utils.mapAddress(address)
+      address = Utils.mapAddress(address)
+      if (address.length > 15) {
+       return (address).substring(0,10) + ".." + address.substring(address.length - 5)
+      }
+      return address
     },
 
     formatMoneyNumber(number, decimals){
