@@ -636,7 +636,7 @@ function decodeRawBlock(block_id, block_raw, divide_amounts) {
       }
 }
 
-async function sync(from, to) {
+async function sync(from, to, force) {
   from = parseInt(from)
   to = parseInt(to)
   logger.log({
@@ -739,7 +739,7 @@ async function sync(from, to) {
         number: decoded_block.number,
         hash: { $ne: decoded_block.hash }
       }).toArray()
-      if (badBlocks.length > 0) {
+      if (force || badBlocks.length > 0) {
         logger.log({
           level: 'info',
           message: 'Removing bad blocks'
@@ -836,5 +836,5 @@ async function sync(from, to) {
 }
 
 
-sync(process.argv[2], process.argv[3])
+sync(process.argv[2], process.argv[3],  process.argv[4])
 
