@@ -26,4 +26,10 @@ module.exports = function(app) {
 
   app.route('/pending_trx')
     .get(blockchain.get_pending_trx)
+
+  app.route('/latest_trx')
+    .get(blockchain.get_latest_trx)
+
+  app.route('/latest_miners')
+    .get(blockchain.get_latest_miners)
 };

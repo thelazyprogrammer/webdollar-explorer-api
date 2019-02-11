@@ -25,5 +25,13 @@ export default {
 
   fetchPendingTransactions() {
     return  Api().get('pending_trx')
+  },
+
+  fetchLatestTransactions() {
+    return  Api().get('latest_trx')
+  },
+
+  fetchLatestMiners() {
+    return  Api().get('latest_miners')
   }
 }

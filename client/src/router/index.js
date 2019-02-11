@@ -10,6 +10,7 @@ import Genesis from '@/components/pages/Genesis'
 import OldGenesis from '@/components/pages/OldGenesis'
 import Stars from '@/components/pages/Stars'
 import pendingTransactions from '@/components/pages/PendingTransactions'
+import webdToday from '@/components/pages/WebdToday'
 
 Vue.use(Router)
 
@@ -69,6 +70,11 @@ export default new Router({
       path: '/pending_trx',
       name: 'Pending Transactions',
       component: pendingTransactions
+    },
+    {
+      path: '/today',
+      name: 'WEBD Today',
+      component: webdToday
     }
   ]
 })

@@ -14,6 +14,9 @@ const MAX_BLOCKS = 25
 const MAX_DEPTH = 1
 
 const MAX_LATEST_BLOCKS = 14
+
+const POS_FORK_BLOCK = 567810
+
 function getEmptyAddress(miner_address) {
   return {
     'address': miner_address,
@@ -623,4 +626,139 @@ exports.get_pending_trx = async function (req, res) {
     })
     return
   })
+}
+
+
+exports.get_latest_trx = async function (req, res) {
+  res.header("Cache-Control", "public, max-age=1")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  let maxTransactions = 10
+  let toTimestamp = new Date()
+  toTimestamp = toTimestamp.getTime() / 1000 - 60 * 60 * 0
+  let fromTimestamp = toTimestamp - 60 * 60 * 24
+
+  let MongoClient = require('mongodb').MongoClient;
+  let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  let blockChainDB = mongoDB.db(config.mongodb.db);
+
+  let latest_trxs = await blockChainDB.collection(config.mongodb.trx_collection).aggregate([
+    {
+      $match: {
+        timestamp: { $gte: fromTimestamp, $lte: toTimestamp},
+      }
+    },
+    {
+      $sort: {
+        from_amount: -1
+      }
+    },
+    {
+      $limit: maxTransactions
+    }
+  ]).toArray()
+
+  if (!latest_trxs) {
+    latest_trx  = []
+  }
+  res.json({
+    trxs: latest_trxs,
+    trxs_number: latest_trxs.length
+  })
+  return
+}
+
+
+exports.get_latest_miners = async function (req, res) {
+  res.header("Cache-Control", "public, max-age=1")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  let maxMiners = 10
+  let toTimestamp = new Date()
+  toTimestamp = toTimestamp.getTime() / 1000 - 60 * 60 * 0
+  let fromTimestamp = toTimestamp - 60 * 60 * 24
+
+  let MongoClient = require('mongodb').MongoClient;
+  let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  let blockChainDB = mongoDB.db(config.mongodb.db);
+
+  let miners = await blockChainDB.collection(config.mongodb.collection).aggregate([
+    {
+        '$match': {
+          number: {
+            '$gte': POS_FORK_BLOCK
+          },
+          timestamp:  { $gte: fromTimestamp, $lte: toTimestamp }
+        },
+    },
+    {
+          '$group': {
+            '_id': '$miner',
+            'blocks': {
+              '$sum': 1
+            },
+            'reward': {
+              '$sum': '$reward'
+            }
+          }
+    },
+    {
+      $sort: {
+        reward: -1,
+        blocks: -1
+      }
+    },
+    {
+      $limit: maxMiners
+    }
+  ]).toArray()
+  let pow_miners_query = [
+    {
+        '$match': {
+          number: {
+            '$gte': POS_FORK_BLOCK
+          },
+          timestamp:  { $gte: fromTimestamp, $lte: toTimestamp },
+          algorithm:  'pow'
+        },
+    },
+    {
+          '$group': {
+            '_id': '$miner',
+            'blocks': {
+              '$sum': 1
+            },
+          }
+    },
+  ]
+
+  let latest_miners = []
+  if (miners.length > 0) {
+    let addresses = miners.map(a => a._id)
+    pow_miners_query[0]['$match']['miner'] = {
+      '$in': addresses
+    }
+    let pow_miners = await blockChainDB.collection(config.mongodb.collection).aggregate(pow_miners_query).toArray()
+    latest_miners = miners
+    console.log(pow_miners)
+    let total_amount = 6000 * 60 * 60 * 24 / 40 * 10000
+    miners.forEach(function(m) {
+        m.ratio = Math.round(m.reward / total_amount * 100 * 100) / 100
+        m.pow_blocks = 0
+        if (pow_miners && pow_miners.length > 0) {
+          pow_miners.forEach(function (posMiner){
+            if (posMiner._id == m._id) {
+              m.pow_blocks = posMiner.blocks
+              return
+            }
+          })
+        }
+        m.pos_blocks = m.blocks - m.pow_blocks
+    })
+  }
+  res.json({
+    miners: latest_miners,
+    miners_number: latest_miners.length
+  })
+  return
 }

@@ -6,6 +6,10 @@
 
     <div class="dropDown" :style="{display: (mobileMenuOpened) ? 'block':'none'}">
 
+      <router-link to="/today" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">WEBD Today</div>
+      </router-link>
+
       <router-link to="/pools" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
         <div v-on:click="this.collapseMenuBack">Pools</div>
       </router-link>
