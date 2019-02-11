@@ -116,7 +116,7 @@ export default {
       if (timestamp) {
         timestamp = new Date(timestamp * 1000)
         let fromNow = moment(timestamp).fromNow()
-        return fromNow + " (" + timestamp.toGMTString() +  ")"
+        return fromNow.replace(" ago", "")
       } else {
         return 'not mined yet'
       }
