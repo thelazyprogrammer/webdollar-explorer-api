@@ -7,6 +7,7 @@
       <tr>
         <td>Block</td>
         <td v-if="showMiner"> Miner </td>
+        <td v-if="!showMiner"> Algorithm </td>
         <td> Age </td>
         <td>Txs</td>
       </tr>
@@ -14,14 +15,17 @@
       <tr v-bind:key="block.number" v-for="block in blocks">
 
         <td align="left">
-          <router-link v-if="showMiner" v-bind:to="{ name: 'Block', params: { block_id: block.number }}">{{ block.number}}</router-link>
-          <router-link v-else v-bind:to="{ name: 'Block', params: { block_id: block.number }}">{{ block.number}}</router-link>
+          <router-link :class="'block-' + block.algorithm" v-bind:to="{ name: 'Block', params: { block_id: block.number }}">{{ block.number}}</router-link>
         </td>
 
         <td v-if="showMiner" align="center">
           <a :href="'#/miner/' + block.miner">
             {{ mapAddress(block.miner) }}
           </a>
+        </td>
+
+        <td v-if="!showMiner" align="center">
+          {{ block.algorithm }}
         </td>
 
         <td align="center">

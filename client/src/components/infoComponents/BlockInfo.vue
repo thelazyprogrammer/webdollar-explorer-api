@@ -23,7 +23,16 @@
             Miner Address
           </span>
         <span>
-            <a class="webdAddress" :href="'#/miner/' + block.miner">{{ block.miner }}</a>
+            <a class="webdAddress" :href="'#/miner/' + block.miner">{{ getLabel(block.miner) }}</a>
+          </span>
+      </div>
+
+      <div v-if="block.resolver && block.algorithm == 'pos'">
+          <span>
+            Resolver Address
+          </span>
+        <span>
+            <a class="webdAddress" :href="'#/miner/' + block.resolver">{{ getLabel(block.resolver) }}</a>
           </span>
       </div>
 
@@ -45,6 +54,15 @@
         </span>
         <span>
           {{ getDifficulty(block.hash) }}
+        </span>
+      </div>
+
+      <div>
+        <span>
+          Algorithm
+        </span>
+        <span>
+          {{ block.algorithm }}
         </span>
       </div>
 
@@ -93,6 +111,9 @@ export default {
 
   methods: {
 
+    getLabel(address) {
+      return Utils.mapAddress(address)
+    },
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number, decimals);
     },
