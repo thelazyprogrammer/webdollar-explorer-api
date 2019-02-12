@@ -96,12 +96,25 @@ export default {
        'status': 'down',
        fee: 'x',
        min_amount: 'x'
+     },
+     {
+       name: 'GYMBASE_POOL_1',
+       address: 'WEBD$gCwr#P50K@S6n@S3STdkkyvkIAr9mIG7gP$',
+       'status': 'up',
+       fee: 1,
+       min_amount: 20
      }
   ],
 
   fame: {
         total_donations: 0,
         donors: [
+          {
+            address: 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
+            amount: 200000,
+            label: 'BACMpool',
+            block_id: 591134
+          },
           {
             address: 'WEBD$gAt5ZbAJJKKvu7XizYZ1yeE5DyqvV7FmEL$',
             amount: 1000000,
