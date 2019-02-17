@@ -62,9 +62,7 @@ exports.latest_blocks_mongo = async function(req, res) {
   try {
     let blockChainDB = mongoDB.db(config.mongodb.db);
     let blockNumber = await blockChainDB.collection(config.mongodb.collection).find({}).count()
-    console.log(blockNumber)
     let pages = Math.round(blockNumber / pageSize)
-    console.log(pages)
 
     blocks = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
     res.json({
@@ -759,7 +757,6 @@ exports.get_latest_miners = async function (req, res) {
     }
     let pow_miners = await blockChainDB.collection(config.mongodb.collection).aggregate(pow_miners_query).toArray()
     latest_miners = miners
-    console.log(pow_miners)
     let total_amount = 6000 * 60 * 60 * 24 / 40 * 10000
     miners.forEach(function(m) {
         m.ratio = Math.round(m.reward / total_amount * 100 * 100) / 100
