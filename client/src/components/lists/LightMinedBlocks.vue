@@ -42,9 +42,12 @@
         </td>
 
       </tr>
-
     </table>
 
+    <paginate v-if="blocks && blocks.length" page="page_number"
+        :page-count="pages" :click-handler="changeAddress" :prev-text="'Prev'"  :next-text="'Next'"
+        :container-class="'pagination-wrapper'">
+    </paginate>
   </div>
 
 </template>
@@ -59,13 +62,17 @@ var moment = require('moment');
 export default {
 
   name: 'transactions',
-
   props:{
     blocks:{ default:()=>{return [] }},
+    pages: { default:()=>{return 1 }},
+    page_number: { default:()=>{return 1 }},
     showMiner: { default: true }
   },
 
   methods: {
+    changeAddress: function(pageNum) {
+      this.$router.push('/blocks?page_number=' + pageNum)
+    },
     mapAddress(address) {
       return Utils.mapAddress(address)
     },
@@ -85,3 +92,29 @@ export default {
 
 }
 </script>
+<style>
+.pagination-wrapper {
+  margin: 0!important;
+  display: flex;
+  justify-content: center!important;
+  padding-left: 0;
+  list-style: none;
+  border-radius: .25rem;
+}
+
+.pagination-wrapper li {
+  padding: .5rem .75rem;
+}
+
+.pagination-wrapper li:hover,
+.pagination-wrapper li:focus {
+  text-decoration: none;
+}
+
+.active > a {
+  text-decoration: underline;
+  cursor: none;
+  color: #00c000!important;
+}
+
+</style>

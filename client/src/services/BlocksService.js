@@ -3,8 +3,11 @@ require('axios-debug-log')
 
 export default {
 
-  fetchBlocks () {
-    return Api().get('block')
+  fetchBlocks (pageNumber) {
+    if (!pageNumber) {
+      pageNumber = 1
+    }
+    return Api().get('block?page_number=' + pageNumber)
   },
 
   fetchBlock (block_id) {

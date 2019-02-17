@@ -40,6 +40,16 @@ exports.latest_blocks_mongo = async function(req, res) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cache-Control", "public, max-age=40")
 
+  let pageNumber = Number.parseInt(req.query.page_number)
+  let pageSize = Number.parseInt(req.query.page_size)
+  if (isNaN(pageNumber) || !pageNumber) {
+    pageNumber = 1
+  }
+  if (isNaN(pageSize) || !pageSize || pageSize > 25 || pageSize < 15) {
+    pageSize = MAX_LATEST_BLOCKS
+  }
+
+
   let blocks = []
   let MongoClient = require('mongodb').MongoClient;
   try {
@@ -51,9 +61,18 @@ exports.latest_blocks_mongo = async function(req, res) {
   }
   try {
     let blockChainDB = mongoDB.db(config.mongodb.db);
+    let blockNumber = await blockChainDB.collection(config.mongodb.collection).find({}).count()
+    console.log(blockNumber)
+    let pages = Math.round(blockNumber / pageSize)
+    console.log(pages)
 
-    blocks = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 }).limit(MAX_LATEST_BLOCKS).toArray()
-    res.json(blocks)
+    blocks = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+    res.json({
+        result: true,
+        blocks: blocks,
+        page_number: pageNumber,
+        pages: pages
+    })
     return
   } catch (ex) {
     console.log(ex)
@@ -101,7 +120,7 @@ exports.read_a_block_mongo = async function(req, res) {
   res.header("Cache-Control", "public, max-age=40")
   res.header("Access-Control-Allow-Origin", "*");
 
-  var blockNumber = parseInt(req.params.blockId);
+  var blockNumber = parseInt(req.params.blockId)
   var block = {}
   try {
     let MongoClient = require('mongodb').MongoClient;

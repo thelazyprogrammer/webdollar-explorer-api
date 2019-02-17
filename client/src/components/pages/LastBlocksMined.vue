@@ -4,7 +4,7 @@
 
     <h2>Last mined blocks</h2>
 
-    <blocks-list v-if="blocks!==''" :showMiner="true" :blocks="this.blocks"></blocks-list>
+    <blocks-list v-if="blocks!==''" :pages="this.pages" :showMiner="true" :blocks="this.blocks"></blocks-list>
 
     <loading v-else></loading>
 
@@ -26,18 +26,26 @@ export default {
 
   data () {
     return {
-      blocks: ''
+      blocks: '',
+      pages: 1,
+      page_number: 1
     }
   },
 
   mounted () {
-    this.getBlocks()
+    this.getBlocks(this.$route.query.page_number)
   },
-
+  watch: {
+    '$route' (to, from) {
+      this.getBlocks(to.query.page_number)
+    }
+  },
   methods: {
-    async getBlocks () {
-      const response = await BlocksService.fetchBlocks()
-      this.blocks = response.data
+    async getBlocks (pageNumber) {
+      const response = await BlocksService.fetchBlocks(pageNumber)
+      this.blocks = response.data.blocks
+      this.pages = response.data.pages
+      this.page_number = response.data.page_number
     }
   }
 
