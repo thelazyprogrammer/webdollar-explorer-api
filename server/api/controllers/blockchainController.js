@@ -306,16 +306,17 @@ exports.read_an_address_mongo = async function (req, res) {
     ).sort( { block_number: 1 }).limit(1).toArray()
     let min_block_number = 0
     let max_block_number = 100000000
-    if (max_block_number_array && min_block_number_array && min_block_number_array.length == 0 && max_block_number_array.lenght == 0) {
+    if (min_block_number_array && min_block_number_array.length == 1) {
       min_block_number = min_block_number_array[0].block_number
+    }
+    if (max_block_number_array && max_block_number_array.length == 1) {
       max_block_number = max_block_number_array[0].block_number
     }
-
     let trx_to_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
            address: miner.address,
            block_number: { $gte: min_block_number, $lte: max_block_number },
-	   type: 0,
+           type: 0,
            amount: { $gt: 0 }
         }
       },
