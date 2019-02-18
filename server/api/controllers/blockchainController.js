@@ -291,12 +291,31 @@ exports.read_an_address_mongo = async function (req, res) {
         }
       }
     ]).toArray()
+    miner.blocks_number = await blockChainDB.collection(config.mongodb.collection).find({
+        timestamp: { $gte: start, $lte: end},
+        miner: miner.address}).count()
+    let max_block_number_array = await blockChainDB.collection(config.mongodb.trx_collection).find({
+        addresses: {$all: [miner.address]},
+        timestamp: { $gte: start, $lte: end},
+      }
+    ).sort( { block_number: -1 }).limit(1).toArray()
+    let min_block_number_array = await blockChainDB.collection(config.mongodb.trx_collection).find({
+        addresses: {$all: [miner.address]},
+        timestamp: { $gte: start, $lte: end},
+      }
+    ).sort( { block_number: 1 }).limit(1).toArray()
+    let min_block_number = 0
+    let max_block_number = 100000000
+    if (max_block_number_array && min_block_number_array && min_block_number_array.length == 0 && max_block_number_array.lenght == 0) {
+      min_block_number = min_block_number_array[0].block_number
+      max_block_number = max_block_number_array[0].block_number
+    }
 
     let trx_to_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
            address: miner.address,
-           timestamp: { $gte: start, $lte: end},
-           type: 0,
+           block_number: { $gte: min_block_number, $lte: max_block_number },
+	   type: 0,
            amount: { $gt: 0 }
         }
       },
@@ -312,8 +331,8 @@ exports.read_an_address_mongo = async function (req, res) {
     let trx_from_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
            address: miner.address,
+           block_number: { $gte: min_block_number, $lte: max_block_number },
            amount: { $gt: 0 },
-           timestamp: { $gte: start, $lte: end},
            type: 1
         }
       },
@@ -379,9 +398,6 @@ exports.read_an_address_mongo = async function (req, res) {
         break
       }
     }
-    miner.blocks_number = await blockChainDB.collection(config.mongodb.collection).find({
-        timestamp: { $gte: start, $lte: end},
-        miner: miner.address}).count()
     miner.transactions_number = await blockChainDB.collection(config.mongodb.trx_collection).find({
         timestamp: { $gte: start, $lte: end},
         addresses: {$all: [miner.address]}}).count()
