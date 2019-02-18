@@ -14,10 +14,13 @@ export default {
     return Api().get('block/' + block_id)
   },
 
-  fetchMiner (miner_address, show_all_transactions) {
+  fetchMiner (miner_address, show_all_transactions, startDate, endDate) {
     let extraURLParams = '?show_all_transactions=false'
     if (show_all_transactions) {
       extraURLParams = '?show_all_transactions=true'
+    }
+    if (startDate && endDate) {
+      extraURLParams += '&start_date=' + startDate + "&end_date=" + endDate
     }
     return Api().get('address/' + encodeURIComponent(miner_address) + extraURLParams)
   },

@@ -101,7 +101,6 @@
             {{ this.formatMoneyNumber(miner.trx_from_balance*10000,4) }}
           </span>
       </div>
-
     </div>
 
     <div v-else>

@@ -209,11 +209,17 @@ exports.read_an_address_mongo = async function (req, res) {
 
   var miner_address = req.params.address
   var show_all_transactions = false
+  let start = new Date(1524743407 * 1000).getTime() / 1000
+  let end = new Date().getTime() / 1000
   if (req.query.show_all_transactions) {
     if (req.query.show_all_transactions == 'true' || req.query.show_all_transactions === true) {
       show_all_transactions = true
       console.log('Showing all trxs for address:' + miner_address)
     }
+  }
+  if (req.query.start_date && req.query.end_date) {
+    start = new Date(req.query.start_date).getTime() / 1000
+    end = new Date(req.query.end_date).getTime() / 1000
   }
   var miner = getEmptyAddress(miner_address)
 
@@ -239,6 +245,7 @@ exports.read_an_address_mongo = async function (req, res) {
     let miner_balance = await blockChainDB.collection(config.mongodb.collection).aggregate([
       { $match: {
            miner: miner.address,
+           timestamp: { $gte: start, $lte: end},
            reward: { $gt: 0 }
         }
       },
@@ -253,6 +260,7 @@ exports.read_an_address_mongo = async function (req, res) {
     let miner_balance_pos = await blockChainDB.collection(config.mongodb.collection).aggregate([
       { $match: {
            miner: miner.address,
+           timestamp: { $gte: start, $lte: end},
            algorithm: 'pos',
            reward: { $gt: 0 }
         }
@@ -269,6 +277,7 @@ exports.read_an_address_mongo = async function (req, res) {
     let miner_balance_res = await blockChainDB.collection(config.mongodb.collection).aggregate([
       { $match: {
            resolver: miner.address,
+           timestamp: { $gte: start, $lte: end},
            miner: { $ne: miner.address },
            algorithm: 'pos',
            reward: { $gt: 0 }
@@ -286,6 +295,7 @@ exports.read_an_address_mongo = async function (req, res) {
     let trx_to_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
            address: miner.address,
+           timestamp: { $gte: start, $lte: end},
            type: 0,
            amount: { $gt: 0 }
         }
@@ -303,6 +313,7 @@ exports.read_an_address_mongo = async function (req, res) {
       { $match: {
            address: miner.address,
            amount: { $gt: 0 },
+           timestamp: { $gte: start, $lte: end},
            type: 1
         }
       },
@@ -337,13 +348,24 @@ exports.read_an_address_mongo = async function (req, res) {
     miner.trx_to_balance = miner.trx_to_balance / 10000
     miner.trx_from_balance = miner.trx_from_balance / 10000
 
-    let last_block = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 }).limit(1).toArray()
+    let last_block = await blockChainDB.collection(config.mongodb.collection).find({
+      timestamp: { $gte: start, $lte: end},
+    }).sort( { number: -1 }).limit(1).toArray()
     miner.last_block= last_block[0].number
     let totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
     miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
 
-    miner.blocks = await blockChainDB.collection(config.mongodb.collection).find({miner: miner.address}).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
-    let max_transactions = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).sort( { block_number: -1 }).limit(100).toArray()
+    miner.blocks = await blockChainDB.collection(config.mongodb.collection).find(
+        {
+            miner: miner.address,
+            timestamp: { $gte: start, $lte: end},
+        }
+    ).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
+    let max_transactions = await blockChainDB.collection(config.mongodb.trx_collection).find({
+        addresses: {$all: [miner.address]},
+        timestamp: { $gte: start, $lte: end},
+      }
+    ).sort( { block_number: -1 }).limit(100).toArray()
     miner.transactions = []
     let pooled_transactions = 0
     for (let i=0; i<max_transactions.length; i++) {
@@ -357,8 +379,12 @@ exports.read_an_address_mongo = async function (req, res) {
         break
       }
     }
-    miner.blocks_number = await blockChainDB.collection(config.mongodb.collection).find({miner: miner.address}).count()
-    miner.transactions_number = await blockChainDB.collection(config.mongodb.trx_collection).find({addresses: {$all: [miner.address]}}).count()
+    miner.blocks_number = await blockChainDB.collection(config.mongodb.collection).find({
+        timestamp: { $gte: start, $lte: end},
+        miner: miner.address}).count()
+    miner.transactions_number = await blockChainDB.collection(config.mongodb.trx_collection).find({
+        timestamp: { $gte: start, $lte: end},
+        addresses: {$all: [miner.address]}}).count()
     mongoDB.close()
   } catch (ex) {
     console.log(ex)

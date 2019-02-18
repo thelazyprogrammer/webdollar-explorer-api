@@ -4,8 +4,10 @@
     <div id="address" v-if="miner && miner.address" class="table-wrap">
 
      <miner-info :miner="this.miner"></miner-info>
-
-       <div  :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
+     <div class="sliderWrapper">
+         <vue-slider @drag-end="onTimeIntervalChange" :piecewise.sync="piecewise" :data.sync="data" :value.sync="value"></vue-slider>
+     </div>
+     <div  :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
 
         <div class="tabWrapper">
           <button id="button_trx" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
@@ -40,10 +42,10 @@ import Transactions from '@/components/lists/Transactions.vue'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
 import LightBlocks from '@/components/lists/LightMinedBlocks.vue'
 import Loading from '@/components/utils/Loading'
-
+import vueSlider from 'vue-slider-component'
 export default {
 
-  components:{ Transactions, MinerInfo, LightBlocks, Loading },
+  components:{ vueSlider, Transactions, MinerInfo, LightBlocks, Loading },
 
   name: 'miner',
 
@@ -54,22 +56,52 @@ export default {
       showTransactions: 'showClass',
       miner: {default: function () { return { } }},
       searchAddress: '',
-      searchStart: ''
+      searchStart: '',
+      piecewise: false,
+      startDate: false,
+      endDate: false,
+      data: {default: function () { return getDates()}},
+      value: {default: function () { return getStartEndDates()}},
     }
   },
-
   beforeRouteUpdate (to) {
     this.getMiner()
   },
 
   mounted () {
     this.miner = {}
+    this.data = this.getDates()
+    this.value = this.getStartEndDates()
     this.getMiner(window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length))
   },
 
   methods: {
-    async onShowLatestTrnsactions() {
-      return this.getMiner()
+    async onTimeIntervalChange(el) {
+      let intervals = el.getValue()
+      
+      this.startDate = intervals[0]
+      this.endDate = intervals[1]
+      this.value = [this.startDate, this.endDate]
+      this.getMiner(window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length), this.startDate, this.endDate)
+      this.value = [this.startDate, this.endDate]
+    },
+    getStartEndDates() {
+      let days = this.getDates()
+      if (this.startDate && this.endDate) {
+        return [this.startDate, this.endDate]
+      }
+      return [days[0], days[days.length - 1]]
+    },
+    getDates() {
+          let days = []
+          let start = new Date(1524743407 * 1000)
+          let end = new Date()
+          while(start < end) {
+            let currDay = new Date(start)
+            days.push(currDay.toISOString().split('T')[0])
+            start.setDate(start.getDate() + 1)
+          }
+          return days
     },
     getTrxNumber(all_trx_number, trx_received_number) {
       if (parseInt(trx_received_number) >= parseInt(all_trx_number)) {
@@ -78,10 +110,10 @@ export default {
         return 'latest ' + trx_received_number + ' from ' + all_trx_number
       }
     },
-    async getMiner (miner) {
+    async getMiner (miner, startDate, endDate) {
       this.miner = {}
       miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
-      let response = await BlocksService.fetchMiner(miner, !this.showLatestTransactions)
+      let response = await BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
       if (response.data.transactions) {
         let trxs_parsed = []
         var miner_address = response.data.address
@@ -216,6 +248,20 @@ export default {
     overflow: hidden;
 }
 
+.sliderWrapper {
+    text-align: left;
+    width: 670px;
+    padding: 0 0 10px 0;
+    margin: 0 auto;
+    margin-top:40px;
+}
+
+.transactionsWrapper table span:first-child {
+  font-weight: bold;
+  text-shadow: 0 0 3px #0804f3;
+}
+
+
 .transactionsWrapper table span:first-child {
   font-weight: bold;
   text-shadow: 0 0 3px #0804f3;
@@ -234,5 +280,21 @@ export default {
     background-color: #00c02c;
     text-align: center;
     cursor: pointer;
+}
+
+.vue-slider-component .vue-slider-process {
+    border: 1px solid #fec02c;
+    background-color: #fec02c;
+}
+
+.vue-slider-component .vue-slider-tooltip {
+    border: 1px solid #fec02c;
+    background-color: #fec02c;
+}
+
+.vue-slider-component .vue-slider-piecewise-dot {
+  background-color: #00c02c;
+  width: 12px;
+  height: 12px;
 }
 </style>
