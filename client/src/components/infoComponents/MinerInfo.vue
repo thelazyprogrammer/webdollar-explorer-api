@@ -73,7 +73,7 @@
         </span>
       </div>
 
-      <div v-if="miner.balance">
+      <div v-if="miner.balance && miner.balance > 0">
           <span class="tooltip">
             PoS estimate
             <span class="tooltiptext">The estimated amount of WEBD that you earn if you stake the current balance for a month</span>
