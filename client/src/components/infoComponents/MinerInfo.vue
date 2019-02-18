@@ -28,7 +28,7 @@
             Balance
           </span>
         <span>
-            {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span title='Percentage of the Total Supply'>[{{ this.miner.total_supply_ratio }}%] </span>
+            {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span title='Percentage of the Total Supply'>[{{ this.formatSupplyRatio(this.miner.total_supply_ratio) }}%] </span>
             <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
             <span v-clipboard:success="onCopy" v-clipboard:copy="miner.address" title="Copy address to clipboard" style="cursor: pointer; color: #fec02c!important; padding: 0px;"> &Xi; </span> <span style="font-size: xx-small; color: #fec02c!important;" :class="copyTextClass"> {{copyText }}</span>
           </span>
@@ -139,13 +139,18 @@ export default {
       return
     },
     formatMoneyNumber(number, decimals) {
-      if (number < 0 || !number) {
+      if (!number) {
         return 0
       }
       return Utils.formatMoneyNumber(number, decimals);
     },
+    formatSupplyRatio(ratio) {
+      if (ratio < 0) {
+        return 0
+      }
+      return ratio
+    },
     onCopy() {
-      console.log("Address copied")
       this.copyTextClass = "showCopyMessage"
       setTimeout(function() {
         this.copyTextClass = "showNoCopyMessage"
