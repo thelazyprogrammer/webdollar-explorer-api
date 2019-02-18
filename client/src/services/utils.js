@@ -7,9 +7,9 @@ export default {
     var number = parseInt(n / 10000);
     var decimalNumber = this.getNumberRest(n);
     var sign = ''
-    if (n >= 0) {
+    if (number < 0) {
        sign = '-'
-       n = -n
+       number = -number
     }
     var result = ''
     if (decimals === 0) {
