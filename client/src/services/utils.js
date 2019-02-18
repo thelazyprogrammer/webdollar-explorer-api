@@ -6,7 +6,11 @@ export default {
 
     var number = parseInt(n / 10000);
     var decimalNumber = this.getNumberRest(n);
-
+    var sign = ''
+    if (n >= 0) {
+       sign = '-'
+       n = -n
+    }
     var result = ''
     if (decimals === 0) {
       result = this.formatIntNumber(number)
@@ -21,7 +25,7 @@ export default {
         result += afterDecimals.replace('0.', '.')
       }
     }
-    return result
+    return sign + result
   },
 
   formatIntNumber(number) {

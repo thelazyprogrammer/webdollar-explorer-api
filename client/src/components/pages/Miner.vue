@@ -96,11 +96,14 @@ export default {
           let days = []
           let start = new Date(1524743407 * 1000)
           let end = new Date()
+          let currDay = new Date(start)
           while(start < end) {
-            let currDay = new Date(start)
+            currDay = new Date(start)
             days.push(currDay.toISOString().split('T')[0])
             start.setDate(start.getDate() + 1)
           }
+          currDay = new Date(start)
+          days.push(currDay.toISOString().split('T')[0])
           return days
     },
     getTrxNumber(all_trx_number, trx_received_number) {
