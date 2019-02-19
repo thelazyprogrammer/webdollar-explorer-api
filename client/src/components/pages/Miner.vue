@@ -70,8 +70,6 @@ export default {
 
   mounted () {
     this.miner = {}
-    this.data = this.getDates()
-    this.value = this.getStartEndDates()
     this.getMiner(window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length))
   },
 
@@ -96,6 +94,12 @@ export default {
           let days = []
           let start = new Date(1524743407 * 1000)
           let end = new Date()
+          if (this.miner.first_block_timestamp) {
+            start = new Date(this.miner.first_block_timestamp * 1000)
+          }
+          if (this.miner.last_block_timestamp) {
+            end = new Date(this.miner.last_block_timestamp * 1000)
+          }
           let currDay = new Date(start)
           while(start < end) {
             currDay = new Date(start)
@@ -158,6 +162,8 @@ export default {
         response.data.transactions = trxs_parsed
       }
       this.miner = response.data
+      this.data = this.getDates()
+      this.value = this.getStartEndDates()
 
     },
 

@@ -32,7 +32,9 @@ function getEmptyAddress(miner_address) {
     'trx_to_balance': 0,
     'trx_from_balance': 0,
     'blocks': [],
-    'transactions': []
+    'transactions': [],
+    'first_block_timestamp': 0,
+    'last_block_timestamp': 0
   }
 }
 
@@ -294,6 +296,8 @@ exports.read_an_address_mongo = async function (req, res) {
     miner.blocks_number = await blockChainDB.collection(config.mongodb.collection).find({
         timestamp: { $gte: start, $lte: end},
         miner: miner.address}).count()
+
+    // get min/max block number between dates
     let max_block_number_array = await blockChainDB.collection(config.mongodb.trx_collection).find({
         addresses: {$all: [miner.address]},
         timestamp: { $gte: start, $lte: end},
@@ -305,13 +309,30 @@ exports.read_an_address_mongo = async function (req, res) {
       }
     ).sort( { block_number: 1 }).limit(1).toArray()
     let min_block_number = 0
-    let max_block_number = 100000000
+    let max_block_number = 0
     if (min_block_number_array && min_block_number_array.length == 1) {
       min_block_number = min_block_number_array[0].block_number
     }
     if (max_block_number_array && max_block_number_array.length == 1) {
       max_block_number = max_block_number_array[0].block_number
     }
+
+    // get general min/max block timestamps
+    let gen_max_block_number_array = await blockChainDB.collection(config.mongodb.collection).find({
+        addresses: {$all: [miner.address]}
+      }
+    ).sort( { number: -1 }).limit(1).toArray()
+    let gen_min_block_number_array = await blockChainDB.collection(config.mongodb.collection).find({
+        addresses: {$all: [miner.address]},
+      }
+    ).sort( { number: 1 }).limit(1).toArray()
+    if (gen_min_block_number_array && gen_min_block_number_array.length == 1) {
+      miner.first_block_timestamp = gen_min_block_number_array[0].timestamp
+    }
+    if (gen_max_block_number_array && gen_max_block_number_array.length == 1) {
+      miner.last_block_timestamp = gen_max_block_number_array[0].timestamp
+    }
+
     let trx_to_balance = await blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
            address: miner.address,
@@ -371,7 +392,11 @@ exports.read_an_address_mongo = async function (req, res) {
     let last_block = await blockChainDB.collection(config.mongodb.collection).find({
       timestamp: { $gte: start, $lte: end},
     }).sort( { number: -1 }).limit(1).toArray()
-    miner.last_block= last_block[0].number
+    if (last_block && last_block.length > 0) {
+      miner.last_block = last_block[0].number
+    } else {
+      miner.last_block = 0
+    }
     let totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
     miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
 
