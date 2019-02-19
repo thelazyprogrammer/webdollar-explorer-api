@@ -5,7 +5,7 @@
 
      <miner-info :miner="this.miner"></miner-info>
      <div class="sliderWrapper">
-         <vue-slider @drag-end="onTimeIntervalChange" :piecewise.sync="piecewise" :data.sync="data" :value.sync="value"></vue-slider>
+         <vue-slider @drag-end="onTimeIntervalChange" :tooltipDir.sync="tooltipDir" :piecewise.sync="piecewise" :data.sync="data" :value.sync="value"></vue-slider>
      </div>
      <div  :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
 
@@ -60,6 +60,7 @@ export default {
       piecewise: false,
       startDate: false,
       endDate: false,
+      tooltipDir: ["top", "bottom"],
       data: {default: function () { return getDates()}},
       value: {default: function () { return getStartEndDates()}},
     }

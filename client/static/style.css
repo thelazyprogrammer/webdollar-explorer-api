@@ -28,6 +28,7 @@ h2{
 }
 
 #donate {
+    z-index: 1000;
     margin-bottom: auto;
     border-top: solid 1px #5f5f5f;
     margin-top: 1em;
@@ -469,3 +470,33 @@ a.add_post_link {
 
 .block-pow {
   color: #00c000!important;
+}
+.vue-slider-component .vue-slider-process {
+    border: 1px solid #fec02c!important;
+    background-color: #fec02c!important;
+}
+
+.vue-slider-component .vue-slider-tooltip {
+    border: 1px solid #00c000!important;
+    background-color: #00c000!important;
+}
+
+.vue-slider-component .vue-slider-piecewise-dot {
+  background-color: #00c02c!important;
+  width: 12px!important;
+  height: 12px!important;
+}
+
+.vue-slider-component .vue-slider-tooltip-top .vue-merged-tooltip .vue-slider-tooltip:before, .vue-slider-component .vue-slider-tooltip-wrap.vue-slider-tooltip-top .vue-slider-tooltip:before {
+  margin-left: -30px;
+}
+.vue-slider-component .vue-slider-tooltip-wrap.vue-slider-tooltip-top {
+  margin-left: 30px
+}
+.vue-slider-component .vue-slider-tooltip-wrap.vue-slider-tooltip-bottom {
+  margin-left: -30px
+}
+
+.vue-slider-component .vue-slider-tooltip-bottom .vue-merged-tooltip .vue-slider-tooltip:before, .vue-slider-component .vue-slider-tooltip-wrap.vue-slider-tooltip-bottom .vue-slider-tooltip:before {
+  margin-left: 30px;
+}
