@@ -739,10 +739,18 @@ async function sync(from, to, force) {
         number: decoded_block.number,
         hash: { $ne: decoded_block.hash }
       }).toArray()
-      if (force || badBlocks.length > 0) {
+      let badBlocksMiner = await blockChainDB.collection(mongodbBlockCollection).find({
+        number: decoded_block.number,
+        miner: { $ne: decoded_block.miner }
+      }).toArray()
+      if (force || badBlocks.length > 0 || badBlocksMiner.length > 0) {
+        let badBlockReason = 'new hash'
+        if (badBlocksMiner.length > 0) {
+          badBlockReason = 'new miner'
+        }
         logger.log({
           level: 'info',
-          message: 'Removing bad blocks'
+          message: 'Removing bad block ' + decoded_block.number + ". Reason: " + badBlockReason
         })
         await blockChainDB.collection(mongodbBlockCollection).deleteMany({ number: decoded_block.number})
         await blockChainDB.collection(mongodbTransactionCollection).deleteMany({ block_number: decoded_block.number})
