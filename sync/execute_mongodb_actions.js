@@ -52,7 +52,7 @@ async function getPoSMiners() {
   let blockChainDB = mongoDB.db(mongodbBlockchainDB);
   let toTimestamp = new Date()
   toTimestamp = toTimestamp.getTime() / 1000 - 60 * 60 * 0 
-  let fromTimestamp = toTimestamp - 60 * 60 * 24 * 100
+  let fromTimestamp = toTimestamp - 60 * 60 * 24 * 5
   let miners = await blockChainDB.collection(mongodbBlockCollection).aggregate([
     {
         '$match': {
@@ -120,7 +120,7 @@ async function checkSanity() {
       json: true
     };
     var optionsCore = {
-      uri:  'http://localhost:4444' + '/address/balance/' + encodeURIComponent(address),
+      uri:  'http://localhost:3333' + '/address/balance/' + encodeURIComponent(address),
       json: true
     };
 
