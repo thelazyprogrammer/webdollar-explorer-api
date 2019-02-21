@@ -30,6 +30,10 @@
         <div v-on:click="this.collapseMenuBack">Pending Transactions</div>
       </router-link>
 
+      <router-link to="/forks" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">Fork Monitor</div>
+      </router-link>
+
       <a href="https://webdollar.io" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' " target="_blank" >
         <div v-on:click="this.collapseMenuBack">WebDollar</div>
       </a>
