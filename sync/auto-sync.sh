@@ -9,7 +9,7 @@ function sync() {
     echo "Syncing..."
     rm -rf "blockchainDB3"
     cp -r $BLOCKCHAIN_PATH .
-    node pouchdb-mongodb-syncer.js 590000 1000000 force
+    node pouchdb-mongodb-syncer.js 609000 1000000 force
 }
 
 while true; do
