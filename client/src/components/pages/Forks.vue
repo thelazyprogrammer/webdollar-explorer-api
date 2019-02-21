@@ -71,13 +71,23 @@ export default {
                 "0x38523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1"
             ]
         },
-        "0x37523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac2" :         {
+        "0x36523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1" :         {
             "number": 7248050,
-            "timestamp": 1550736604,
-            "hash": "0x37523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac2",
-            "difficulty": 2978675520298707,
+            "timestamp": 1550736605,
+            "hash": "0x36523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1",
+            "difficulty": 2978675520298608,
             "parents": [
                 "0x38523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1"
+            ]
+        },
+        "0x35523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1" :         {
+            "number": 7248051,
+            "timestamp": 1550736629,
+            "hash": "0x35523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1",
+            "difficulty": 2978675520298708,
+            "parents": [
+                "0x37523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1",
+                "0x36523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1"
             ]
         },
       }
@@ -173,11 +183,12 @@ export default {
                 var node = nodes[i];
                 node.y = (latest - node.block.timestamp) * this.pixels_per_second;
                 for(var j = 0; j < columns.length; j++) {
+                    let self = this
                     if(j == 0 && !node.canonical)
                         continue;
                     if(columns[j] < node.y)
                         continue;
-                    if(node.siblings.map(function(n) { return n.x == j * this.node_width; }).reduce(function(a, b) { return a | b; }, false))
+                    if(node.siblings.map(function(n) { return n.x == j * self.node_width; }).reduce(function(a, b) { return a | b; }, false))
                         continue;
                     node.x = (j + mincol) * this.node_width;
                     columns[j] = node.y - this.node_height;
