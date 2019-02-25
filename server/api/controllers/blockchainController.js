@@ -825,7 +825,7 @@ exports.get_latest_miners = async function (req, res) {
     }
     let pow_miners = await blockChainDB.collection(config.mongodb.collection).aggregate(pow_miners_query).toArray()
     latest_miners = miners
-    let total_amount = 6000 * 60 * 60 * 24 / 40 * 10000
+    let total_amount = 6000 * 60 * 60 * 24 / 45 * 10000
     miners.forEach(function(m) {
         m.ratio = Math.round(m.reward / total_amount * 100 * 100) / 100
         m.pow_blocks = 0
