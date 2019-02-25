@@ -247,36 +247,43 @@ export default {
     {
       initial_amount: 1867485689.1922,
       address: 'WEBD$gDZwjjD7ZE5+AE+44ITr8yo5E2aXYT3mEH$',
+      name: 'WEBD_DEV_FUNDS_1',
       owner: 'WebDollar Team'
     },
     {
       initial_amount: 580875474.0000,
       address: 'WEBD$gD5@1VU3ZiJ1siQxib#wAb4xeQTUS2zscn$',
+      name: 'WEBD_DEV_FUNDS_3',
       owner: 'WebDollar Team'
     },
     {
       initial_amount: 450484398.9600,
+      name: 'WEBD_DEV_FUNDS_4',
       address: 'WEBD$gCP41xykgy6K$LyGHCVNDZ44@PTp1kGufP$',
       owner: 'WebDollar Team'
     },
     {
       initial_amount: 622074519,
       address: 'WEBD$gDx8CjURuVS+LSI91ufs@LH2QpIdSzaAxT$',
+      name: 'WEBD_DEV_FUNDS_2',
       owner: 'WebDollar Team'
     },
     {
       initial_amount: 250000000,
       address: 'WEBD$gByeqrPHBGvZfwssFbLtFc64Tt6WQDknXP$',
+      name: 'WEBD_DEV_FUNDS_5',
       owner: 'WebDollar Team'
     },
     {
       initial_amount: 35000000,
       address: 'WEBD$gAIhBLJi6yvx#+PZtxMg5piwIW0p1#4HU3$',
+      name: 'WEBD_DEV_FUNDS_6',
       owner: 'WebDollar Team'
     },
     {
       initial_amount: 30000000,
       address: 'WEBD$gAuP5uvvJo6c#hxTtor9n5GV5m1Ysd0zjT$',
+      name: 'WEBD_DEV_FUNDS_7',
       owner: 'WebDollar Team'
     },
     {

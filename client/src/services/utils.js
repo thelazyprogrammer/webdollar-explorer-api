@@ -72,8 +72,9 @@ export default {
   mapAddress(address) {
     let label = address
     let specialAddresses = SpecialAddresses.pools.concat(SpecialAddresses.custom)
+      .concat(SpecialAddresses.genesis_addresses)
     specialAddresses.forEach(function (specialAddress) {
-      if (specialAddress.address == address) {
+      if (specialAddress.address == address && specialAddress.name) {
         label = specialAddress.name
         return
       }
