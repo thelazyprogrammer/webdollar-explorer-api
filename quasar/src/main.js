@@ -50,16 +50,6 @@ Vue.component('vue-slider', Slider)
 
 Vue.use(Quasar, {
   config: {
-    brand: {
-      primary: '#292828',
-      secondary: '#404040',
-      accent: '#fec02c',
-
-      positive: '#00c000',
-      negative: '#da6654',
-      info: '#fff',
-      warning: '#fec02c'
-    }
   },
   components: {
     QBreadcrumbs,
