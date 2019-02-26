@@ -1,20 +1,20 @@
 <template>
       <q-list>
         <q-item-label header>Menu</q-item-label>
-        <q-item clickable tag="a" href="#/today">
+        <q-item clickable tag="a" href="#/stats">
           <q-item-section avatar>
             <q-icon name="today" />
           </q-item-section>
           <q-item-section>
-            <q-item-label caption>WEBD Today</q-item-label>
+            <q-item-label caption>Stats</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a" href="#/pending_trx">
+        <q-item clickable tag="a" href="#/pending">
           <q-item-section avatar>
             <q-icon name="today" />
           </q-item-section>
           <q-item-section>
-            <q-item-label caption>Pending Transactions</q-item-label>
+            <q-item-label caption>Pending Trx</q-item-label>
           </q-item-section>
         </q-item>
         <q-item clickable tag="a" href="#/blocks">

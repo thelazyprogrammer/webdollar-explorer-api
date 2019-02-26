@@ -68,12 +68,12 @@ export default new Router({
                         component: Stars
                       },
               {
-                        path: '/pending_trx',
+                        path: '/pending',
                         name: 'Pending Transactions',
                         component: pendingTransactions
                       },
               {
-                        path: '/today',
+                        path: '/stats',
                         name: 'WEBD Today',
                         component: webdToday
                       },
