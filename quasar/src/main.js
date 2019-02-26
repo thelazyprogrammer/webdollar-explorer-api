@@ -13,7 +13,9 @@ import '@quasar/extras/eva-icons/eva-icons.css'
 import {
   Quasar, 
   QLayout,
+  QAvatar,
   QHeader,
+  QFooter,
   QDrawer,
   QPageContainer,
   QPage,
@@ -28,9 +30,22 @@ import {
 } from 'quasar'
 
 Vue.use(Quasar, {
-  config: {},
+  config: {
+    brand: {
+      primary: '#292828',
+      secondary: '#404040',
+      accent: '#fec02c',
+
+      positive: '#00c000',
+      negative: '#da6654',
+      info: '#fff',
+      warning: '#fec02c'
+    }
+  },
   components: {
     QLayout,
+    QFooter,
+    QAvatar,
     QHeader,
     QDrawer,
     QPageContainer,
