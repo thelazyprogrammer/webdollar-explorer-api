@@ -2,52 +2,37 @@
 
   <div>
 
-    <table class="minedBlocksList" v-if="blocks && blocks.length">
+   <q-list padding>
+      <q-item dense active class="text-weight-bold">
+        <q-item-section side top>
+          <q-item-label style="width: 40px;" >No.</q-item-label>
+        </q-item-section>
 
-      <tr>
-        <td>Block</td>
-        <td v-if="showMiner"> Miner </td>
-        <td v-if="!showMiner"> Algorithm </td>
-        <td> Age </td>
-        <td>Txs</td>
-      </tr>
+        <q-item-section :inset-level="1" side top>
+          <q-item-label style="width: 120px;">Miner</q-item-label>
+        </q-item-section>
 
-      <tr v-bind:key="block.number" v-for="block in blocks">
+        <q-item-section right top>
+          <q-item-label>Age</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-separator bordered />
 
-        <td align="left">
-          <router-link :class="'block-' + block.algorithm" v-bind:to="{ name: 'Block', params: { block_id: block.number }}">{{ block.number}}</router-link>
-        </td>
+      <q-item dense active spaced v-bind:key="block.number" v-for="block in blocks">
+        <q-item-section side top>
+          <q-item-label caption lines="2">{{block.number}}</q-item-label>
+        </q-item-section>
 
-        <td v-if="showMiner" align="center">
-          <a :href="'#/miner/' + block.miner">
-            {{ mapAddress(block.miner) }}
-          </a>
-        </td>
+        <q-item-section :inset-level="1" side top>
+          <q-item-label caption lines="2" style="font-family: 'avenir',monospace;width: 120px;" >{{mapAddress(block.miner)}}</q-item-label>
+        </q-item-section>
 
-        <td v-if="!showMiner" align="center">
-          {{ block.algorithm }}
-        </td>
+        <q-item-section right top>
+          <q-item-label caption>{{ formatDate(block.timestamp, showMiner) }}</q-item-label>
+        </q-item-section>
+      </q-item>
 
-        <td align="center">
-          {{ formatDate(block.timestamp, showMiner) }}
-        </td>
-
-        <td align="left">
-          <a v-if="showMiner" :href="'#/miner/' + block.miner">
-            {{ block.trxs_number}} {{ block.transactions }}
-          </a>
-          <span v-else>
-            {{ block.trxs_number}} {{ block.transactions }}
-          </span>
-        </td>
-
-      </tr>
-    </table>
-
-    <paginate v-if="blocks && blocks.length" page="page_number"
-        :page-count="pages" :click-handler="changeAddress" :prev-text="'Prev'"  :next-text="'Next'"
-        :container-class="'pagination-wrapper'">
-    </paginate>
+    </q-list>
   </div>
 
 </template>
@@ -93,28 +78,5 @@ export default {
 }
 </script>
 <style>
-.pagination-wrapper {
-  margin: 0!important;
-  display: flex;
-  justify-content: center!important;
-  padding-left: 0;
-  list-style: none;
-  border-radius: .25rem;
-}
-
-.pagination-wrapper li {
-  padding: .5rem .75rem;
-}
-
-.pagination-wrapper li:hover,
-.pagination-wrapper li:focus {
-  text-decoration: none;
-}
-
-.active > a {
-  text-decoration: underline;
-  cursor: none;
-  color: #00c000!important;
-}
 
 </style>

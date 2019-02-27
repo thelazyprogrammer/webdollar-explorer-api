@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hhh lpR fFf">
+  <q-layout view="hhh lpR fff">
 
     <q-header reveal class="bg-primary text-white">
       <q-toolbar>
@@ -13,7 +13,10 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" bordered content-class="bg-grey-2">
+    <q-drawer v-model="leftDrawerOpen"
+        :width="200"
+        bordered
+      >
       <Menu />
     </q-drawer>
 
@@ -21,7 +24,7 @@
       <router-view />
     </q-page-container>
 
-    <q-footer reveal bordered class="bg-grey-8 text-white text-center text-white">
+    <q-footer elevated bordered class="text-white text-center text-caption">
       <Footer />
     </q-footer>
 

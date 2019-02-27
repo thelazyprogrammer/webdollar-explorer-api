@@ -7,7 +7,7 @@
         The owner of this website disclaims any liability in connection with the integrity and use of this information.
       </div>
       <div>
-        Found a bug? Report it <a class="donate-link" href="https://github.com/thelazyprogrammer/webdollar-explorer-api">here</a>. Copyright <a class="donate-link" href="http://lazyprogrammer.io">@lazyprogrammer.io</a> 2018
+        Found a bug? Report it <a class="donate-link" href="https://github.com/thelazyprogrammer/webdollar-explorer-api">here</a>. <a class="donate-link" href="http://lazyprogrammer.io">&copy;lazyprogrammer.io</a> 2019
       </div>
     </div>
 </template>
@@ -22,11 +22,10 @@ export default {
 .donate {
   margin-top: 5px;
   margin-bottom: 5px;
-  font-size: 1em;
 }
 
 .donate-link {
-  color: #fec02c!important;
+  color: #ddd;
   text-decoration: none;
 }
 </style>

@@ -1,11 +1,6 @@
 <template>
 
   <div class="container">
-        <q-breadcrumbs active-color="white" style="font-size: 16px">
-          <q-breadcrumbs-el label="Home" icon="home" />
-          <q-breadcrumbs-el label="Blocks" icon="" />
-        </q-breadcrumbs>
-
     <blocks-list v-if="blocks!==''" :pages="this.pages" :showMiner="true" :blocks="this.blocks"></blocks-list>
 
     <loading v-else></loading>
