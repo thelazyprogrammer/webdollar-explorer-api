@@ -4,8 +4,12 @@
 
     <h2>Last mined blocks</h2>
 
-    <blocks-list v-if="blocks!==''" :pages="this.pages" :showMiner="true" :blocks="this.blocks"></blocks-list>
-
+    <blocks-list v-if="this.blocks" :showMiner="true" :blocks="this.blocks"></blocks-list>
+      <paginate v-if="this.blocks" page="this.blocks.page_number"
+            :page-count="this.blocks.pages" :click-handler="changeAddress" :prev-text="'Prev'"  :next-text="'Next'"
+            :container-class="'pagination-wrapper'">
+      </paginate>
+    
     <loading v-else></loading>
 
   </div>
@@ -41,11 +45,14 @@ export default {
     }
   },
   methods: {
-    async getBlocks (pageNumber) {
+    changeAddress: function(pageNum) {
+      this.$router.push('/blocks?page_number=' + pageNum)
+    },
+     async getBlocks (pageNumber) {
       const response = await BlocksService.fetchBlocks(pageNumber)
       this.blocks = response.data.blocks
-      this.pages = response.data.pages
-      this.page_number = response.data.page_number
+      this.blocks.page_number = response.data.page_number
+      this.blocks.pages = response.data.pages
     }
   }
 
