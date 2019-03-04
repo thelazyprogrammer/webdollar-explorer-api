@@ -13,7 +13,7 @@
       <td>Age</td>
     </tr>
 
-    <tr v-bind:key="trx.block_id" v-for="(trx,index) in transactions" :class=" isReceivingMoney(address,trx.from.address,trx.to.address)">
+    <tr v-bind:key="trx.block_id" v-for="(trx) in transactions" :class=" isReceivingMoney(address,trx.from.address,trx.to.address)">
 
       <td align="left">
        <router-link replace v-bind:to="{ name: 'Block', params: { block_id: trx.block_number }}">{{ trx.block_number}}</router-link>
