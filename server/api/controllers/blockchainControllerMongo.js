@@ -302,7 +302,6 @@ exports.read_an_address_mongo = async function (req, res) {
       miner.last_block = 0
     }
     let totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
-    miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
 
     if (miner_balance_res.length == 1) {
       miner.miner_balance_res = miner_balance_res[0].balance / 10000
@@ -322,6 +321,7 @@ exports.read_an_address_mongo = async function (req, res) {
       miner.trx_from_balance = trx_from_balance[0].balance
     }
     miner.balance = (miner.miner_balance - miner.trx_to_balance + miner.trx_from_balance) /10000
+    miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
     miner.miner_balance = miner.miner_balance / 10000
     miner.trx_to_balance = miner.trx_to_balance / 10000
     miner.trx_from_balance = miner.trx_from_balance / 10000
