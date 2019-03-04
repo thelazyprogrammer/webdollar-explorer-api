@@ -17,6 +17,10 @@
 
         <div class="address_tab" id="transactions">
           <transactions :address="this.miner.address" :transactions="this.miner.transactions"></transactions>
+          <paginate v-if="this.miner.transactions && this.miner.transactions.length" page="this.miner.transactions.page_number"
+            :page-count="this.miner.transactions.pages" :click-handler="changeTransactions" :prev-text="'Prev'"  :next-text="'Next'"
+            :container-class="'pagination-wrapper'">
+          </paginate>
         </div>
 
         <div class="addressTab transactionsWrapper" id="blocks">
@@ -99,6 +103,15 @@ export default {
       this.miner.blocks.page_number = blocks.data.page_number
 
     },
+    async changeTransactions(pageNum) {
+      let miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
+      let transactions = await BlocksService.fetchTransactions(pageNum, miner)
+      this.miner.transactions = transactions.data.trxs
+      this.miner.transactions_number = transactions.data.trxs_number
+      this.miner.transactions.pages = transactions.data.pages
+      this.miner.transactions.page_number = transactions.data.page_number
+
+    },
     getStartEndDates() {
       let days = this.getDates()
       if (this.startDate && this.endDate) {
@@ -138,7 +151,7 @@ export default {
       miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
       let minerTask = BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
       let blocksTask = BlocksService.fetchBlocks(1, miner)
-      let transactionsTask = BlocksService.fetchTransactions(miner)
+      let transactionsTask = BlocksService.fetchTransactions(1, miner)
       
       let minerData = await minerTask
       let blocks = await blocksTask
@@ -186,6 +199,8 @@ export default {
         this.miner.transactions = trxs_parsed
       }
       this.miner.transactions_number = transactions.data.trxs_number
+      this.miner.transactions.pages = transactions.data.pages
+      this.miner.transactions.page_number = transactions.data.page_number
       this.miner.blocks = blocks.data.blocks
       this.miner.blocks_number = blocks.data.blocks_number
       this.miner.blocks.pages = blocks.data.pages

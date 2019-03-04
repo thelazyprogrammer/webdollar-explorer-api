@@ -45,7 +45,14 @@ export default {
     return  Api().get('latest_miners')
   },
 
-  fetchTransactions(miner_address) {
-    return  Api().get('trx' + '?miner=' + encodeURIComponent(miner_address))
+  fetchTransactions(pageNumber, miner_address) {
+    if (!pageNumber) {
+      pageNumber = 1
+    }
+    let extraURLParams = '?page_number=' + pageNumber
+    if (miner_address) {
+      extraURLParams += '&miner=' + encodeURIComponent(miner_address)
+    }
+    return  Api().get('trx' + extraURLParams)
   },
 }
