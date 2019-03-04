@@ -101,7 +101,7 @@ export default {
             start = new Date(this.miner.first_block_timestamp * 1000)
           }
           if (this.miner.last_block_timestamp) {
-            end = new Date(this.miner.last_block_timestamp * 1000)
+            end = new Date((this.miner.last_block_timestamp + 24 * 3600) * 1000)
           }
           let currDay = new Date(start)
           while(start < end) {
