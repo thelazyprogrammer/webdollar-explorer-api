@@ -174,28 +174,40 @@ export default {
       return Utils.formatMoneyNumber(number, decimals);
     },
 
+    setDisplay(el, type) {
+        if (document.getElementById(el)) {
+          document.getElementById(el).style.display = type
+        }
+    },
+
+    setColor(el, color) {
+        if (document.getElementById(el)) {
+          document.getElementById(el).style.backgroundColor = color
+        }
+    },
+
     openTab(name) {
       if (name=='blocks') {
-        document.getElementById('blocks').style.display = "block"
-        document.getElementById('transactions').style.display = "none"
-        document.getElementById('blocks_resolved').style.display = "none"
-        document.getElementById('button_block').style.backgroundColor = "#00c02c"
-        document.getElementById('button_trx').style.backgroundColor = "#a4c0ab"
-        document.getElementById('button_block_resolved').style.backgroundColor = "#a4c0ab"
+        this.setDisplay('blocks', 'block')
+        this.setDisplay('transactions', 'none')
+        this.setDisplay('blocks_resolved', 'none')
+        this.setColor('button_block', "#00c02c")
+        this.setColor('button_trx', "#a4c0ab")
+        this.setColor('button_block_resolved', "#a4c0ab")
       } else if (name=='blocks_resolved') {
-        document.getElementById('blocks_resolved').style.display = "block"
-        document.getElementById('transactions').style.display = "none"
-        document.getElementById('blocks').style.display = "none"
-        document.getElementById('button_block_resolved').style.backgroundColor = "#00c02c"
-        document.getElementById('button_block').style.backgroundColor = "#a4c0ab"
-        document.getElementById('button_trx').style.backgroundColor = "#a4c0ab"
+        this.setDisplay('blocks', 'none')
+        this.setDisplay('transactions', 'none')
+        this.setDisplay('blocks_resolved', 'block')
+        this.setColor('button_block', "#a4c0ab")
+        this.setColor('button_trx', "#a4c0ab")
+        this.setColor('button_block_resolved', "#00c02c")
       } else {
-        document.getElementById('blocks').style.display = "none"
-        document.getElementById('blocks_resolved').style.display = "none"
-        document.getElementById('transactions').style.display = "block"
-        document.getElementById('button_trx').style.backgroundColor = "#00c02c"
-        document.getElementById('button_block').style.backgroundColor = "#a4c0ab"
-        document.getElementById('button_block_resolved').style.backgroundColor = "#a4c0ab"
+        this.setDisplay('blocks', 'none')
+        this.setDisplay('transactions', 'block')
+        this.setDisplay('blocks_resolved', 'none')
+        this.setColor('button_block', "#a4c0ab")
+        this.setColor('button_trx', "#00c02c")
+        this.setColor('button_block_resolved', "#a4c0ab")
       }
     }
   }
@@ -206,6 +218,11 @@ export default {
 #blocks {
   display:none;
 }
+
+#blocks_resolved {
+  display:none;
+}
+
 
 .doNotShowClass {
  display:inherit;
