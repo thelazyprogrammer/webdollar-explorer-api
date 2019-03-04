@@ -20,7 +20,11 @@
         </div>
 
         <div class="addressTab transactionsWrapper" id="blocks">
-          <light-blocks :showMiner="false" :blocks="this.miner.blocks"></light-blocks>
+          <light-blocks :pages="this.miner.blocks.pages" :showMiner="false" :blocks="this.miner.blocks"></light-blocks>
+          <paginate v-if="this.miner.blocks && this.miner.blocks.length" page="this.miner.blocks.page_number"
+            :page-count="this.miner.blocks.pages" :click-handler="changeBlocks" :prev-text="'Prev'"  :next-text="'Next'"
+            :container-class="'pagination-wrapper'">
+          </paginate>
         </div>
 
         <div class="addressTab transactionsWrapper" id="blocks_resolved">
@@ -86,6 +90,15 @@ export default {
       this.getMiner(window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length), this.startDate, this.endDate)
       this.value = [this.startDate, this.endDate]
     },
+    async changeBlocks(pageNum) {
+      let miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
+      let blocks = await BlocksService.fetchBlocks(pageNum, miner)
+      this.miner.blocks = blocks.data.blocks
+      this.miner.blocks_number = blocks.data.blocks_number
+      this.miner.blocks.pages = blocks.data.pages
+      this.miner.blocks.page_number = blocks.data.page_number
+
+    },
     getStartEndDates() {
       let days = this.getDates()
       if (this.startDate && this.endDate) {
@@ -123,11 +136,19 @@ export default {
     async getMiner (miner, startDate, endDate) {
       this.miner = {}
       miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
-      let response = await BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
-      if (response.data.transactions) {
+      let minerTask = BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
+      let blocksTask = BlocksService.fetchBlocks(1, miner)
+      let transactionsTask = BlocksService.fetchTransactions(miner)
+      
+      let minerData = await minerTask
+      let blocks = await blocksTask
+      let transactions = await transactionsTask
+      this.miner = minerData.data
+
+      if (transactions) {
         let trxs_parsed = []
-        var miner_address = response.data.address
-        response.data.transactions.forEach(function(trx) {
+        var miner_address = miner
+        transactions.data.trxs.forEach(function(trx) {
           var index_from = -1
           var index_to = -1
 
@@ -162,9 +183,12 @@ export default {
 
           trxs_parsed.push(trx)
         })
-        response.data.transactions = trxs_parsed
+        this.miner.transactions = trxs_parsed
       }
-      this.miner = response.data
+      this.miner.transactions_number = transactions.data.trxs_number
+      this.miner.blocks = blocks.data.blocks
+      this.miner.blocks_number = blocks.data.blocks_number
+      this.miner.blocks.pages = blocks.data.pages
       this.data = this.getDates()
       this.value = this.getStartEndDates()
 

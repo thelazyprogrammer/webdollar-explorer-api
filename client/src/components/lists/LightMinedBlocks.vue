@@ -44,10 +44,6 @@
       </tr>
     </table>
 
-    <paginate v-if="blocks && blocks.length" page="page_number"
-        :page-count="pages" :click-handler="changeAddress" :prev-text="'Prev'"  :next-text="'Next'"
-        :container-class="'pagination-wrapper'">
-    </paginate>
   </div>
 
 </template>
@@ -64,15 +60,10 @@ export default {
   name: 'transactions',
   props:{
     blocks:{ default:()=>{return [] }},
-    pages: { default:()=>{return 1 }},
-    page_number: { default:()=>{return 1 }},
     showMiner: { default: true }
   },
 
   methods: {
-    changeAddress: function(pageNum) {
-      this.$router.push('/blocks?page_number=' + pageNum)
-    },
     mapAddress(address) {
       return Utils.mapAddress(address)
     },

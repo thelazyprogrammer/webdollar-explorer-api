@@ -3,11 +3,15 @@ require('axios-debug-log')
 
 export default {
 
-  fetchBlocks (pageNumber) {
+  fetchBlocks (pageNumber, miner_address) {
     if (!pageNumber) {
       pageNumber = 1
     }
-    return Api().get('block?page_number=' + pageNumber)
+    let extraURLParams = '?page_number=' + pageNumber
+    if (miner_address) {
+      extraURLParams += '&miner=' + encodeURIComponent(miner_address)
+    }
+    return Api().get('block' + extraURLParams)
   },
 
   fetchBlock (block_id) {
@@ -39,5 +43,9 @@ export default {
 
   fetchLatestMiners() {
     return  Api().get('latest_miners')
-  }
+  },
+
+  fetchTransactions(miner_address) {
+    return  Api().get('trx' + '?miner=' + encodeURIComponent(miner_address))
+  },
 }
