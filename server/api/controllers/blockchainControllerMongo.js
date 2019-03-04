@@ -50,7 +50,10 @@ exports.latest_blocks_mongo = async function(req, res) {
   if (isNaN(pageSize) || !pageSize || pageSize > 25 || pageSize < 15) {
     pageSize = MAX_LATEST_BLOCKS
   }
-
+  let miner = undefined
+  if (req.query.miner) {
+    miner = req.query.miner
+  }
 
   let blocks = []
   let MongoClient = require('mongodb').MongoClient;
@@ -63,9 +66,15 @@ exports.latest_blocks_mongo = async function(req, res) {
   }
   try {
     let blockChainDB = mongoDB.db(config.mongodb.db);
-    let blockNumberTask = blockChainDB.collection(config.mongodb.collection).find({}).count()
+    let findQuery = {}
+    if (miner) {
+      findQuery = {
+        miner: miner
+      }
+    }
+    let blockNumberTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).count()
 
-    let blocksTask = blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+    let blocksTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).sort( { number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
 
     let blocks = await blocksTask
     let blockNumber = await blockNumberTask
@@ -74,7 +83,8 @@ exports.latest_blocks_mongo = async function(req, res) {
         result: true,
         blocks: blocks,
         page_number: pageNumber,
-        pages: pages
+        pages: pages,
+        blocks_number: blockNumber
     })
     return
   } catch (ex) {
@@ -121,15 +131,8 @@ exports.read_an_address_mongo = async function (req, res) {
   res.header("Access-Control-Allow-Origin", "*");
 
   var miner_address = req.params.address
-  var show_all_transactions = false
   let start = new Date(1524743407 * 1000).getTime() / 1000
   let end = new Date().getTime() / 1000
-  if (req.query.show_all_transactions) {
-    if (req.query.show_all_transactions == 'true' || req.query.show_all_transactions === true) {
-      show_all_transactions = true
-      console.log('Showing all trxs for address:' + miner_address)
-    }
-  }
   if (req.query.start_date && req.query.end_date) {
     start = new Date(req.query.start_date).getTime() / 1000
     end = new Date(req.query.end_date).getTime() / 1000
@@ -204,13 +207,6 @@ exports.read_an_address_mongo = async function (req, res) {
         }
       }
     ]).toArray()
-    let miner_transactions_number_task = await blockChainDB.collection(config.mongodb.trx_collection).find({
-        timestamp: { $gte: start, $lte: end},
-        addresses: {$all: [miner.address]}}).count()
-
-    let miner_blocks_number_task = await blockChainDB.collection(config.mongodb.collection).find({
-        timestamp: { $gte: start, $lte: end},
-        miner: miner.address}).count()
 
     let miner_blocks_resolved_number_task = await blockChainDB.collection(config.mongodb.collection).find({
         timestamp: { $gte: start, $lte: end},
@@ -284,37 +280,10 @@ exports.read_an_address_mongo = async function (req, res) {
       timestamp: { $gte: start, $lte: end},
     }).sort( { number: -1 }).limit(1).toArray()
 
-    let miner_blocks_task = blockChainDB.collection(config.mongodb.collection).find(
-        {
-            miner: miner.address,
-            timestamp: { $gte: start, $lte: end},
-        }
-    ).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
-
-    let miner_blocks_resolved_task = blockChainDB.collection(config.mongodb.collection).find(
-        {
-            resolver: miner.address,
-            miner: { $ne: miner.address },
-            timestamp: { $gte: start, $lte: end},
-        }
-    ).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
-
-    let max_transactions_task = blockChainDB.collection(config.mongodb.trx_collection).find({
-        addresses: {$all: [miner.address]},
-        timestamp: { $gte: start, $lte: end},
-      }
-    ).sort( { block_number: -1 }).limit(100).toArray()
-
     // WAIT FOR TASKS
     let miner_balance = await miner_balance_task
     let miner_balance_pos = await miner_balance_pos_task
     let miner_balance_res = await miner_balance_res_task
-    miner.transactions_number = await miner_transactions_number_task
-    miner.blocks_number = await miner_blocks_number_task
-    miner.blocks = await miner_blocks_task
-    miner.blocks_resolved_number = await miner_blocks_resolved_number_task
-    miner.blocks_resolved = await miner_blocks_resolved_task
-    let max_transactions = await max_transactions_task
     let last_block = await last_block_task
     let trx_from_balance = await trx_from_balance_task
     let trx_to_balance = await trx_to_balance_task
@@ -334,20 +303,6 @@ exports.read_an_address_mongo = async function (req, res) {
     }
     let totalSupply = blockchainUtils.getTotalSupply(miner.last_block)
     miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
-
-    miner.transactions = []
-    let pooled_transactions = 0
-    for (let i=0; i<max_transactions.length; i++) {
-      let trx = max_transactions[i]
-      if (trx.addresses.length > 10) {
-        pooled_transactions += 1
-      }
-      if (pooled_transactions <= MAX_POOLED_TRXS) {
-        miner.transactions.push(trx)
-      } else {
-        break
-      }
-    }
 
     if (miner_balance_res.length == 1) {
       miner.miner_balance_res = miner_balance_res[0].balance / 10000
@@ -508,6 +463,55 @@ exports.get_latest_miners = async function (req, res) {
   res.json({
     miners: latest_miners,
     miners_number: latest_miners.length
+  })
+  return
+}
+
+
+exports.get_trx = async function (req, res) {
+  res.header("Cache-Control", "public, max-age=1")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  let maxTransactions = 15
+  let miner = ''
+
+  if (req.query.miner) {
+    miner = req.query.miner
+  } else {
+    res.json({})
+    return
+  }
+  let pageNumber = Number.parseInt(req.query.page_number)
+  let pageSize = Number.parseInt(req.query.page_size)
+  if (isNaN(pageNumber) || !pageNumber) {
+    pageNumber = 1
+  }
+  if (isNaN(pageSize) || !pageSize || pageSize > 25 || pageSize < 15) {
+    pageSize = 15
+  }
+
+
+  let MongoClient = require('mongodb').MongoClient;
+  let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  let blockChainDB = mongoDB.db(config.mongodb.db);
+  let trxsTask = blockChainDB.collection(config.mongodb.trx_collection).find({
+            addresses: {$all: [miner]},
+          }
+    ).sort( { block_number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+  let trxsNumberTask = blockChainDB.collection(config.mongodb.trx_collection).find({
+            addresses: {$all: [miner]},
+          }
+    ).count()
+
+  let trxs = await trxsTask
+  let trxsNumber = await trxsNumberTask
+  let pages = Math.round(trxsNumber / pageSize)
+
+  res.json({
+    trxs: trxs,
+    trxs_number: trxsNumber,
+    page_number: pageNumber,
+    pages: pages
   })
   return
 }

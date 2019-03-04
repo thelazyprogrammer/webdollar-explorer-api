@@ -33,4 +33,8 @@ module.exports = function(app) {
 
   app.route('/latest_miners')
     .get(blockchainMongo.get_latest_miners)
+
+  app.route('/trx')
+    .get(blockchainMongo.get_trx)
+
 };
