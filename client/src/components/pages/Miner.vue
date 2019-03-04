@@ -10,8 +10,11 @@
      <div  :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
 
         <div class="tabWrapper">
-          <button id="button_trx" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
-          <button id="button_block" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{ getTrxNumber(miner.blocks_number, miner.blocks.length)}})</button>
+          <button id="button_trx" v-if="miner.transactions_number" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
+          <button id="button_block" v-if="miner.blocks_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{ getTrxNumber(miner.blocks_number, miner.blocks.length)}})</button>
+          <button id="button_block_resolved" v-if="miner.blocks_resolved_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(miner.blocks_resolved_number, miner.blocks_resolved.length)}})</button>
+          <toggle-button v-if="false && (miner.transactions_number > miner.transactions.length || miner.blocks_number > miner.blocks.length)" :value="true" :height=45 :width=155 v-model="showLatestTransactions"
+               @change="onShowLatestTrnsactions"
           <toggle-button v-if="false && (miner.transactions_number > miner.transactions.length || miner.blocks_number > miner.blocks.length)" :value="true" :height=45 :width=155 v-model="showLatestTransactions"
                @change="onShowLatestTrnsactions"
                :labels="{checked: 'Show All', unchecked: 'Show Latest'}"/>
@@ -23,6 +26,10 @@
 
         <div class="addressTab transactionsWrapper" id="blocks">
           <light-blocks :showMiner="false" :blocks="this.miner.blocks"></light-blocks>
+        </div>
+
+        <div class="addressTab transactionsWrapper" id="blocks_resolved">
+          <light-blocks :showMiner="false" :blocks="this.miner.blocks_resolved"></light-blocks>
         </div>
 
       </div>
@@ -176,13 +183,24 @@ export default {
       if (name=='blocks') {
         document.getElementById('blocks').style.display = "block"
         document.getElementById('transactions').style.display = "none"
+        document.getElementById('blocks_resolved').style.display = "none"
         document.getElementById('button_block').style.backgroundColor = "#00c02c"
+        document.getElementById('button_trx').style.backgroundColor = "#a4c0ab"
+        document.getElementById('button_block_resolved').style.backgroundColor = "#a4c0ab"
+      } else if (name=='blocks_resolved') {
+        document.getElementById('blocks_resolved').style.display = "block"
+        document.getElementById('transactions').style.display = "none"
+        document.getElementById('blocks').style.display = "none"
+        document.getElementById('button_block_resolved').style.backgroundColor = "#00c02c"
+        document.getElementById('button_block').style.backgroundColor = "#a4c0ab"
         document.getElementById('button_trx').style.backgroundColor = "#a4c0ab"
       } else {
         document.getElementById('blocks').style.display = "none"
+        document.getElementById('blocks_resolved').style.display = "none"
         document.getElementById('transactions').style.display = "block"
         document.getElementById('button_trx').style.backgroundColor = "#00c02c"
         document.getElementById('button_block').style.backgroundColor = "#a4c0ab"
+        document.getElementById('button_block_resolved').style.backgroundColor = "#a4c0ab"
       }
     }
   }

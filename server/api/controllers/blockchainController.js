@@ -304,6 +304,10 @@ exports.read_an_address_mongo = async function (req, res) {
         timestamp: { $gte: start, $lte: end},
         miner: miner.address}).count()
 
+    let miner_blocks_resolved_number_task = await blockChainDB.collection(config.mongodb.collection).find({
+        timestamp: { $gte: start, $lte: end},
+        resolver: miner.address, miner: {$ne: miner.address}}).count()
+
     // get min/max block number between dates
     let max_block_number_array = await blockChainDB.collection(config.mongodb.trx_collection).find({
         addresses: {$all: [miner.address]},
@@ -379,6 +383,14 @@ exports.read_an_address_mongo = async function (req, res) {
         }
     ).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
 
+    let miner_blocks_resolved_task = blockChainDB.collection(config.mongodb.collection).find(
+        {
+            resolver: miner.address,
+            miner: { $ne: miner.address },
+            timestamp: { $gte: start, $lte: end},
+        }
+    ).sort( { number: -1 }).limit(MAX_BLOCKS).toArray()
+
     let max_transactions_task = blockChainDB.collection(config.mongodb.trx_collection).find({
         addresses: {$all: [miner.address]},
         timestamp: { $gte: start, $lte: end},
@@ -392,6 +404,8 @@ exports.read_an_address_mongo = async function (req, res) {
     miner.transactions_number = await miner_transactions_number_task
     miner.blocks_number = await miner_blocks_number_task
     miner.blocks = await miner_blocks_task
+    miner.blocks_resolved_number = await miner_blocks_resolved_number_task
+    miner.blocks_resolved = await miner_blocks_resolved_task
     let max_transactions = await max_transactions_task
     let last_block = await last_block_task
     let trx_from_balance = await trx_from_balance_task
