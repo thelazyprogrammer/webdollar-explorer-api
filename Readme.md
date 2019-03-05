@@ -46,7 +46,7 @@ git clone https://github.com/WebDollar/Node-WebDollar.git
 cd Node-WebDollar
 git remote add lazy https://github.com/thelazyprogrammer/Node-WebDollar.git
 git fetch lazy
-git cherry-pick e041e21d7bead9db005efb0412168f559b186c21
+git cherry-pick 5264fe57bb708018ba93a1013179ba3bbe224b04
 npm install
 ```
 
