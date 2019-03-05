@@ -21,19 +21,27 @@ export default {
   name: 'stars',
 
   components:{ Loading, },
-
+  destroyed() {
+    if (this.loaderInterval) {
+      clearInterval(this.loaderInterval)
+    }
+  },
   data () {
     return {
       forks: [],
       is_loaded: true,
       pixels_per_second: 2,
       node_width: 300,
-      node_height: 20
+      node_height: 20,
+      loaderInterval: ''
     }
   },
   mounted () {
     this.getForks()
-    setInterval(function() {this.getForks()}.bind(this), 5000)
+    if (this.loaderInterval) {
+      clearInterval(this.loaderInterval)
+    }
+    this.loaderInterval = setInterval(function() {this.getForks()}.bind(this), 5000)
   },
   methods: {
     getDisplayClass() {
