@@ -53,8 +53,12 @@ export default {
 
   data () {
     return {
-      genesis_addresses: []
+      genesis_addresses: [],
+      destroyed: false
     }
+  },
+  destroyed() {
+    this.destroyed = true
   },
   mounted () {
     this.getBlocks()
@@ -72,6 +76,9 @@ export default {
     async getBlocks() {
       for (let i=1; i<16;i++) {
         await sleep(300)
+        if (this.destroyed) {
+          break
+        }
         let response = await BlocksService.fetchBlock(i)
         let block_info = response.data
         if (block_info && block_info.miner) {

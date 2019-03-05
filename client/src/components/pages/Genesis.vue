@@ -66,8 +66,12 @@ export default {
       genesis_addresses: [],
       total_genesis: 0,
       tracked_genesis: 0,
+      destroyed: false,
       former_genesis_addresses: SpecialAddresses.genesis_addresses
     }
+  },
+  destroyed() {
+    this.destroyed = true
   },
   mounted () {
     this.getGenesis()
@@ -85,6 +89,9 @@ export default {
     async getGenesis() {
       for (let i=0; i<this.former_genesis_addresses.length; i++) {
         await sleep(300)
+        if (this.destroyed) {
+          break
+        }
         let genesis_address = this.former_genesis_addresses[i]
         let miner_data = await BlocksService.fetchMiner(genesis_address.address)
         let miner = miner_data.data
