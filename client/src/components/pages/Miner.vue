@@ -12,7 +12,7 @@
         <div class="tabWrapper">
           <button id="button_trx" v-if="miner.transactions_number" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
           <button id="button_block" v-if="miner.blocks_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{ getTrxNumber(miner.blocks_number, miner.blocks.length)}})</button>
-          <button id="button_block_resolved" v-if="this.blocksr" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(this.blocksr_number, this.blocksr.length)}})</button>
+          <button id="button_block_resolved" v-if="this.blocksr_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(this.blocksr_number, this.blocksr.length)}})</button>
         </div>
 
         <div class="addressTab transactionsWrapper" id="transactions">
