@@ -1,9 +1,6 @@
 <template>
   <div >
-
     <div v-if="miner" class="minerTable">
-
-      <h2>Address Details</h2>
 
       <div>
         <span>

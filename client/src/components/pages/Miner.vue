@@ -15,9 +15,9 @@
           <button id="button_block_resolved" v-if="miner.blocks_resolved_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(miner.blocks_resolved_number, miner.blocks_resolved.length)}})</button>
         </div>
 
-        <div class="address_tab" id="transactions">
+        <div class="addressTab transactionsWrapper" id="transactions">
           <transactions :address="this.miner.address" :transactions="this.miner.transactions"></transactions>
-          <paginate v-if="this.miner.transactions && this.miner.transactions.length" page="this.miner.transactions.page_number"
+          <paginate v-if="this.miner.transactions && this.miner.transactions.length && this.miner.transactions.pages > 1" page="this.miner.transactions.page_number"
             :page-count="this.miner.transactions.pages" :click-handler="changeTransactions" :prev-text="'Prev'"  :next-text="'Next'"
             :container-class="'pagination-wrapper'">
           </paginate>
@@ -25,7 +25,7 @@
 
         <div class="addressTab transactionsWrapper" id="blocks">
           <light-blocks :pages="this.miner.blocks.pages" :showMiner="false" :blocks="this.miner.blocks"></light-blocks>
-          <paginate v-if="this.miner.blocks && this.miner.blocks.length" page="this.miner.blocks.page_number"
+          <paginate v-if="this.miner.blocks && this.miner.blocks.length && this.miner.blocks.pages > 1" page="this.miner.blocks.page_number"
             :page-count="this.miner.blocks.pages" :click-handler="changeBlocks" :prev-text="'Prev'"  :next-text="'Next'"
             :container-class="'pagination-wrapper'">
           </paginate>
@@ -206,6 +206,14 @@ export default {
       this.miner.blocks.pages = blocks.data.pages
       this.data = this.getDates()
       this.value = this.getStartEndDates()
+      var self = this
+      setTimeout(function() { if (!self.miner.transactions_number || self.miner.transactions_number == 0) {
+        if (self.miner.blocks_number && self.miner.blocks_number != 0) {
+          self.openTab("blocks")
+        }
+      } else {
+        self.openTab("transactions")
+      }}, 50)
 
     },
 
@@ -216,7 +224,10 @@ export default {
     setDisplay(el, type) {
         if (document.getElementById(el)) {
           document.getElementById(el).style.display = type
-        }
+        } else {
+console.log("no el")
+console.log(el)
+}
     },
 
     setColor(el, color) {
@@ -226,14 +237,14 @@ export default {
     },
 
     openTab(name) {
-      if (name=='blocks') {
+     if (name == 'blocks') {
         this.setDisplay('blocks', 'block')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'none')
         this.setColor('button_block', "#00c02c")
         this.setColor('button_trx', "#a4c0ab")
         this.setColor('button_block_resolved', "#a4c0ab")
-      } else if (name=='blocks_resolved') {
+      } else if (name == 'blocks_resolved') {
         this.setDisplay('blocks', 'none')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'block')
@@ -254,14 +265,9 @@ export default {
 </script>
 
 <style type="text/css">
-#blocks {
+#blocks, #blocks_resolved, #transactions {
   display:none;
 }
-
-#blocks_resolved {
-  display:none;
-}
-
 
 .doNotShowClass {
  display:inherit;
@@ -330,7 +336,7 @@ export default {
 .sliderWrapper {
     text-align: left;
     width: 670px;
-    padding: 0 0 10px 0;
+    padding: 0 0 0 0;
     margin: 0 auto;
     margin-top:40px;
 }

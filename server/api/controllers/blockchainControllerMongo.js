@@ -13,7 +13,7 @@ const MAX_POOLED_TRXS = 15
 const MAX_BLOCKS = 25
 const MAX_DEPTH = 1
 
-const MAX_LATEST_BLOCKS = 14
+const MAX_LATEST_BLOCKS = 15
 
 const POS_FORK_BLOCK = 567810
 

@@ -11,13 +11,13 @@ a{
   text-decoration: none;
 }
 
-h2{
+h2, h3, h4{
   width: 100%;
   text-align: center;
   font-weight: 100;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   color:#fec02c;
-  padding: 20px 0;
+  padding: 3px 0;
 }
 
 .mainBox{
@@ -263,12 +263,6 @@ a.add_post_link {
 .minerTable div span:nth-child(2){
   background-color: #292929;
   padding: 5px 10px;
-}
-
-.minerTable h2{
-  background-color: #252424;
-  margin: 0 0 10px 0;
-  padding: 25px 0;
 }
 
 .logoLink{
