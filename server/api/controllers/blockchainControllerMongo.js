@@ -605,6 +605,14 @@ exports.get_uncle = async function(req, res) {
           }
         }
       }
+      if (parents.length == 0) {
+        let parent = await blockChainDB.collection(config.mongodb.collection).find({
+          hash: blocks[i].previous_hash
+        }).toArray()
+	if (parent && parent.length == 1) {
+          parents = [ parent[0].hash + parent[0].miner + parent[0].resolver + parent[0].resolver2 ]
+	}
+      }
       let hashBlock = blocks[i].hash + blocks[i].miner + blocks[i].resolver + blocks[i].resolver2
       if (unclesMapped[hashBlock]) {
         unclesMapped[hashBlock].parents = parents
