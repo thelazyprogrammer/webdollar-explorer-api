@@ -25,7 +25,7 @@ export default {
   data () {
     return {
       forks: [],
-      is_loaded: false,
+      is_loaded: true,
       pixels_per_second: 2,
       node_width: 300,
       node_height: 20
@@ -33,6 +33,7 @@ export default {
   },
   mounted () {
     this.getForks()
+    setInterval(function() {this.getForks()}.bind(this), 5000)
   },
   methods: {
     getDisplayClass() {
@@ -42,57 +43,11 @@ export default {
       return "displayNOSVG"
     },
     async getForks() {
-      this.is_loaded = false
-      let nodes = {
-        "0x69d1f8cef325b99d1ac2ee3acb92214bd774daee16d0409bffdaca22ef2b1461" : {
-            "number": 7248048,
-            "timestamp": 1550736462,
-            "hash": "0x69d1f8cef325b99d1ac2ee3acb92214bd774daee16d0409bffdaca22ef2b1461",
-            "difficulty": 2978675520298708,
-            "parents": [
-                "0x9890232c149e2236bfa4525b70d273f4dc41a151e06e41c32aa7f4cc39ab44c8"
-            ]
-        },
-        "0x38523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1" :         {
-            "number": 7248049,
-            "timestamp": 1550736505,
-            "hash": "0x38523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1",
-            "difficulty": 2978675520298708,
-            "parents": [
-                "0x69d1f8cef325b99d1ac2ee3acb92214bd774daee16d0409bffdaca22ef2b1461"
-            ]
-        },
-        "0x37523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1" :         {
-            "number": 7248050,
-            "timestamp": 1550736605,
-            "hash": "0x37523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1",
-            "difficulty": 2978675520298708,
-            "parents": [
-                "0x38523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1"
-            ]
-        },
-        "0x36523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1" :         {
-            "number": 7248050,
-            "timestamp": 1550736605,
-            "hash": "0x36523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1",
-            "difficulty": 2978675520298608,
-            "parents": [
-                "0x38523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1"
-            ]
-        },
-        "0x35523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1" :         {
-            "number": 7248051,
-            "timestamp": 1550736629,
-            "hash": "0x35523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1",
-            "difficulty": 2978675520298708,
-            "parents": [
-                "0x37523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1",
-                "0x36523445b8babd9960d293e909ad69976bf861863bc29ca5cbbb2b04d27c0ac1"
-            ]
-        },
+      let unclesData = await BlocksService.fetchUncles()
+      for (var key in unclesData.data.uncles) {
+        this.forks[key] = unclesData.data.uncles[key]
       }
-      this.buildGraph(nodes)
-      this.is_loaded = true
+      this.buildGraph(this.forks)
     },
     async drawGraph(nodes, edges) {
             var svg = d3.select("svg"),
@@ -117,20 +72,30 @@ export default {
             node.append("circle")
                 .attr("r", 2.5)
                 .attr("fill", "#666")
+            node.append("a")
+              .attr("xlink:href", function(d) {return "#/blocks/" + d.block.number})
+              .append("rect")
+              .attr("x", 5)
+              .attr("y", -18)
+              .attr("height", 35)
+              .attr("width", 89)
+              .style("fill", "#292828")
             node.append("text")
                 .attr("class", "nodehash")
                 .attr("dy", 13)
                 .attr("x", 8)
                 .attr("fill", "#00c000")
+                .style("pointer-events", "none")
                 .style("text-anchor", "start")
                 .text(function(d) { return d.block.hash.substring(0, 10); });
             node.append("text")
                 .attr("class", "nodenum")
-                .attr("fill", "#00c000")
+                .attr("fill", "#c0c000")
                 .attr("dy", -3)
                 .attr("x", 8)
                 .style("text-anchor", "start")
-                .text(function(d) { return d.block.number; });
+                .style("pointer-events", "none")
+                .text(function(d) { return d.block.number; })
             nodeset.exit().remove();
 
             var link = g.selectAll(".link")
@@ -181,7 +146,8 @@ export default {
 
             for(var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
-                node.y = (latest - node.block.timestamp) * this.pixels_per_second;
+                var dist = latest - node.block.timestamp
+                node.y = dist * this.pixels_per_second;
                 for(var j = 0; j < columns.length; j++) {
                     let self = this
                     if(j == 0 && !node.canonical)
@@ -336,5 +302,16 @@ export default {
 
 #root path {
   stroke: #666
+}
+
+.link {
+  fill: none;
+  stroke-opacity: 0.4;
+  stroke-width: 1.5px;
+}
+
+.nodehash, .nodenum {
+  font-size: 15px;
+  z-index: 9999;
 }
 </style>

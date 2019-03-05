@@ -58,4 +58,8 @@ export default {
     }
     return  Api().get('trx' + extraURLParams)
   },
+
+  fetchUncles() {
+    return  Api().get('uncle')
+  },
 }

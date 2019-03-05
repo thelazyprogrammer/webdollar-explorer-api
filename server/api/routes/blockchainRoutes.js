@@ -37,4 +37,7 @@ module.exports = function(app) {
   app.route('/trx')
     .get(blockchainMongo.get_trx)
 
+  app.route('/uncle')
+    .get(blockchainMongo.get_uncle)
+
 };

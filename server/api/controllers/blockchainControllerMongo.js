@@ -522,3 +522,86 @@ exports.get_trx = async function (req, res) {
   return
 }
 
+exports.get_uncle = async function(req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=5")
+
+  let pageNumber = Number.parseInt(req.query.page_number)
+  let pageSize = Number.parseInt(req.query.page_size)
+  if (isNaN(pageNumber) || !pageNumber) {
+    pageNumber = 1
+  }
+  if (isNaN(pageSize) || !pageSize || pageSize > 25 || pageSize < 15) {
+    pageSize = 15
+  }
+  let miner = undefined
+  let resolver = undefined
+  if (req.query.miner) {
+    miner = req.query.miner
+  }
+  if (req.query.resolver) {
+    resolver = req.query.resolver
+  }
+
+  let uncles = []
+  let MongoClient = require('mongodb').MongoClient;
+  try {
+    var mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  } catch (ex) {
+    console.log(ex)
+    res.json()
+    return
+  }
+  try {
+    let blockChainDB = mongoDB.db(config.mongodb.db);
+    let findQuery = {}
+    if (miner) {
+      findQuery.miner = miner
+    }
+    if (resolver) {
+      findQuery.resolver = resolver
+      findQuery.miner = { $ne: resolver }
+    }
+    let blocksTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).sort( { number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+
+    let blocks = await blocksTask
+    let blocksNumber = blocks.length
+    let unclesMapped = {}
+    for (let i = 1; i < blocksNumber; i++) {
+      let uncles = await blockChainDB.collection(config.mongodb.uncle_collection).find({
+        number: blocks[i - 1].number
+      }).toArray()
+      let parents = []
+      if (uncles && uncles.length) {
+        if (uncles.length > 1) {
+          console.log(uncles.length + " forks for: " + blocks[i - 1].number)
+        }
+        for (var uncle = 0; uncle < uncles.length; uncle++) {
+          parents.push(uncles[uncle].hash.split("").reverse().join(""))
+        }
+      }
+      unclesMapped[blocks[i].hash.split("").reverse().join("")] = {
+        number: blocks[i].number,
+        timestamp: blocks[i].timestamp,
+        hash: blocks[i].hash.split("").reverse().join(""),
+        difficulty: 13,
+        parents: parents
+      }
+    }
+    let pages = Math.round(blocksNumber / pageSize)
+    res.json({
+        result: true,
+        uncles: unclesMapped,
+        page_number: pageNumber,
+        pages: pages,
+        uncles_number: blocksNumber
+    })
+    return
+  } catch (ex) {
+    console.log(ex)
+    res.json()
+    return
+  } finally {
+    mongoDB.close()
+  }
+}
