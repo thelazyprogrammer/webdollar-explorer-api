@@ -567,25 +567,51 @@ exports.get_uncle = async function(req, res) {
     let blocks = await blocksTask
     let blocksNumber = blocks.length
     let unclesMapped = {}
-    for (let i = 1; i < blocksNumber; i++) {
-      let uncles = await blockChainDB.collection(config.mongodb.uncle_collection).find({
-        number: blocks[i - 1].number
-      }).toArray()
+    for (let i = 0; i < blocksNumber - 1; i++) {
+      let uncles = []
+      try {
+        uncles = await blockChainDB.collection(config.mongodb.uncle_collection).find({
+          number: blocks[i + 1].number
+        }).toArray()
+      } catch (ex) {
+        console.log(ex)
+        console.log("Failed to get uncles")
+      }
       let parents = []
       if (uncles && uncles.length) {
         if (uncles.length > 1) {
-          console.log(uncles.length + " forks for: " + blocks[i - 1].number)
+          console.log(uncles.length + " forks for: " + blocks[i + 1].number)
         }
         for (var uncle = 0; uncle < uncles.length; uncle++) {
-          parents.push(uncles[uncle].hash.split("").reverse().join(""))
+          let hash = uncles[uncle].hash + uncles[uncle].miner + uncles[uncle].resolver + uncles[uncle].resolver2
+          parents.push(hash)
+          let isFork = true
+          if (i == blocksNumber - 2) {
+            isFork = false
+          }
+          unclesMapped[hash] = {
+            number: uncles[uncle].number,
+            timestamp: uncles[uncle].timestamp,
+            difficulty: 13,
+            hash: hash,
+            is_fork: isFork,
+            parents: []
+          }
         }
       }
-      unclesMapped[blocks[i].hash.split("").reverse().join("")] = {
-        number: blocks[i].number,
-        timestamp: blocks[i].timestamp,
-        hash: blocks[i].hash.split("").reverse().join(""),
-        difficulty: 13,
-        parents: parents
+      let hashBlock = blocks[i].hash + blocks[i].miner + blocks[i].resolver + blocks[i].resolver2
+      if (unclesMapped[hashBlock]) {
+        unclesMapped[hashBlock].parents = parents
+        unclesMapped[hashBlock].is_fork = false
+      } else {
+        unclesMapped[hashBlock] = {
+                        number: blocks[i].number,
+                        timestamp: blocks[i].timestamp,
+                        difficulty: 13,
+                        hash: hashBlock,
+                        parents: parents,
+                        is_fork: false
+        }
       }
     }
     let pages = Math.round(blocksNumber / pageSize)
