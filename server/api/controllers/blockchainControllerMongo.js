@@ -513,6 +513,12 @@ exports.get_trx = async function (req, res) {
   let trxsNumber = await trxsNumberTask
   let pages = Math.round(trxsNumber / pageSize)
 
+  if (pageNumber == 1) {
+    let pending_trx = await get_pending_trx(miner)
+    if (pending_trx && pending_trx.trxs && pending_trx.trxs.length > 0) {
+      trxs = pending_trx.trxs.concat(trxs)
+    }
+  }
   res.json({
     trxs: trxs,
     trxs_number: trxsNumber,
@@ -631,3 +637,59 @@ exports.get_uncle = async function(req, res) {
     mongoDB.close()
   }
 }
+
+async function get_pending_trx(address) {
+  var options = {
+        uri: config.webdollar.pouchdb_sync_url + '/transactions/pending',
+        json: true
+  };
+
+  let pending_transactions = await requestPromise(options)
+  let transactions = []
+console.log(pending_transactions)
+    pending_transactions.forEach(function(transaction) {
+      try {
+        let transaction_parsed = {
+          fee: 0,
+          from: {
+            amount: 0,
+            address: [],
+            addresses: transaction.from.addresses
+          },
+          to: {
+            address: [],
+            addresses: transaction.to.addresses
+          }
+        }
+        var to_amount = 0
+        var isValidTrx = false
+        transaction.from.addresses.forEach(function(from) {
+          if (address && from.address == address) {
+            isValidTrx = true
+          }
+          transaction_parsed.from.address.push(from.address)
+          transaction_parsed.from.amount += parseInt(from.amount)
+        })
+
+        transaction.to.addresses.forEach(function(to) {
+          if (address && to.address == address) {
+            isValidTrx = true
+          }
+          transaction_parsed.to.address.push(to.address)
+          to_amount += parseInt(to.amount)
+        })
+
+        transaction_parsed.fee = transaction_parsed.from.amount - to_amount
+        if (isValidTrx) {
+          transactions.push(transaction_parsed)
+        }
+      } catch (ex) {
+        console.log(ex)
+      }
+    })
+    return {
+      trxs: transactions,
+      trxs_number: transactions.length
+    }
+}
+

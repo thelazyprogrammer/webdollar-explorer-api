@@ -163,6 +163,7 @@ export default {
         let trxs_parsed = []
         var miner_address = miner
         transactions.data.trxs.forEach(function(trx) {
+          if (trx.block_number) {
           var index_from = -1
           var index_to = -1
 
@@ -193,6 +194,9 @@ export default {
           if (index_to != -1) {
             trx.to.trxs.unshift(trx.to.trxs[index_to])
             trx.to.trxs.splice(index_to + 1, 1)
+          }
+          } else {
+            trx.block_number = "pending"
           }
 
           trxs_parsed.push(trx)
