@@ -12,7 +12,7 @@
         <div class="tabWrapper">
           <button id="button_trx" v-if="miner.transactions_number" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
           <button id="button_block" v-if="miner.blocks_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{ getTrxNumber(miner.blocks_number, miner.blocks.length)}})</button>
-          <button id="button_block_resolved" v-if="miner.blocks_resolved_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(miner.blocks_resolved_number, miner.blocks_resolved.length)}})</button>
+          <button id="button_block_resolved" v-if="this.blocksr" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(this.blocksr_number, this.blocksr.length)}})</button>
         </div>
 
         <div class="addressTab transactionsWrapper" id="transactions">
@@ -24,7 +24,7 @@
         </div>
 
         <div class="addressTab transactionsWrapper" id="blocks">
-          <light-blocks :pages="this.miner.blocks.pages" :showMiner="false" :blocks="this.miner.blocks"></light-blocks>
+          <light-blocks :showMiner="false" :blocks="this.miner.blocks"></light-blocks>
           <paginate v-if="this.miner.blocks && this.miner.blocks.length && this.miner.blocks.pages > 1" page="this.miner.blocks.page_number"
             :page-count="this.miner.blocks.pages" :click-handler="changeBlocks" :prev-text="'Prev'"  :next-text="'Next'"
             :container-class="'pagination-wrapper'">
@@ -32,7 +32,11 @@
         </div>
 
         <div class="addressTab transactionsWrapper" id="blocks_resolved">
-          <light-blocks :showMiner="false" :blocks="this.miner.blocks_resolved"></light-blocks>
+          <light-blocks :showMiner="false" :blocks="this.blocksr"></light-blocks>
+          <paginate v-if="this.blocksr && this.blocksr.length && this.blocksr.pages > 1" page="this.blocksr.page_number"
+            :page-count="this.blocksr.pages" :click-handler="changeBlocksResolved" :prev-text="'Prev'"  :next-text="'Next'"
+            :container-class="'pagination-wrapper'">
+          </paginate>
         </div>
 
       </div>
@@ -65,10 +69,12 @@ export default {
       showMiner: 'doNotShowClass',
       showTransactions: 'showClass',
       miner: {default: function () { return { } }},
+      blocksr: {default: function () { return { } }},
       searchAddress: '',
       searchStart: '',
       piecewise: false,
       startDate: false,
+      blocksr_number: 0,
       endDate: false,
       tooltipDir: ["top", "bottom"],
       data: {default: function () { return getDates()}},
@@ -101,16 +107,22 @@ export default {
       this.miner.blocks_number = blocks.data.blocks_number
       this.miner.blocks.pages = blocks.data.pages
       this.miner.blocks.page_number = blocks.data.page_number
-
+    },
+    async changeBlocksResolved(pageNum) {
+      let miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
+      let blocksResolved = await BlocksService.fetchBlocks(pageNum, '', miner)
+      this.blocksr = blocksResolved.data.blocks
+      this.blocksr_number = blocksResolved.data.blocks_number
+      this.blocksr.pages = blocksResolved.data.pages
+      this.blocksr.page_number = blocksResolved.data.page_number
     },
     async changeTransactions(pageNum) {
       let miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
       let transactions = await BlocksService.fetchTransactions(pageNum, miner)
-      this.miner.transactions = transactions.data.trxs
+      this.miner.transactions = this.orderTrx(transactions, miner)
       this.miner.transactions_number = transactions.data.trxs_number
       this.miner.transactions.pages = transactions.data.pages
       this.miner.transactions.page_number = transactions.data.page_number
-
     },
     getStartEndDates() {
       let days = this.getDates()
@@ -146,18 +158,7 @@ export default {
         return 'latest ' + trx_received_number + ' from ' + all_trx_number
       }
     },
-    async getMiner (miner, startDate, endDate) {
-      this.miner = {}
-      miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
-      let minerTask = BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
-      let blocksTask = BlocksService.fetchBlocks(1, miner)
-      let transactionsTask = BlocksService.fetchTransactions(1, miner)
-      
-      let minerData = await minerTask
-      let blocks = await blocksTask
-      let transactions = await transactionsTask
-      this.miner = minerData.data
-
+    orderTrx(transactions, miner) {
       if (transactions) {
         let trxs_parsed = []
         var miner_address = miner
@@ -196,14 +197,36 @@ export default {
 
           trxs_parsed.push(trx)
         })
-        this.miner.transactions = trxs_parsed
+        return trxs_parsed
       }
+      return []
+    },
+    async getMiner (miner, startDate, endDate) {
+      this.miner = {}
+      miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
+      let minerTask = BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
+      let blocksTask = BlocksService.fetchBlocks(1, miner)
+      let blocksResolvedTask = BlocksService.fetchBlocks(1, '', miner)
+      let transactionsTask = BlocksService.fetchTransactions(1, miner)
+      
+      let minerData = await minerTask
+      let blocks = await blocksTask
+      let blocksResolved = await blocksResolvedTask
+      let transactions = await transactionsTask
+      this.miner = minerData.data
+
+      this.miner.transactions = this.orderTrx(transactions, miner)
+
       this.miner.transactions_number = transactions.data.trxs_number
       this.miner.transactions.pages = transactions.data.pages
       this.miner.transactions.page_number = transactions.data.page_number
       this.miner.blocks = blocks.data.blocks
       this.miner.blocks_number = blocks.data.blocks_number
       this.miner.blocks.pages = blocks.data.pages
+      this.blocksr = blocksResolved.data.blocks
+      this.blocksr_number = blocksResolved.data.blocks_number
+      this.blocksr.pages = blocksResolved.data.pages
+      this.blocksr.page_number = blocksResolved.data.page_number
       this.data = this.getDates()
       this.value = this.getStartEndDates()
       var self = this
@@ -224,10 +247,7 @@ export default {
     setDisplay(el, type) {
         if (document.getElementById(el)) {
           document.getElementById(el).style.display = type
-        } else {
-console.log("no el")
-console.log(el)
-}
+        }
     },
 
     setColor(el, color) {

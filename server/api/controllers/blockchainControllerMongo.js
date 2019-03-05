@@ -51,8 +51,12 @@ exports.latest_blocks_mongo = async function(req, res) {
     pageSize = MAX_LATEST_BLOCKS
   }
   let miner = undefined
+  let resolver = undefined
   if (req.query.miner) {
     miner = req.query.miner
+  }
+  if (req.query.resolver) {
+    resolver = req.query.resolver
   }
 
   let blocks = []
@@ -68,9 +72,11 @@ exports.latest_blocks_mongo = async function(req, res) {
     let blockChainDB = mongoDB.db(config.mongodb.db);
     let findQuery = {}
     if (miner) {
-      findQuery = {
-        miner: miner
-      }
+      findQuery.miner = miner
+    }
+    if (resolver) {
+      findQuery.resolver = resolver
+      findQuery.miner = { $ne: resolver }
     }
     let blockNumberTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).count()
 

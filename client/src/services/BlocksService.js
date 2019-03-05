@@ -3,13 +3,16 @@ require('axios-debug-log')
 
 export default {
 
-  fetchBlocks (pageNumber, miner_address) {
+  fetchBlocks (pageNumber, miner_address, resolver_address) {
     if (!pageNumber) {
       pageNumber = 1
     }
     let extraURLParams = '?page_number=' + pageNumber
     if (miner_address) {
       extraURLParams += '&miner=' + encodeURIComponent(miner_address)
+    }
+    if (resolver_address) {
+      extraURLParams += '&resolver=' + encodeURIComponent(resolver_address)
     }
     return Api().get('block' + extraURLParams)
   },
