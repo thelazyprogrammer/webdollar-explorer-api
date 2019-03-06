@@ -92,8 +92,14 @@ export default {
     this.getMiner()
   },
 
+  destroyed() {
+    this.miner = {}
+    this.poolStats = []
+  },
+
   mounted () {
     this.miner = {}
+    this.poolStats = []
     this.getMiner(window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length))
   },
 
@@ -249,6 +255,7 @@ export default {
         self.openTab("transactions")
       }}, 1)
 
+      this.poolStats = []
       let poolStats = []
       try {
         poolStats = await PoolsService.fetchPoolStatsWMP()
@@ -256,19 +263,23 @@ export default {
       let poolMiners = poolStats.data || []
       let minerNumber = 0
       let minerPool = {}
+      let hashes = 0
       for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
         if (poolMiners[minerIndex].address == miner) {
           minerPool = poolMiners[minerIndex]
+          if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
           minerNumber++
         }
       }
       if (minerNumber > 0) {
         minerPool.name = "WMP"
         minerPool.miners = minerNumber
+        minerPool.power = hashes
         this.poolStats.push(minerPool)
       }
 
       poolStats = []
+      hashes = 0
       try {
         poolStats = await PoolsService.fetchPoolStatsBACM()
       } catch (ex) {}
@@ -277,13 +288,14 @@ export default {
       for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
         if (poolMiners[minerIndex].address == miner) {
           minerPool = poolMiners[minerIndex]
-          minerPool.power = minerPool.hashes
+          if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
           minerNumber++
         }
       }
       if (minerNumber > 0) {
         minerPool.name = "BACM"
         minerPool.miners = minerNumber
+        minerPool.power = hashes
         this.poolStats.push(minerPool)
       }
 
