@@ -654,7 +654,6 @@ async function get_pending_trx(address) {
 
   let pending_transactions = await requestPromise(options)
   let transactions = []
-console.log(pending_transactions)
     pending_transactions.forEach(function(transaction) {
       try {
         let transaction_parsed = {
