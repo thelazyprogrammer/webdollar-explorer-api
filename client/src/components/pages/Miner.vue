@@ -13,6 +13,7 @@
           <button id="button_trx" v-if="miner.transactions_number" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
           <button id="button_block" v-if="miner.blocks_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{ getTrxNumber(miner.blocks_number, miner.blocks.length)}})</button>
           <button id="button_block_resolved" v-if="this.blocksr_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(this.blocksr_number, this.blocksr.length)}})</button>
+          <button id="button_pools_stats" v-if="this.poolStats.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_stats')">Live Pool Stats<br></button>
         </div>
 
         <div class="addressTab transactionsWrapper" id="transactions">
@@ -39,6 +40,9 @@
           </paginate>
         </div>
 
+        <div class="addressTab transactionsWrapper" id="pools_stats">
+          <pool-stats :stats="this.poolStats"></pool-stats>
+        </div>
       </div>
 
     </div>
@@ -52,14 +56,16 @@
 
 import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
+import PoolsService from '@/services/PoolsService'
 import Transactions from '@/components/lists/Transactions.vue'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
 import LightBlocks from '@/components/lists/LightMinedBlocks.vue'
+import PoolStats from '@/components/lists/PoolStats.vue'
 import Loading from '@/components/utils/Loading'
 import vueSlider from 'vue-slider-component'
 export default {
 
-  components:{ vueSlider, Transactions, MinerInfo, LightBlocks, Loading },
+  components:{ vueSlider, Transactions, MinerInfo, LightBlocks, Loading, PoolStats },
 
   name: 'miner',
 
@@ -79,6 +85,7 @@ export default {
       tooltipDir: ["top", "bottom"],
       data: {default: function () { return getDates()}},
       value: {default: function () { return getStartEndDates()}},
+      poolStats: []
     }
   },
   beforeRouteUpdate (to) {
@@ -240,8 +247,68 @@ export default {
         }
       } else {
         self.openTab("transactions")
-      }}, 50)
+      }}, 1)
 
+      let poolStats = []
+      try {
+        poolStats = await PoolsService.fetchPoolStatsWMP()
+      } catch (ex) {}
+      let poolMiners = poolStats.data || []
+      let minerNumber = 0
+      let minerPool = {}
+      for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
+        if (poolMiners[minerIndex].address == miner) {
+          minerPool = poolMiners[minerIndex]
+          minerNumber++
+        }
+      }
+      if (minerNumber > 0) {
+        minerPool.name = "WMP"
+        minerPool.miners = minerNumber
+        this.poolStats.push(minerPool)
+      }
+
+      poolStats = []
+      try {
+        poolStats = await PoolsService.fetchPoolStatsBACM()
+      } catch (ex) {}
+      poolMiners = poolStats.data || []
+      minerNumber = 0
+      for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
+        if (poolMiners[minerIndex].address == miner) {
+          minerPool = poolMiners[minerIndex]
+          minerPool.power = minerPool.hashes
+          minerNumber++
+        }
+      }
+      if (minerNumber > 0) {
+        minerPool.name = "BACM"
+        minerPool.miners = minerNumber
+        this.poolStats.push(minerPool)
+      }
+
+      poolStats = []
+      try {
+        poolStats = await PoolsService.fetchPoolStatsCOFFEE()
+      } catch (ex) {}
+      poolMiners = poolStats.data.miners || []
+      minerNumber = 0
+      minerPool = {}
+      for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
+        if (poolMiners[minerIndex].address == miner) {
+          minerPool = poolMiners[minerIndex]
+          minerPool.power = minerPool.hashes
+          break
+        }
+      }
+      if (minerPool.address) {
+        minerPool.name = "COFFEE"
+        minerPool.miners = minerPool.instances
+        minerPool.reward_sent = minerPool.total_sent * 10000
+        minerPool.reward_total = minerPool.reward_total * 10000
+        minerPool.power = minerPool.hps
+        this.poolStats.push(minerPool)
+      }
     },
 
     formatMoneyNumber(number, decimals){
@@ -265,6 +332,8 @@ export default {
         this.setDisplay('blocks', 'block')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'none')
+        this.setDisplay('pools_stats', 'none')
+        this.setColor('button_pools_stats', "#a4c0ab")
         this.setColor('button_block', "#00c02c")
         this.setColor('button_trx', "#a4c0ab")
         this.setColor('button_block_resolved', "#a4c0ab")
@@ -272,13 +341,26 @@ export default {
         this.setDisplay('blocks', 'none')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'block')
+        this.setDisplay('pools_stats', 'none')
+        this.setColor('button_pools_stats', "#a4c0ab")
         this.setColor('button_block', "#a4c0ab")
         this.setColor('button_trx', "#a4c0ab")
         this.setColor('button_block_resolved', "#00c02c")
+      } else if (name == 'pool_stats') {
+        this.setDisplay('blocks', 'none')
+        this.setDisplay('transactions', 'none')
+        this.setDisplay('blocks_resolved', 'none')
+        this.setDisplay('pools_stats', 'block')
+        this.setColor('button_block', "#a4c0ab")
+        this.setColor('button_trx', "#a4c0ab")
+        this.setColor('button_block_resolved', "#a4c0ab")
+        this.setColor('button_pools_stats', "#00c02c")
       } else {
         this.setDisplay('blocks', 'none')
         this.setDisplay('transactions', 'block')
         this.setDisplay('blocks_resolved', 'none')
+        this.setDisplay('pools_stats', 'none')
+        this.setColor('button_pools_stats', "#a4c0ab")
         this.setColor('button_block', "#a4c0ab")
         this.setColor('button_trx', "#00c02c")
         this.setColor('button_block_resolved', "#a4c0ab")
@@ -289,7 +371,7 @@ export default {
 </script>
 
 <style type="text/css">
-#blocks, #blocks_resolved, #transactions {
+#blocks, #blocks_resolved, #transactions, #pool_stats {
   display:none;
 }
 
