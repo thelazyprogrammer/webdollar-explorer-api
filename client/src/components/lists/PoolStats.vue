@@ -62,8 +62,11 @@ export default {
     formatPower(number) {
       number = Number(number)
       if (isNaN(number)) { number = 0 }
+      if (number > 1000000) {
+        return (Math.round(number / 100000)) / 100 + " M"
+      }
       if (number > 1000) {
-        return (number / 1000) + " K"
+        return (Math.round(number / 10) /100) + " K"
       }
       return number + " "
     }
