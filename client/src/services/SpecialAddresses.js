@@ -37,7 +37,7 @@ export default {
      {
        name: 'WMP',
        address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
-       'status': 'down',
+       'status': 'up',
        fee: 2,
        min_amount: 20
      },
@@ -86,7 +86,7 @@ export default {
      {
        name: 'DEV_POS_POOL_1',
        address: 'WEBD$gAosJ5+2tFnS$q5EsZZGVHKEU#cHnPJbZz$',
-       'status': 'up',
+       'status': 'down',
        fee: 'x',
        min_amount: 'x'
      },
@@ -100,7 +100,7 @@ export default {
      {
        name: 'GYMBASE_POOL_1',
        address: 'WEBD$gCwr#P50K@S6n@S3STdkkyvkIAr9mIG7gP$',
-       'status': 'up',
+       'status': 'down',
        fee: 1,
        min_amount: 20
      }
