@@ -53,7 +53,9 @@ export default {
     async getForks() {
       let unclesData = await BlocksService.fetchUncles()
       for (var key in unclesData.data.uncles) {
-        this.forks[key] = unclesData.data.uncles[key]
+        if (!this.forks[key]) {
+          this.forks[key] = unclesData.data.uncles[key]
+        }
       }
       this.buildGraph(this.forks)
     },
