@@ -6,8 +6,8 @@
 
       <tr>
         <td>Block</td>
-        <td v-if="showMiner"> Miner </td>
-        <td v-if="!showMiner"> Algorithm </td>
+        <td v-if="showMiner">Miner</td>
+        <td v-if="showResolver">Resolver</td>
         <td> Age </td>
         <td>Txs</td>
       </tr>
@@ -24,8 +24,10 @@
           </a>
         </td>
 
-        <td v-if="!showMiner" align="center">
-          {{ block.algorithm }}
+        <td v-if="showResolver" align="center">
+          <a :href="'#/miner/' + block.miner">
+            {{ mapAddress(block.resolver || block.miner) }}
+          </a>
         </td>
 
         <td align="center">
@@ -60,12 +62,18 @@ export default {
   name: 'transactions',
   props:{
     blocks:{ default:()=>{return [] }},
-    showMiner: { default: true }
+    showMiner: { default: true },
+    showResolver: { default: false },
+    showAlgorithm: { default: false },
   },
 
   methods: {
     mapAddress(address) {
-      return Utils.mapAddress(address)
+      address = Utils.mapAddress(address)
+      if (address.length > 15) {
+       return (address).substring(0,10) + ".." + address.substring(address.length - 5)
+      }
+      return address
     },
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number, decimals);

@@ -15,7 +15,9 @@
       <tr v-bind:key="pool.name" v-for="pool in stats">
 
         <td align="center">
-          {{ pool.name }}
+          <a :href="'#/miner/' + pool.address">
+            {{ mapAddress(pool.address) }}
+          </a>
         </td>
 
         <td align="center">
@@ -56,6 +58,13 @@ export default {
   },
 
   methods: {
+    mapAddress(address) {
+      address = Utils.mapAddress(address)
+      if (address.length > 15) {
+       return (address).substring(0,10) + ".." + address.substring(address.length - 5)
+      }
+      return address
+    },
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number, decimals);
     },

@@ -25,7 +25,7 @@
         </div>
 
         <div class="addressTab transactionsWrapper" id="blocks">
-          <light-blocks :showMiner="false" :blocks="this.miner.blocks"></light-blocks>
+          <light-blocks :showMiner="false" :showResolver="true" :blocks="this.miner.blocks"></light-blocks>
           <paginate v-if="this.miner.blocks && this.miner.blocks.length && this.miner.blocks.pages > 1" page="this.miner.blocks.page_number"
             :page-count="this.miner.blocks.pages" :click-handler="changeBlocks" :prev-text="'Prev'"  :next-text="'Next'"
             :container-class="'pagination-wrapper'">
@@ -33,7 +33,7 @@
         </div>
 
         <div class="addressTab transactionsWrapper" id="blocks_resolved">
-          <light-blocks :showMiner="false" :blocks="this.blocksr"></light-blocks>
+          <light-blocks :showMiner="true" :blocks="this.blocksr"></light-blocks>
           <paginate v-if="this.blocksr && this.blocksr.length && this.blocksr.pages > 1" page="this.blocksr.page_number"
             :page-count="this.blocksr.pages" :click-handler="changeBlocksResolved" :prev-text="'Prev'"  :next-text="'Next'"
             :container-class="'pagination-wrapper'">
@@ -272,7 +272,7 @@ export default {
         }
       }
       if (minerNumber > 0) {
-        minerPool.name = "WMP"
+        minerPool.address = "WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$"
         minerPool.miners = minerNumber
         minerPool.power = hashes
         this.poolStats.push(minerPool)
@@ -293,7 +293,7 @@ export default {
         }
       }
       if (minerNumber > 0) {
-        minerPool.name = "BACM"
+        minerPool.address = "WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$"
         minerPool.miners = minerNumber
         minerPool.power = hashes
         this.poolStats.push(minerPool)
@@ -314,7 +314,7 @@ export default {
         }
       }
       if (minerPool.address) {
-        minerPool.name = "COFFEE"
+        minerPool.address = "WEBD$gCMxAKX96yhmaygo@NG+vnb4cz1eYoYpMv$"
         minerPool.miners = minerPool.instances
         minerPool.reward_sent = minerPool.total_sent * 10000
         minerPool.reward_total = minerPool.reward_total * 10000
