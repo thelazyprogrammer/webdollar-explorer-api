@@ -25,7 +25,7 @@
         </td>
 
         <td v-if="showResolver" align="center">
-          <a :href="'#/miner/' + block.miner">
+          <a :href="'#/miner/' + (block.resolver || block.miner)">
             {{ mapAddress(block.resolver || block.miner) }}
           </a>
         </td>
