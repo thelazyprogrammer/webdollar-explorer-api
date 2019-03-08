@@ -31,7 +31,7 @@
         </td>
 
         <td align="center">
-          {{ formatDate(block.timestamp, showMiner) }}
+          {{ formatDate(block.timestamp) }}
         </td>
 
         <td align="left">
@@ -78,14 +78,9 @@ export default {
     formatMoneyNumber(number, decimals){
       return Utils.formatMoneyNumber(number, decimals);
     },
-    formatDate(timestamp, showMiner){
+    formatDate(timestamp){
       let blockDate = new Date(timestamp * 1000)
-      let fromNow = moment(blockDate).fromNow()
-      if (showMiner) {
-        return fromNow
-      } else {
-        return fromNow + " (" + blockDate.toGMTString() +  ")"
-      }
+      return moment(blockDate).fromNow()
     }
   }
 
