@@ -6,7 +6,7 @@ config.couchdb = {};
 config.couchdb.syncer = {};
 config.mongodb = {};
 
-config.server.port = 3000
+config.server.port = process.env.SERVER_PORT || 3000
 
 config.webdollar.pouchdb_sync_url = "http://localhost:3333"
 config.webdollar.couchdb_sync_url = "http://localhost:3333"
