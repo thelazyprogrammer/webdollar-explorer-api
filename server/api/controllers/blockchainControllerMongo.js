@@ -84,7 +84,7 @@ exports.latest_blocks_mongo = async function(req, res) {
 
     let blocks = await blocksTask
     let blockNumber = await blockNumberTask
-    let pages = Math.round(blockNumber / pageSize)
+    let pages = Math.ceil(blockNumber / pageSize)
     res.json({
         result: true,
         blocks: blocks,
@@ -511,7 +511,7 @@ exports.get_trx = async function (req, res) {
 
   let trxs = await trxsTask
   let trxsNumber = await trxsNumberTask
-  let pages = Math.round(trxsNumber / pageSize)
+  let pages = Math.ceil(trxsNumber / pageSize)
 
   if (pageNumber == 1) {
     let pending_trx = await get_pending_trx(miner)
@@ -628,7 +628,7 @@ exports.get_uncle = async function(req, res) {
         }
       }
     }
-    let pages = Math.round(blocksNumber / pageSize)
+    let pages = Math.ceil(blocksNumber / pageSize)
     res.json({
         result: true,
         uncles: unclesMapped,
