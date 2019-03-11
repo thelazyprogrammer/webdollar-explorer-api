@@ -473,6 +473,37 @@ exports.get_latest_miners = async function (req, res) {
   return
 }
 
+async function getTransactions(miner, pageNumber, pageSize) {
+  let MongoClient = require('mongodb').MongoClient;
+  let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  let blockChainDB = mongoDB.db(config.mongodb.db);
+  let trxsTask = blockChainDB.collection(config.mongodb.trx_collection).find({
+            addresses: {$all: [miner]},
+          }
+    ).sort( { block_number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+  let trxsNumberTask = blockChainDB.collection(config.mongodb.trx_collection).find({
+            addresses: {$all: [miner]},
+          }
+    ).count()
+
+  let trxs = await trxsTask
+  let trxsNumber = await trxsNumberTask
+  let pages = Math.ceil(trxsNumber / pageSize)
+
+  if (pageNumber == 1) {
+    let pending_trx = await get_pending_trx(miner)
+    if (pending_trx && pending_trx.trxs && pending_trx.trxs.length > 0) {
+      trxs = pending_trx.trxs.concat(trxs)
+    }
+  }
+
+  return {
+    trxs: trxs,
+    trxs_number: trxsNumber,
+    pages: pages
+  }
+}
+
 
 exports.get_trx = async function (req, res) {
   res.header("Cache-Control", "public, max-age=1")
@@ -496,34 +527,13 @@ exports.get_trx = async function (req, res) {
     pageSize = 15
   }
 
+  let trxData = await getTransactions(miner, pageNumber, pageSize)
 
-  let MongoClient = require('mongodb').MongoClient;
-  let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
-  let blockChainDB = mongoDB.db(config.mongodb.db);
-  let trxsTask = blockChainDB.collection(config.mongodb.trx_collection).find({
-            addresses: {$all: [miner]},
-          }
-    ).sort( { block_number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
-  let trxsNumberTask = blockChainDB.collection(config.mongodb.trx_collection).find({
-            addresses: {$all: [miner]},
-          }
-    ).count()
-
-  let trxs = await trxsTask
-  let trxsNumber = await trxsNumberTask
-  let pages = Math.ceil(trxsNumber / pageSize)
-
-  if (pageNumber == 1) {
-    let pending_trx = await get_pending_trx(miner)
-    if (pending_trx && pending_trx.trxs && pending_trx.trxs.length > 0) {
-      trxs = pending_trx.trxs.concat(trxs)
-    }
-  }
   res.json({
-    trxs: trxs,
-    trxs_number: trxsNumber,
+    trxs: trxData.trxs,
+    trxs_number: trxData.trxs_number,
     page_number: pageNumber,
-    pages: pages
+    pages: trxData.pages
   })
   return
 }
@@ -698,5 +708,106 @@ async function get_pending_trx(address) {
       trxs: transactions,
       trxs_number: transactions.length
     }
+}
+
+async function getStars(address, depth, addresses, stars, first) {
+
+  let first_depth = depth * 13
+  if (first || depth == MAX_DEPTH + 1) {
+    first_depth = 1001
+  }
+  if (!addresses.includes(address)) {
+    addresses.push(address)
+    stars.nodes.push({
+      id: address,
+      group: first_depth
+    })
+  }
+
+  try {
+    let trxsData = await getTransactions(address, 1, 60)
+    let current_addresses = []
+    trxsData.trxs.forEach(function(transaction) {
+      let is_from = false
+      let is_to = false
+      let from_addresses = []
+      let to_addresses = []
+      transaction.from.address.forEach(function(from) {
+        if (!addresses.includes(from)) {
+          from_addresses.push(from)
+        }
+        if (from == address) {
+          is_from = true
+        }
+      })
+      transaction.to.address.forEach(function(to) {
+        if (!addresses.includes(to)) {
+          to_addresses.push(to)
+        }
+        if (to == address) {
+          is_to = true
+        }
+      })
+      if (is_from) {
+        current_addresses = current_addresses.concat(to_addresses)
+      }
+      if (is_to) {
+        current_addresses = current_addresses.concat(from_addresses)
+      }
+    })
+
+    current_addresses.forEach(function(curr_address) {
+      if (!addresses.includes(curr_address)) {
+        console.log("Found star: " + curr_address)
+        addresses.push(curr_address)
+        stars.nodes.push({
+          id: curr_address,
+          group: (depth + 1) * 13
+        });
+        stars.links.push({
+          source: address,
+          target: curr_address,
+          value: 1
+        });
+      }
+    })
+    if (depth == 1) {
+      return Promise.resolve(stars)
+    } else {
+      let stars1 = []
+      current_addresses.forEach(function(curr_address) {
+        stars1 = Promise.resolve(getStars(curr_address, depth - 1, addresses, stars))
+      })
+      return Promise.resolve(stars1)
+    }
+  } catch (exception) {
+    console.log(exception.message)
+    return stars
+  }
+}
+
+exports.get_stars = async function (req, res) {
+  res.header("Cache-Control", "public, max-age=1")
+  res.header("Access-Control-Allow-Origin", "*");
+
+  let address = req.params.address;
+  let depth = 1;
+  if (req.query.depth) {
+    depth = parseInt(req.query.depth);
+  }
+
+  if (address.length != 40 || depth > MAX_DEPTH + 1) {
+    res.json(false);
+    return
+  }
+  console.log("Getting stars for address: " + address + ", depth: " + depth)
+  let stars = []
+  try {
+    stars = await getStars(address, depth, [], { nodes: [], links: []}, true)
+  } catch (ex) {
+    console.log(ex)
+  }
+  res.json(stars);
+  return;
 }
 
