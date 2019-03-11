@@ -266,66 +266,66 @@ async function getStars(address, depth, addresses, stars, first) {
     json: true
   };
 
-  let address_info = await requestPromise(options)
-    try {
-      let current_addresses = []
-      address_info.transactions.forEach(function(transaction) {
-        let is_from = false
-        let is_to = false
-        let from_addresses = []
-        let to_addresses = []
-        transaction.transaction.from.addresses.forEach(function(from) {
-          if (!addresses.includes(from.address)) {
-            from_addresses.push(from.address)
-          }
-          if (from.address == address) {
-            is_from = true
-          }
-        })
-        transaction.transaction.to.addresses.forEach(function(to) {
-          if (!addresses.includes(to.address)) {
-            to_addresses.push(to.address)
-          }
-          if (to.address == address) {
-            is_to = true
-          }
-        })
-        if (is_from) {
-          current_addresses = current_addresses.concat(to_addresses)
+  try {
+    let address_info = await requestPromise(options)
+    let current_addresses = []
+    address_info.transactions.forEach(function(transaction) {
+      let is_from = false
+      let is_to = false
+      let from_addresses = []
+      let to_addresses = []
+      transaction.transaction.from.addresses.forEach(function(from) {
+        if (!addresses.includes(from.address)) {
+          from_addresses.push(from.address)
         }
-        if (is_to) {
-          current_addresses = current_addresses.concat(from_addresses)
+        if (from.address == address) {
+          is_from = true
         }
       })
-
-      current_addresses.forEach(function(curr_address) {
-        if (!addresses.includes(curr_address)) {
-          console.log("Found star: " + curr_address)
-          addresses.push(curr_address)
-          stars.nodes.push({
-            id: curr_address,
-            group: (depth + 1) * 13
-          });
-          stars.links.push({
-            source: address,
-            target: curr_address,
-            value: 1
-          });
+      transaction.transaction.to.addresses.forEach(function(to) {
+        if (!addresses.includes(to.address)) {
+          to_addresses.push(to.address)
+        }
+        if (to.address == address) {
+          is_to = true
         }
       })
-      if (depth == 1) {
-        return Promise.resolve(stars)
-      } else {
-        let stars1 = []
-        current_addresses.forEach(function(curr_address) {
-          stars1 = Promise.resolve(getStars(curr_address, depth - 1, addresses, stars))
-        })
-        return Promise.resolve(stars1)
+      if (is_from) {
+        current_addresses = current_addresses.concat(to_addresses)
       }
-    } catch (exception) {
-      console.log(exception.message)
-      return stars
+      if (is_to) {
+        current_addresses = current_addresses.concat(from_addresses)
+      }
+    })
+
+    current_addresses.forEach(function(curr_address) {
+      if (!addresses.includes(curr_address)) {
+        console.log("Found star: " + curr_address)
+        addresses.push(curr_address)
+        stars.nodes.push({
+          id: curr_address,
+          group: (depth + 1) * 13
+        });
+        stars.links.push({
+          source: address,
+          target: curr_address,
+          value: 1
+        });
+      }
+    })
+    if (depth == 1) {
+      return Promise.resolve(stars)
+    } else {
+      let stars1 = []
+      current_addresses.forEach(function(curr_address) {
+        stars1 = Promise.resolve(getStars(curr_address, depth - 1, addresses, stars))
+      })
+      return Promise.resolve(stars1)
     }
+  } catch (exception) {
+    console.log(exception.message)
+    return stars
+  }
 }
 
 exports.get_stars = async function (req, res) {
@@ -343,7 +343,12 @@ exports.get_stars = async function (req, res) {
     return
   }
   console.log("Getting stars for address: " + address + ", depth: " + depth)
-  let stars = await getStars(address, depth, [], { nodes: [], links: []}, true)
+  let stars = []
+  try {
+    stars = await getStars(address, depth, [], { nodes: [], links: []}, true)
+  } catch (ex) {
+    console.log(ex)
+  }
   res.json(stars);
   return;
 }
