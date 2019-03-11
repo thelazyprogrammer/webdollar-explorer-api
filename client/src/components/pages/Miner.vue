@@ -298,6 +298,26 @@ export default {
         minerPool.power = hashes
         this.poolStats.push(minerPool)
       }
+      poolStats = []
+      hashes = 0
+      try {
+        poolStats = await PoolsService.fetchPoolStatsROXANA()
+      } catch (ex) {}
+      poolMiners = poolStats.data || []
+      minerNumber = 0
+      for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
+        if (poolMiners[minerIndex].address == miner) {
+          minerPool = poolMiners[minerIndex]
+          if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
+          minerNumber++
+        }
+      }
+      if (minerNumber > 0) {
+        minerPool.address = "WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$"
+        minerPool.miners = minerNumber
+        minerPool.power = hashes
+        this.poolStats.push(minerPool)
+      }
 
       poolStats = []
       try {
