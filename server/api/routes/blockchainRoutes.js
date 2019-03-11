@@ -23,7 +23,7 @@ module.exports = function(app) {
     .get(status_route)
 
   app.route('/stars/:address*')
-    .get(blockchainNative.get_stars)
+    .get(blockchainMongo.get_stars)
 
   app.route('/pending_trx')
     .get(blockchainNative.get_pending_trx)
