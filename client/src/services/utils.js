@@ -4,6 +4,9 @@ export default {
 
   formatMoneyNumber(n, decimals=0) {
 
+    if (!n || isNaN(n)) {
+      n = 0
+    }
     var number = parseInt(n / 10000);
     var decimalNumber = this.getNumberRest(n);
     var sign = ''
