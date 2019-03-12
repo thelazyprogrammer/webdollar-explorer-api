@@ -87,28 +87,5 @@ export default {
 }
 </script>
 <style>
-.pagination-wrapper {
-  margin: 0!important;
-  display: flex;
-  justify-content: center!important;
-  padding-left: 0;
-  list-style: none;
-  border-radius: .25rem;
-}
-
-.pagination-wrapper li {
-  padding: .5rem .75rem;
-}
-
-.pagination-wrapper li:hover,
-.pagination-wrapper li:focus {
-  text-decoration: none;
-}
-
-.active > a {
-  text-decoration: underline;
-  cursor: none;
-  color: #00c000!important;
-}
 
 </style>

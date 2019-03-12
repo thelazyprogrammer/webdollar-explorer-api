@@ -64,9 +64,14 @@ h2, h3, h4{
     font-size: 0.8em;
     overflow-x: auto;
   }
+}
 
+@media screen and (max-width: 580px) {
+  .pagination-wrapper {
+    margin: 0 0 10em 0!important;
+  }
   #donate p {
-    font-size: 0.7em;
+    font-size: 0.6em;
   }
 }
 
@@ -493,4 +498,28 @@ a.add_post_link {
 
 .vue-slider-component .vue-slider-tooltip-bottom .vue-merged-tooltip .vue-slider-tooltip:before, .vue-slider-component .vue-slider-tooltip-wrap.vue-slider-tooltip-bottom .vue-slider-tooltip:before {
   margin-left: 30px;
+}
+
+.pagination-wrapper {
+  margin: 0;
+  display: flex;
+  justify-content: center!important;
+  padding-left: 0;
+  list-style: none;
+  border-radius: .25rem;
+}
+
+.pagination-wrapper li {
+  padding: .5rem .75rem;
+}
+
+.pagination-wrapper li:hover,
+.pagination-wrapper li:focus {
+  text-decoration: none;
+}
+
+.active > a {
+  text-decoration: underline;
+  cursor: none;
+  color: #00c000!important;
 }
