@@ -1,4 +1,4 @@
-# WebDollar Blockchain Explorer
+# WebDollar Blockchain Explorer [![Build Status](https://travis-ci.com/thelazyprogrammer/webdollar-explorer-api.svg?branch=master)](https://travis-ci.com/thelazyprogrammer/webdollar-explorer-api)
 
 This project allows to deploy a complete, scalable and fast service to access WebDollar.io blockchain.
 
