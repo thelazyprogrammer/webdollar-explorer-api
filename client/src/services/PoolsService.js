@@ -21,5 +21,5 @@ export default {
 
   fetchPoolStatsCOFFEE (miner) {
     return COFFEEPoolApi().get()
-  },
+  }
 }

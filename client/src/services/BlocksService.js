@@ -3,63 +3,63 @@ require('axios-debug-log')
 
 export default {
 
-  fetchBlocks (pageNumber, miner_address, resolver_address) {
+  fetchBlocks (pageNumber, minerAddress, resolverAddress) {
     if (!pageNumber) {
       pageNumber = 1
     }
     let extraURLParams = '?page_number=' + pageNumber
-    if (miner_address) {
-      extraURLParams += '&miner=' + encodeURIComponent(miner_address)
+    if (minerAddress) {
+      extraURLParams += '&miner=' + encodeURIComponent(minerAddress)
     }
-    if (resolver_address) {
-      extraURLParams += '&resolver=' + encodeURIComponent(resolver_address)
+    if (resolverAddress) {
+      extraURLParams += '&resolver=' + encodeURIComponent(resolverAddress)
     }
     return Api().get('block' + extraURLParams)
   },
 
-  fetchBlock (block_id) {
-    return Api().get('block/' + block_id)
+  fetchBlock (blockId) {
+    return Api().get('block/' + blockId)
   },
 
-  fetchMiner (miner_address, show_all_transactions, startDate, endDate) {
+  fetchMiner (minerAddress, showAllTransactions, startDate, endDate) {
     let extraURLParams = '?show_all_transactions=false'
-    if (show_all_transactions) {
+    if (showAllTransactions) {
       extraURLParams = '?show_all_transactions=true'
     }
     if (startDate && endDate) {
-      extraURLParams += '&start_date=' + startDate + "&end_date=" + endDate
+      extraURLParams += '&start_date=' + startDate + '&end_date=' + endDate
     }
-    return Api().get('address/' + encodeURIComponent(miner_address) + extraURLParams)
+    return Api().get('address/' + encodeURIComponent(minerAddress) + extraURLParams)
   },
 
-  fetchStars(star_url) {
-    return Api().get('stars/' + star_url)
+  fetchStars (starUrl) {
+    return Api().get('stars/' + starUrl)
   },
 
-  fetchPendingTransactions() {
-    return  Api().get('pending_trx')
+  fetchPendingTransactions () {
+    return Api().get('pending_trx')
   },
 
-  fetchLatestTransactions() {
-    return  Api().get('latest_trx')
+  fetchLatestTransactions () {
+    return Api().get('latest_trx')
   },
 
-  fetchLatestMiners() {
-    return  Api().get('latest_miners')
+  fetchLatestMiners () {
+    return Api().get('latest_miners')
   },
 
-  fetchTransactions(pageNumber, miner_address) {
+  fetchTransactions (pageNumber, minerAddress) {
     if (!pageNumber) {
       pageNumber = 1
     }
     let extraURLParams = '?page_number=' + pageNumber
-    if (miner_address) {
-      extraURLParams += '&miner=' + encodeURIComponent(miner_address)
+    if (minerAddress) {
+      extraURLParams += '&miner=' + encodeURIComponent(minerAddress)
     }
-    return  Api().get('trx' + extraURLParams)
+    return Api().get('trx' + extraURLParams)
   },
 
-  fetchUncles() {
-    return  Api().get('uncle')
-  },
+  fetchUncles () {
+    return Api().get('uncle')
+  }
 }
