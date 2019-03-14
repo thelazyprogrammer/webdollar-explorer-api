@@ -23,7 +23,6 @@
 
 <script>
 
-import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
 import Transactions from '@/components/lists/Transactions.vue'
 import BlockInfo from '@/components/infoComponents/BlockInfo.vue'
@@ -47,26 +46,26 @@ export default {
     this.getBlock()
   },
   methods: {
-    async getBlock (block_id) {
-      if (!block_id) {
-        block_id = this.$route.params.block_id
+    async getBlock (blockId) {
+      if (!blockId) {
+        blockId = this.$route.params.block_id
       }
       this.block_loaded = false
       try {
-        let response = await BlocksService.fetchBlock(block_id)
+        let response = await BlocksService.fetchBlock(blockId)
         if (response.data.trxs) {
-          let trxs_parsed = []
+          let trxsParsed = []
           response.data.trxs.forEach(function (trx) {
             trx.from.addresses = trx.from.trxs.sort((a, b) => Number(b.trx_from_amount) - Number(a.trx_from_amount))
             trx.to.addresses = trx.to.trxs.sort((a, b) => Number(b.trx_to_amount) - Number(a.trx_to_amount))
-            trxs_parsed.push(trx)
+            trxsParsed.push(trx)
           })
-          response.data.trxs = trxs_parsed
+          response.data.trxs = trxsParsed
         }
         this.block = response.data
       } catch (exception) {
         console.log(exception)
-        this.block = { block_id: parseInt(block_id) }
+        this.block = { block_id: parseInt(blockId) }
       }
       this.block_loaded = true
     }

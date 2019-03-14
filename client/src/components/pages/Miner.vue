@@ -175,37 +175,37 @@ export default {
     orderTrx (transactions, miner) {
       if (transactions) {
         let trxsParsed = []
-        var miner_address = miner
+        var minerAddress = miner
         transactions.data.trxs.forEach(function (trx) {
           if (trx.block_number) {
-            var index_from = -1
-            var index_to = -1
+            var indexFrom = -1
+            var indexTo = -1
 
             trx.from.trxs = trx.from.trxs.sort(function (a, b) {
               return (Number(b.trx_from_amount) - Number(a.trx_from_amount))
             })
             trx.from.trxs.forEach(function (trx, index) {
-              if (trx.trx_from_address == miner_address) {
-                index_from = index
+              if (trx.trx_from_address === minerAddress) {
+                indexFrom = index
               }
             })
 
-            if (index_from != -1) {
-              trx.from.trxs.unshift(trx.from.trxs[index_from])
-              trx.from.trxs.splice(index_from + 1, 1)
+            if (indexFrom !== -1) {
+              trx.from.trxs.unshift(trx.from.trxs[indexFrom])
+              trx.from.trxs.splice(indexFrom + 1, 1)
             }
 
             trx.to.trxs = trx.to.trxs.sort(function (a, b) {
               return (Number(b.trx_to_amount) - Number(a.trx_to_amount))
             })
             trx.to.trxs.forEach(function (trx, index) {
-              if (trx.trx_to_address == miner_address) {
-                index_to = index
+              if (trx.trx_to_address === minerAddress) {
+                indexTo = index
               }
             })
-            if (index_to != -1) {
-              trx.to.trxs.unshift(trx.to.trxs[index_to])
-              trx.to.trxs.splice(index_to + 1, 1)
+            if (indexTo !== -1) {
+              trx.to.trxs.unshift(trx.to.trxs[indexTo])
+              trx.to.trxs.splice(indexTo + 1, 1)
             }
           } else {
             trx.block_number = 'pending'
@@ -247,8 +247,8 @@ export default {
       this.value = this.getStartEndDates()
       var self = this
       setTimeout(function () {
-        if (!self.miner.transactions_number || self.miner.transactions_number == 0) {
-          if (self.miner.blocks_number && self.miner.blocks_number != 0) {
+        if (!self.miner.transactions_number || self.miner.transactions_number === 0) {
+          if (self.miner.blocks_number && self.miner.blocks_number !== 0) {
             self.openTab('blocks')
           }
         } else {
@@ -266,7 +266,7 @@ export default {
       let minerPool = {}
       let hashes = 0
       for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
-        if (poolMiners[minerIndex].address == miner) {
+        if (poolMiners[minerIndex].address === miner) {
           minerPool = poolMiners[minerIndex]
           if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
           minerNumber++
@@ -286,9 +286,9 @@ export default {
       } catch (ex) {}
       poolMiners = poolStats.data || []
       minerNumber = 0
-      for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
-        if (poolMiners[minerIndex].address == miner) {
-          minerPool = poolMiners[minerIndex]
+      for (var minerIndex1 = 0; minerIndex1 < poolMiners.length; minerIndex1++) {
+        if (poolMiners[minerIndex1].address === miner) {
+          minerPool = poolMiners[minerIndex1]
           if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
           minerNumber++
         }
@@ -306,9 +306,9 @@ export default {
       } catch (ex) {}
       poolMiners = poolStats.data || []
       minerNumber = 0
-      for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
-        if (poolMiners[minerIndex].address == miner) {
-          minerPool = poolMiners[minerIndex]
+      for (var minerIndex2 = 0; minerIndex2 < poolMiners.length; minerIndex2++) {
+        if (poolMiners[minerIndex2].address === miner) {
+          minerPool = poolMiners[minerIndex2]
           if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
           minerNumber++
         }
@@ -327,9 +327,9 @@ export default {
       poolMiners = poolStats.data.miners || []
       minerNumber = 0
       minerPool = {}
-      for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
-        if (poolMiners[minerIndex].address == miner) {
-          minerPool = poolMiners[minerIndex]
+      for (var minerIndex3 = 0; minerIndex3 < poolMiners.length; minerIndex3++) {
+        if (poolMiners[minerIndex3].address === miner) {
+          minerPool = poolMiners[minerIndex3]
           minerPool.power = minerPool.hashes
           break
         }
@@ -361,7 +361,7 @@ export default {
     },
 
     openTab (name) {
-      if (name == 'blocks') {
+      if (name === 'blocks') {
         this.setDisplay('blocks', 'block')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'none')
@@ -370,7 +370,7 @@ export default {
         this.setColor('button_block', '#00c02c')
         this.setColor('button_trx', '#a4c0ab')
         this.setColor('button_block_resolved', '#a4c0ab')
-      } else if (name == 'blocks_resolved') {
+      } else if (name === 'blocks_resolved') {
         this.setDisplay('blocks', 'none')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'block')
@@ -379,7 +379,7 @@ export default {
         this.setColor('button_block', '#a4c0ab')
         this.setColor('button_trx', '#a4c0ab')
         this.setColor('button_block_resolved', '#00c02c')
-      } else if (name == 'pool_stats') {
+      } else if (name === 'pool_stats') {
         this.setDisplay('blocks', 'none')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'none')

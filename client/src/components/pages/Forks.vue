@@ -60,8 +60,8 @@ export default {
       this.buildGraph(this.forks)
     },
     async drawGraph (nodes, edges) {
-      var svg = d3.select('svg'),
-        g = svg.select('#root')
+      var svg = d3.select('svg')
+      var g = svg.select('#root')
 
       var xmax = Math.max.apply(null, nodes.map(function (d) { return d.x }))
       var ymax = Math.max.apply(null, nodes.map(function (d) { return d.y }))
@@ -106,8 +106,8 @@ export default {
           return 'link' + ((d[0].canonical && d[1].canonical) ? ' canonical-link' : ' uncle-link')
         })
         .attr('d', function (d) {
-          var fromNode = d[0],
-            toNode = d[1]
+          var fromNode = d[0]
+          var toNode = d[1]
 
           return 'M' + toNode.x + ',' + toNode.y +
                         'C' + toNode.x + ',' + (toNode.y + 15) +
@@ -119,8 +119,8 @@ export default {
           return 'link' + ((d[0].canonical && d[1].canonical) ? ' canonical-link' : ' uncle-link')
         })
         .attr('d', function (d) {
-          var fromNode = d[0],
-            toNode = d[1]
+          var fromNode = d[0]
+          var toNode = d[1]
 
           return 'M' + toNode.x + ',' + toNode.y +
                         'C' + toNode.x + ',' + (toNode.y + 15) +
@@ -151,14 +151,14 @@ export default {
         node.y = dist * this.pixels_per_second
         for (var j = 0; j < columns.length; j++) {
           let self = this
-          if (j == 0 && !node.canonical) { continue }
+          if (j === 0 && !node.canonical) { continue }
           if (columns[j] < node.y) { continue }
-          if (node.siblings.map(function (n) { return n.x == j * self.node_width }).reduce(function (a, b) { return a | b }, false)) { continue }
+          if (node.siblings.map(function (n) { return n.x === j * self.node_width }).reduce(function (a, b) { return a | b }, false)) { continue }
           node.x = (j + mincol) * this.node_width
           columns[j] = node.y - this.node_height
           break
         }
-        if (node.x == undefined) {
+        if (node.x === undefined) {
           node.x = (columns.length + mincol) * this.node_width
           columns.push(node.y + this.node_height)
         }
@@ -171,56 +171,53 @@ export default {
       for (var i = nodes.length - 1; i >= 0; i--) {
         var node = nodes[i]
 
-        if (node.children.length == 0 || canonical[node.block.hash] != undefined) {
+        if (node.children.length === 0 || canonical[node.block.hash] !== undefined) {
           node.canonical = true
           if (node.parents.length > 0) { canonical[node.parents[0].block.hash] = true }
         }
 
         for (var j = 0; j < node.parents.length; j++) {
           for (var k = 0; k < node.parents[j].children.length; k++) {
-            if (node.parents[j].children[k] != node) { node.siblings.push(node.parents[j].children[k]) }
+            if (node.parents[j].children[k] !== node) { node.siblings.push(node.parents[j].children[k]) }
           }
         }
 
-        for (var j = 0; j < node.children.length; j++) {
-          for (var k = 0; k < node.children[j].parents.length; k++) {
-            if (node.children[j].parents[k] != node) { node.siblings.push(node.children[j].parents[k]) }
+        for (var j1 = 0; j1 < node.children.length; j1++) {
+          for (var k1 = 0; k1 < node.children[j1].parents.length; k1++) {
+            if (node.children[j1].parents[k1] !== node) { node.siblings.push(node.children[j1].parents[k1]) }
           }
         }
       }
 
       // Lay out the physical graph
-      return await this.layoutNodes(nodes, mincol, latest)
+      return this.layoutNodes(nodes, mincol, latest)
     },
     async findSubgraphs (nodes) {
       var subgraphs = []
       var subgraphMap = {}
-      var totalNodes = 0
       var nextSubgraph = 0
 
       for (var i = 0; i < nodes.length; i++) {
-        if (subgraphMap[nodes[i].block.hash] == undefined) {
+        if (subgraphMap[nodes[i].block.hash] === undefined) {
           var frontier = [nodes[i]]
           var subgraph = []
           subgraphs[nextSubgraph++] = subgraph
 
-          while (frontier.length != 0) {
+          while (frontier.length !== 0) {
             var node = frontier.pop()
-            if (subgraphMap[node.block.hash] != undefined) { continue }
+            if (subgraphMap[node.block.hash] !== undefined) { continue }
             subgraphMap[node.block.hash] = node
             subgraph.push(node)
-            for (var j = 0; j < node.parents.length; j++) { frontier.push(node.parents[j]) }
-            for (var j = 0; j < node.children.length; j++) { frontier.push(node.children[j]) }
+            for (var j2 = 0; j2 < node.parents.length; j2++) { frontier.push(node.parents[j2]) }
+            for (var j3 = 0; j3 < node.children.length; j3++) { frontier.push(node.children[j3]) }
           }
         }
       }
 
-      for (var i = 0; i < subgraphs.length; i++) { subgraphs[i].sort(function (a, b) { return a.block.timestamp - b.block.timestamp }) }
+      for (var i4 = 0; i4 < subgraphs.length; i4++) { subgraphs[i4].sort(function (a, b) { return a.block.timestamp - b.block.timestamp }) }
       return subgraphs
     },
     async buildGraph (blocks) {
-      var earliest = undefined
-
       // Build a map of new node objects
       var nodeMap = {}
       for (var hash in blocks) {
@@ -238,19 +235,19 @@ export default {
       // Generate node and edge lists, and populate parents and children
       var nodes = []
       var edges = []
-      for (var hash in nodeMap) {
-        var node = nodeMap[hash]
+      for (var hash1 in nodeMap) {
+        var node2 = nodeMap[hash1]
 
-        for (var i = 0; i < node.block.parents.length; i++) {
-          var parentNode = nodeMap[node.block.parents[i]]
-          if (parentNode != undefined) {
-            node.parents.push(parentNode)
-            edges.push([parentNode, node])
-            parentNode.children.push(node)
+        for (var i5 = 0; i5 < node2.block.parents.length; i5++) {
+          var parentNode = nodeMap[node2.block.parents[i5]]
+          if (parentNode !== undefined) {
+            node2.parents.push(parentNode)
+            edges.push([parentNode, node2])
+            parentNode.children.push(node2)
           }
         }
 
-        nodes.push(node)
+        nodes.push(node2)
       }
 
       var latest = nodes.map(function (n) { return n.block.timestamp }).reduce(function (a, b) { return Math.max(a, b) }, 0)

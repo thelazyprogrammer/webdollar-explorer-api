@@ -48,7 +48,6 @@
 <script>
 
 import Utils from '@/services/utils'
-import BlocksService from '@/services/BlocksService'
 let moment = require('moment')
 
 export default {

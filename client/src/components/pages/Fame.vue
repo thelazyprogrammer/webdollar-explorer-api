@@ -62,11 +62,11 @@ export default {
       return Utils.formatMoneyNumber(number * 10000, 0)
     },
     getTotalDonations () {
-      var total_donations = 0
+      var totalDonations = 0
       this.fame.donors.forEach(function (donor) {
-        total_donations = (total_donations * 10000 + donor.amount * 10000) / 10000
+        totalDonations = (totalDonations * 10000 + donor.amount * 10000) / 10000
       })
-      this.fame.total_donations = Utils.formatMoneyNumber(total_donations.toFixed(2) * 10000, 0)
+      this.fame.total_donations = Utils.formatMoneyNumber(totalDonations.toFixed(2) * 10000, 0)
     }
   }
 }

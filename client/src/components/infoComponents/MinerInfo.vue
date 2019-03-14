@@ -108,7 +108,6 @@
 <script>
 
 import Utils from '@/services/utils'
-import BlocksService from '@/services/BlocksService'
 
 export default {
   name: 'block',
@@ -127,7 +126,7 @@ export default {
   methods: {
     getLabel (address) {
       let label = Utils.mapAddress(address)
-      if (label != address) {
+      if (label !== address) {
         return label
       }
     },
@@ -158,7 +157,6 @@ export default {
       let dailyReward = share * balance / 10000
       let monthlyReward = dailyReward * 30 * 97 / 100
       // PoS reward decreases 3% per month and 9% per year
-      let yearlyReward = monthlyReward * 12
       return this.formatMoneyNumber(monthlyReward * 10000)
     }
   }

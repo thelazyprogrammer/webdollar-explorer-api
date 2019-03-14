@@ -53,7 +53,6 @@
 <script>
 
 import Utils from '@/services/utils'
-import BlocksService from '@/services/BlocksService'
 
 var moment = require('moment')
 

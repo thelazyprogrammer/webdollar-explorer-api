@@ -66,8 +66,7 @@ export default {
       genesis_addresses: [],
       total_genesis: 0,
       tracked_genesis: 0,
-      destroyed: false,
-      former_genesis_addresses: SpecialAddresses.genesis_addresses
+      destroyed: false
     }
   },
   destroyed () {
@@ -87,22 +86,22 @@ export default {
       return 'genesisUnchanged'
     },
     async getGenesis () {
-      for (let i = 0; i < this.former_genesis_addresses.length; i++) {
+      for (let i = 0; i < SpecialAddresses.genesis_addresses.length; i++) {
         await sleep(300)
         if (this.destroyed) {
           break
         }
-        let genesis_address = this.former_genesis_addresses[i]
-        let miner_data = await BlocksService.fetchMiner(genesis_address.address)
-        let miner = miner_data.data
+        let genesisAddress = SpecialAddresses.genesis_addresses[i]
+        let minerData = await BlocksService.fetchMiner(genesisAddress.address)
+        let miner = minerData.data
         if (miner && miner.address && miner.blocks) {
           this.tracked_genesis += miner.balance
-          this.total_genesis += genesis_address.initial_amount
+          this.total_genesis += genesisAddress.initial_amount
           this.genesis_addresses.push({
-            initial_amount: genesis_address.initial_amount,
-            miner_address: genesis_address.address,
+            initial_amount: genesisAddress.initial_amount,
+            miner_address: genesisAddress.address,
             current_amount: miner.balance,
-            owner: genesis_address.owner
+            owner: genesisAddress.owner
           })
         }
       }
