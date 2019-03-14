@@ -4,4 +4,4 @@ node_js:
 before_script:
   - cd client && npm install
 script:
-  - cd client && npm run lint
+  - npm run lint
