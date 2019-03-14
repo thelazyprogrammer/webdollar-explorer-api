@@ -32,7 +32,7 @@ import Loading from '@/components/utils/Loading'
 export default {
   name: 'block',
 
-  components:{ Transactions, BlockInfo, Loading },
+  components: { Transactions, BlockInfo, Loading },
 
   data () {
     return {
@@ -56,9 +56,9 @@ export default {
         let response = await BlocksService.fetchBlock(block_id)
         if (response.data.trxs) {
           let trxs_parsed = []
-          response.data.trxs.forEach(function(trx) {
-            trx.from.addresses = trx.from.trxs.sort((a,b) => Number(b.trx_from_amount) - Number(a.trx_from_amount))
-            trx.to.addresses = trx.to.trxs.sort((a,b) => Number(b.trx_to_amount) - Number(a.trx_to_amount))
+          response.data.trxs.forEach(function (trx) {
+            trx.from.addresses = trx.from.trxs.sort((a, b) => Number(b.trx_from_amount) - Number(a.trx_from_amount))
+            trx.to.addresses = trx.to.trxs.sort((a, b) => Number(b.trx_to_amount) - Number(a.trx_to_amount))
             trxs_parsed.push(trx)
           })
           response.data.trxs = trxs_parsed
@@ -66,10 +66,10 @@ export default {
         this.block = response.data
       } catch (exception) {
         console.log(exception)
-        this.block =  { block_id: parseInt(block_id) }
+        this.block = { block_id: parseInt(block_id) }
       }
       this.block_loaded = true
-    },
+    }
 
   }
 }

@@ -50,15 +50,13 @@
 
 <script>
 
-import BlocksService from '@/services/BlocksService'
-
 export default {
 
-  name: "HeaderLayout",
+  name: 'HeaderLayout',
 
   components: {},
 
-  data() {
+  data () {
     return {
       screenWidth: 0,
       alertsHeight: 0,
@@ -76,67 +74,57 @@ export default {
 
   methods: {
 
-    collapseMenuBack() {
+    collapseMenuBack () {
+      this.mobileMenuOpened = false
+    },
 
-      this.mobileMenuOpened = false;
+    showMobileMenu () {
+      this.mobileMenuOpened = !this.mobileMenuOpened
+    },
+
+    verifyIfIsMobile () {
+
+      //      if (this.screenWidth < 768) {
+      //
+      //        this.isMobile = true;
+      //
+      //      } else {
+      //
+      //        this.isMobile = false;
+      //
+      //      }
 
     },
 
-    showMobileMenu() {
-
-      this.mobileMenuOpened = !this.mobileMenuOpened;
-
-    },
-
-    verifyIfIsMobile() {
-
-//      if (this.screenWidth < 768) {
-//
-//        this.isMobile = true;
-//
-//      } else {
-//
-//        this.isMobile = false;
-//
-//      }
-
-    },
-
-    addEvent(object, type, callback) {
-      if (object === null || typeof(object) === 'undefined') return;
+    addEvent (object, type, callback) {
+      if (object === null || typeof (object) === 'undefined') return
       if (object.addEventListener) {
-        object.addEventListener(type, callback, false);
+        object.addEventListener(type, callback, false)
       } else if (object.attachEvent) {
-        object.attachEvent("on" + type, callback);
+        object.attachEvent('on' + type, callback)
       } else {
-        object["on" + type] = callback;
+        object['on' + type] = callback
       }
     }
 
   },
 
-  mounted() {
+  mounted () {
+    if (typeof window === 'undefined') return
 
-    if (typeof window === 'undefined') return;
+    this.addEvent(window, 'resize', (event) => {
+      this.screenWidth = window.innerWidth
+      this.verifyIfIsMobile()
+    })
 
-    this.addEvent(window, "resize", (event) => {
-
-      this.screenWidth = window.innerWidth;
-      this.verifyIfIsMobile();
-
-    });
-
-    this.addEvent(window, "scroll", (event) => {
-
-      if (this.mobileMenuOpened == true) {
-        this.mobileMenuOpened = false;
+    this.addEvent(window, 'scroll', (event) => {
+      if (this.mobileMenuOpened === true) {
+        this.mobileMenuOpened = false
       }
+    })
 
-    });
-
-    this.screenWidth = window.innerWidth;
-    this.verifyIfIsMobile();
-
+    this.screenWidth = window.innerWidth
+    this.verifyIfIsMobile()
   }
 
 }

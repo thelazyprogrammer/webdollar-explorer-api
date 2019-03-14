@@ -3,7 +3,10 @@ module.exports = {
         "browser": true,
         "es6": true
     },
-    "extends": "standard",
+    "extends": ["standard", "plugin:vue/essential"],
+    "plugins": [
+        "vue"
+    ],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"

@@ -35,7 +35,7 @@
        {{ formatMoneyNumber(donor.amount) }}
       </td>
    </tr>
-  </table> 
+  </table>
   </div>
 
 </template>
@@ -47,7 +47,7 @@ import SpecialAddresses from '@/services/SpecialAddresses'
 export default {
   name: 'fame',
 
-  components:{ },
+  components: { },
 
   data () {
     return {
@@ -58,15 +58,15 @@ export default {
     this.getTotalDonations()
   },
   methods: {
-    formatMoneyNumber(number){
-      return Utils.formatMoneyNumber(number * 10000, 0);
+    formatMoneyNumber (number) {
+      return Utils.formatMoneyNumber(number * 10000, 0)
     },
-    getTotalDonations() {
+    getTotalDonations () {
       var total_donations = 0
-      this.fame.donors.forEach(function(donor) {
+      this.fame.donors.forEach(function (donor) {
         total_donations = (total_donations * 10000 + donor.amount * 10000) / 10000
-      }); 
-      this.fame.total_donations = Utils.formatMoneyNumber(total_donations.toFixed(2) * 10000,0)
+      })
+      this.fame.total_donations = Utils.formatMoneyNumber(total_donations.toFixed(2) * 10000, 0)
     }
   }
 }

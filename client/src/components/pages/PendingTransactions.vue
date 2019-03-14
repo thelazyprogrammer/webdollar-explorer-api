@@ -14,7 +14,6 @@
 
 <script>
 
-import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
 import Transactions from '@/components/lists/Transactions.vue'
 import Loading from '@/components/utils/Loading'
@@ -22,7 +21,7 @@ import Loading from '@/components/utils/Loading'
 export default {
   name: 'pending_trx',
 
-  components:{ Transactions, Loading },
+  components: { Transactions, Loading },
 
   data () {
     return {
@@ -35,26 +34,26 @@ export default {
     this.getPendingTransactions()
   },
   methods: {
-    async getPendingTransactions() {
+    async getPendingTransactions () {
       this.trxs_loaded = false
       try {
         let response = await BlocksService.fetchPendingTransactions()
         if (response.data.trxs) {
-          let trxs_parsed = []
-          response.data.trxs.forEach(function(trx) {
-            trx.from.addresses = trx.from.addresses.sort((a,b) => Number(b.amount) - Number(a.amount))
-            trx.to.addresses = trx.to.addresses.sort((a,b) => Number(b.amount) - Number(a.amount))
-            trxs_parsed.push(trx)
+          let trxsParsed = []
+          response.data.trxs.forEach(function (trx) {
+            trx.from.addresses = trx.from.addresses.sort((a, b) => Number(b.amount) - Number(a.amount))
+            trx.to.addresses = trx.to.addresses.sort((a, b) => Number(b.amount) - Number(a.amount))
+            trxsParsed.push(trx)
           })
-          response.data.trxs = trxs_parsed.sort((a, b) => Number(b.from.amount) - Number(a.from.amount))
+          response.data.trxs = trxsParsed.sort((a, b) => Number(b.from.amount) - Number(a.from.amount))
         }
-        this.trxs= response.data.trxs
+        this.trxs = response.data.trxs
       } catch (exception) {
         console.error(exception)
         this.trxs = []
       }
       this.trxs_loaded = true
-    },
+    }
 
   }
 }

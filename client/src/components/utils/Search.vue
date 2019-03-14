@@ -9,8 +9,6 @@
 
 <script>
 
-import BlocksService from '@/services/BlocksService'
-
 export default {
 
   name: 'search',
@@ -25,11 +23,11 @@ export default {
 
     async onSearchAddress (event) {
       if (this.searchAddress) {
-        if (this.searchAddress.indexOf("WEBD") >=0 ) {
-           this.$router.push({ path: `/miner/` + this.searchAddress });
-           window.location.href = `#/miner/` + this.searchAddress
+        if (this.searchAddress.indexOf('WEBD') >= 0) {
+          this.$router.push({ path: `/miner/` + this.searchAddress })
+          window.location.href = `#/miner/` + this.searchAddress
         } else {
-          this.$router.push({ path: `/blocks/` + this.searchAddress });
+          this.$router.push({ path: `/blocks/` + this.searchAddress })
         }
         setTimeout(function () {
           location.reload()

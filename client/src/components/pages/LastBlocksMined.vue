@@ -9,7 +9,7 @@
             :page-count="this.blocks.pages" :click-handler="changeAddress" :prev-text="'Prev'"  :next-text="'Next'"
             :container-class="'pagination-wrapper'">
       </paginate>
-    
+
     <loading v-else></loading>
 
   </div>
@@ -26,7 +26,7 @@ export default {
 
   name: 'last_mined_blocks',
 
-  components: {BlocksList, Loading},
+  components: { BlocksList, Loading },
 
   data () {
     return {
@@ -45,10 +45,10 @@ export default {
     }
   },
   methods: {
-    changeAddress: function(pageNum) {
+    changeAddress: function (pageNum) {
       this.$router.push('/blocks?page_number=' + pageNum)
     },
-     async getBlocks (pageNumber) {
+    async getBlocks (pageNumber) {
       const response = await BlocksService.fetchBlocks(pageNumber)
       this.blocks = response.data.blocks
       this.blocks.page_number = response.data.page_number
@@ -58,4 +58,3 @@ export default {
 
 }
 </script>
-

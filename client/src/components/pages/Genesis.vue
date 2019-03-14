@@ -59,7 +59,7 @@ function sleep (ms) {
 export default {
   name: 'genesis',
 
-  components:{ },
+  components: { },
 
   data () {
     return {
@@ -70,24 +70,24 @@ export default {
       former_genesis_addresses: SpecialAddresses.genesis_addresses
     }
   },
-  destroyed() {
+  destroyed () {
     this.destroyed = true
   },
   mounted () {
     this.getGenesis()
   },
   methods: {
-    formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number * 10000, decimals);
+    formatMoneyNumber (number, decimals) {
+      return Utils.formatMoneyNumber(number * 10000, decimals)
     },
-    genesisChange(former, current){
+    genesisChange (former, current) {
       if (current < former) {
-        return "genesisChanged"
+        return 'genesisChanged'
       }
-      return "genesisUnchanged"
+      return 'genesisUnchanged'
     },
-    async getGenesis() {
-      for (let i=0; i<this.former_genesis_addresses.length; i++) {
+    async getGenesis () {
+      for (let i = 0; i < this.former_genesis_addresses.length; i++) {
         await sleep(300)
         if (this.destroyed) {
           break

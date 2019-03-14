@@ -80,38 +80,37 @@ export default {
 
   name: 'transactions',
 
-  props:{
-    transactions:{ default:()=>{return [] }},
-    address: { default:()=>{return [] }}
+  props: {
+    transactions: { default: () => { return [] } },
+    address: { default: () => { return [] } }
   },
 
   methods: {
 
-    mapAddress(address) {
+    mapAddress (address) {
       address = Utils.mapAddress(address)
       if (address.length > 15) {
-       return (address).substring(0,10) + ".." + address.substring(address.length - 5)
+        return (address).substring(0, 10) + '..' + address.substring(address.length - 5)
       }
       return address
     },
 
-    formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number, decimals);
+    formatMoneyNumber (number, decimals) {
+      return Utils.formatMoneyNumber(number, decimals)
     },
 
-    isReceivingMoney(mainAddress,compareAddressFrom,compareAddressTo){
+    isReceivingMoney (mainAddress, compareAddressFrom, compareAddressTo) {
       if (mainAddress && compareAddressFrom && compareAddressTo) {
-        if (compareAddressFrom.includes(mainAddress)) return 'toColor';
-        if (compareAddressTo.includes(mainAddress)) return 'fromColor';
+        if (compareAddressFrom.includes(mainAddress)) return 'toColor'
+        if (compareAddressTo.includes(mainAddress)) return 'fromColor'
       }
-      return '';
-
+      return ''
     },
-    formatDate(timestamp) {
+    formatDate (timestamp) {
       if (timestamp) {
         timestamp = new Date(timestamp * 1000)
         let fromNow = moment(timestamp).fromNow()
-        return fromNow.replace(" ago", "")
+        return fromNow.replace(' ago', '')
       } else {
         return 'not mined yet'
       }

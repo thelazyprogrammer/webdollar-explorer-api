@@ -49,7 +49,7 @@ function sleep (ms) {
 export default {
   name: 'genesis',
 
-  components:{ },
+  components: { },
 
   data () {
     return {
@@ -57,38 +57,38 @@ export default {
       destroyed: false
     }
   },
-  destroyed() {
+  destroyed () {
     this.destroyed = true
   },
   mounted () {
     this.getBlocks()
   },
   methods: {
-    formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number * 10000, decimals);
+    formatMoneyNumber (number, decimals) {
+      return Utils.formatMoneyNumber(number * 10000, decimals)
     },
-    genesisChange(former, current){
-      if (former != current) {
-        return "genesisChanged"
+    genesisChange (former, current) {
+      if (former !== current) {
+        return 'genesisChanged'
       }
-      return "genesisUnchanged"
+      return 'genesisUnchanged'
     },
-    async getBlocks() {
-      for (let i=1; i<16;i++) {
+    async getBlocks () {
+      for (let i = 1; i < 16; i++) {
         await sleep(300)
         if (this.destroyed) {
           break
         }
         let response = await BlocksService.fetchBlock(i)
-        let block_info = response.data
-        if (block_info && block_info.miner) {
-          let miner_data = await BlocksService.fetchMiner(block_info.miner)
-          let miner = miner_data.data
+        let blockInfo = response.data
+        if (blockInfo && blockInfo.miner) {
+          let minerData = await BlocksService.fetchMiner(blockInfo.miner)
+          let miner = minerData.data
           if (miner && miner.address && miner.blocks) {
             this.genesis_addresses.push({
-              id: block_info.number,
-              reward: block_info.reward / 10000,
-              miner_address: block_info.miner,
+              id: blockInfo.number,
+              reward: blockInfo.reward / 10000,
+              miner_address: blockInfo.miner,
               current_reward: miner.balance
             })
           }

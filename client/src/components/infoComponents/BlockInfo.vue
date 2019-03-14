@@ -100,35 +100,34 @@
 <script>
 
 import Utils from '@/services/utils'
-import BlocksService from '@/services/BlocksService'
 
 export default {
   name: 'block',
 
-  props:{
-    block:{ default:()=>{return [] }},
+  props: {
+    block: { default: () => { return [] } }
   },
 
   methods: {
 
-    getLabel(address) {
+    getLabel (address) {
       return Utils.mapAddress(address)
     },
-    formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number, decimals);
+    formatMoneyNumber (number, decimals) {
+      return Utils.formatMoneyNumber(number, decimals)
     },
-    formatDate(timestamp){
+    formatDate (timestamp) {
       let blockDate = new Date(timestamp * 1000)
       return blockDate.toGMTString()
     },
-    getDifficulty(hash) {
-      for (var i=0; i < hash.length; i++) {
+    getDifficulty (hash) {
+      for (var i = 0; i < hash.length; i++) {
         if (hash[i] !== '0') {
           break
         }
       }
       return i
-    },
+    }
   }
 }
 </script>

@@ -53,6 +53,7 @@
 </template>
 
 <script>
+/* eslint-disable no-unmodified-loop-condition */
 
 import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
@@ -65,7 +66,7 @@ import Loading from '@/components/utils/Loading'
 import vueSlider from 'vue-slider-component'
 export default {
 
-  components:{ vueSlider, Transactions, MinerInfo, LightBlocks, Loading, PoolStats },
+  components: { vueSlider, Transactions, MinerInfo, LightBlocks, Loading, PoolStats },
 
   name: 'miner',
 
@@ -74,17 +75,17 @@ export default {
       showLatestTransactions: true,
       showMiner: 'doNotShowClass',
       showTransactions: 'showClass',
-      miner: {default: function () { return { } }},
-      blocksr: {default: function () { return { } }},
+      miner: { default: function () { return { } } },
+      blocksr: { default: function () { return { } } },
       searchAddress: '',
       searchStart: '',
       piecewise: false,
       startDate: false,
       blocksr_number: 0,
       endDate: false,
-      tooltipDir: ["top", "bottom"],
-      data: {default: function () { return getDates()}},
-      value: {default: function () { return getStartEndDates()}},
+      tooltipDir: ['top', 'bottom'],
+      data: { default: function () { return this.getDates() } },
+      value: { default: function () { return this.getStartEndDates() } },
       poolStats: []
     }
   },
@@ -92,7 +93,7 @@ export default {
     this.getMiner()
   },
 
-  destroyed() {
+  destroyed () {
     this.miner = {}
     this.poolStats = []
   },
@@ -100,132 +101,130 @@ export default {
   mounted () {
     this.miner = {}
     this.poolStats = []
-    this.getMiner(window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length))
+    this.getMiner(window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length))
   },
 
   methods: {
-    async onTimeIntervalChange(el) {
+    async onTimeIntervalChange (el) {
       let intervals = el.getValue()
-      
+
       this.startDate = intervals[0]
       this.endDate = intervals[1]
       this.value = [this.startDate, this.endDate]
-      this.getMiner(window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length), this.startDate, this.endDate)
+      this.getMiner(window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length), this.startDate, this.endDate)
       this.value = [this.startDate, this.endDate]
     },
-    async changeBlocks(pageNum) {
-      let miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
+    async changeBlocks (pageNum) {
+      let miner = window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length)
       let blocks = await BlocksService.fetchBlocks(pageNum, miner)
       this.miner.blocks = blocks.data.blocks
       this.miner.blocks_number = blocks.data.blocks_number
       this.miner.blocks.pages = blocks.data.pages
       this.miner.blocks.page_number = blocks.data.page_number
     },
-    async changeBlocksResolved(pageNum) {
-      let miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
+    async changeBlocksResolved (pageNum) {
+      let miner = window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length)
       let blocksResolved = await BlocksService.fetchBlocks(pageNum, '', miner)
       this.blocksr = blocksResolved.data.blocks
       this.blocksr_number = blocksResolved.data.blocks_number
       this.blocksr.pages = blocksResolved.data.pages
       this.blocksr.page_number = blocksResolved.data.page_number
     },
-    async changeTransactions(pageNum) {
-      let miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
+    async changeTransactions (pageNum) {
+      let miner = window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length)
       let transactions = await BlocksService.fetchTransactions(pageNum, miner)
       this.miner.transactions = this.orderTrx(transactions, miner)
       this.miner.transactions_number = transactions.data.trxs_number
       this.miner.transactions.pages = transactions.data.pages
       this.miner.transactions.page_number = transactions.data.page_number
     },
-    getStartEndDates() {
+    getStartEndDates () {
       let days = this.getDates()
       if (this.startDate && this.endDate) {
         return [this.startDate, this.endDate]
       }
       return [days[0], days[days.length - 1]]
     },
-    getDates() {
-          let days = []
-          let start = new Date(1524743407 * 1000)
-          let end = new Date()
-          if (this.miner.first_block_timestamp) {
-            start = new Date(this.miner.first_block_timestamp * 1000)
-          }
-          if (this.miner.last_block_timestamp) {
-            end = new Date((this.miner.last_block_timestamp + 24 * 3600) * 1000)
-          }
-          let currDay = new Date(start)
-          while(start < end) {
-            currDay = new Date(start)
-            days.push(currDay.toISOString().split('T')[0])
-            start.setDate(start.getDate() + 1)
-          }
-          currDay = new Date(start)
-          days.push(currDay.toISOString().split('T')[0])
-          return days
+    getDates () {
+      let days = []
+      let start = new Date(1524743407 * 1000)
+      let end = new Date()
+      if (this.miner.first_block_timestamp) {
+        start = new Date(this.miner.first_block_timestamp * 1000)
+      }
+      if (this.miner.last_block_timestamp) {
+        end = new Date((this.miner.last_block_timestamp + 24 * 3600) * 1000)
+      }
+      let currDay = new Date(start)
+      while (start < end) {
+        currDay = new Date(start)
+        days.push(currDay.toISOString().split('T')[0])
+        start.setDate(start.getDate() + 1)
+      }
+      currDay = new Date(start)
+      days.push(currDay.toISOString().split('T')[0])
+      return days
     },
-    getTrxNumber(all_trx_number, trx_received_number) {
-      if (parseInt(trx_received_number) >= parseInt(all_trx_number)) {
-        return trx_received_number
+    getTrxNumber (allTrxNumber, trxReceivedNumber) {
+      if (parseInt(trxReceivedNumber) >= parseInt(allTrxNumber)) {
+        return trxReceivedNumber
       } else {
-        return 'latest ' + trx_received_number + ' from ' + all_trx_number
+        return 'latest ' + trxReceivedNumber + ' from ' + allTrxNumber
       }
     },
-    orderTrx(transactions, miner) {
+    orderTrx (transactions, miner) {
       if (transactions) {
-        let trxs_parsed = []
+        let trxsParsed = []
         var miner_address = miner
-        transactions.data.trxs.forEach(function(trx) {
+        transactions.data.trxs.forEach(function (trx) {
           if (trx.block_number) {
-          var index_from = -1
-          var index_to = -1
+            var index_from = -1
+            var index_to = -1
 
-          trx.from.trxs = trx.from.trxs.sort( function(a,b) {
-            return (Number(b.trx_from_amount) - Number(a.trx_from_amount))
-          })
-          trx.from.trxs.forEach(function(trx, index) {
-            if (trx.trx_from_address == miner_address) {
-              index_from = index
-              return
+            trx.from.trxs = trx.from.trxs.sort(function (a, b) {
+              return (Number(b.trx_from_amount) - Number(a.trx_from_amount))
+            })
+            trx.from.trxs.forEach(function (trx, index) {
+              if (trx.trx_from_address == miner_address) {
+                index_from = index
+              }
+            })
+
+            if (index_from != -1) {
+              trx.from.trxs.unshift(trx.from.trxs[index_from])
+              trx.from.trxs.splice(index_from + 1, 1)
             }
-          })
 
-          if (index_from != -1) {
-            trx.from.trxs.unshift(trx.from.trxs[index_from])
-            trx.from.trxs.splice(index_from + 1, 1)
-          }
-
-          trx.to.trxs = trx.to.trxs.sort(function (a,b) {
-            return (Number(b.trx_to_amount) - Number(a.trx_to_amount))
-          })
-          trx.to.trxs.forEach(function(trx, index) {
-            if (trx.trx_to_address == miner_address) {
-              index_to = index
-              return
+            trx.to.trxs = trx.to.trxs.sort(function (a, b) {
+              return (Number(b.trx_to_amount) - Number(a.trx_to_amount))
+            })
+            trx.to.trxs.forEach(function (trx, index) {
+              if (trx.trx_to_address == miner_address) {
+                index_to = index
+              }
+            })
+            if (index_to != -1) {
+              trx.to.trxs.unshift(trx.to.trxs[index_to])
+              trx.to.trxs.splice(index_to + 1, 1)
             }
-          })
-          if (index_to != -1) {
-            trx.to.trxs.unshift(trx.to.trxs[index_to])
-            trx.to.trxs.splice(index_to + 1, 1)
-          }
           } else {
-            trx.block_number = "pending"
+            trx.block_number = 'pending'
           }
 
-          trxs_parsed.push(trx)
+          trxsParsed.push(trx)
         })
-        return trxs_parsed
+        return trxsParsed
       }
       return []
     },
     async getMiner (miner, startDate, endDate) {
       this.miner = {}
-      miner = window.location.href.substring(window.location.href.indexOf("WEBD"),window.location.href.length)
+      miner = window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length)
       let minerTask = BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
       let blocksTask = BlocksService.fetchBlocks(1, miner)
       let blocksResolvedTask = BlocksService.fetchBlocks(1, '', miner)
       let transactionsTask = BlocksService.fetchTransactions(1, miner)
-      
+
       let minerData = await minerTask
       let blocks = await blocksTask
       let blocksResolved = await blocksResolvedTask
@@ -247,13 +246,15 @@ export default {
       this.data = this.getDates()
       this.value = this.getStartEndDates()
       var self = this
-      setTimeout(function() { if (!self.miner.transactions_number || self.miner.transactions_number == 0) {
-        if (self.miner.blocks_number && self.miner.blocks_number != 0) {
-          self.openTab("blocks")
+      setTimeout(function () {
+        if (!self.miner.transactions_number || self.miner.transactions_number == 0) {
+          if (self.miner.blocks_number && self.miner.blocks_number != 0) {
+            self.openTab('blocks')
+          }
+        } else {
+          self.openTab('transactions')
         }
-      } else {
-        self.openTab("transactions")
-      }}, 1)
+      }, 1)
 
       this.poolStats = []
       let poolStats = []
@@ -272,7 +273,7 @@ export default {
         }
       }
       if (minerNumber > 0) {
-        minerPool.address = "WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$"
+        minerPool.address = 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$'
         minerPool.miners = minerNumber
         minerPool.power = hashes
         this.poolStats.push(minerPool)
@@ -293,7 +294,7 @@ export default {
         }
       }
       if (minerNumber > 0) {
-        minerPool.address = "WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$"
+        minerPool.address = 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$'
         minerPool.miners = minerNumber
         minerPool.power = hashes
         this.poolStats.push(minerPool)
@@ -313,7 +314,7 @@ export default {
         }
       }
       if (minerNumber > 0) {
-        minerPool.address = "WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$"
+        minerPool.address = 'WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$'
         minerPool.miners = minerNumber
         minerPool.power = hashes
         this.poolStats.push(minerPool)
@@ -334,7 +335,7 @@ export default {
         }
       }
       if (minerPool.address) {
-        minerPool.address = "WEBD$gCMxAKX96yhmaygo@NG+vnb4cz1eYoYpMv$"
+        minerPool.address = 'WEBD$gCMxAKX96yhmaygo@NG+vnb4cz1eYoYpMv$'
         minerPool.miners = minerPool.instances
         minerPool.reward_sent = minerPool.total_sent * 10000
         minerPool.reward_total = minerPool.reward_total * 10000
@@ -343,59 +344,59 @@ export default {
       }
     },
 
-    formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number, decimals);
+    formatMoneyNumber (number, decimals) {
+      return Utils.formatMoneyNumber(number, decimals)
     },
 
-    setDisplay(el, type) {
-        if (document.getElementById(el)) {
-          document.getElementById(el).style.display = type
-        }
+    setDisplay (el, type) {
+      if (document.getElementById(el)) {
+        document.getElementById(el).style.display = type
+      }
     },
 
-    setColor(el, color) {
-        if (document.getElementById(el)) {
-          document.getElementById(el).style.backgroundColor = color
-        }
+    setColor (el, color) {
+      if (document.getElementById(el)) {
+        document.getElementById(el).style.backgroundColor = color
+      }
     },
 
-    openTab(name) {
-     if (name == 'blocks') {
+    openTab (name) {
+      if (name == 'blocks') {
         this.setDisplay('blocks', 'block')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'none')
         this.setDisplay('pools_stats', 'none')
-        this.setColor('button_pools_stats', "#a4c0ab")
-        this.setColor('button_block', "#00c02c")
-        this.setColor('button_trx', "#a4c0ab")
-        this.setColor('button_block_resolved', "#a4c0ab")
+        this.setColor('button_pools_stats', '#a4c0ab')
+        this.setColor('button_block', '#00c02c')
+        this.setColor('button_trx', '#a4c0ab')
+        this.setColor('button_block_resolved', '#a4c0ab')
       } else if (name == 'blocks_resolved') {
         this.setDisplay('blocks', 'none')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'block')
         this.setDisplay('pools_stats', 'none')
-        this.setColor('button_pools_stats', "#a4c0ab")
-        this.setColor('button_block', "#a4c0ab")
-        this.setColor('button_trx', "#a4c0ab")
-        this.setColor('button_block_resolved', "#00c02c")
+        this.setColor('button_pools_stats', '#a4c0ab')
+        this.setColor('button_block', '#a4c0ab')
+        this.setColor('button_trx', '#a4c0ab')
+        this.setColor('button_block_resolved', '#00c02c')
       } else if (name == 'pool_stats') {
         this.setDisplay('blocks', 'none')
         this.setDisplay('transactions', 'none')
         this.setDisplay('blocks_resolved', 'none')
         this.setDisplay('pools_stats', 'block')
-        this.setColor('button_block', "#a4c0ab")
-        this.setColor('button_trx', "#a4c0ab")
-        this.setColor('button_block_resolved', "#a4c0ab")
-        this.setColor('button_pools_stats', "#00c02c")
+        this.setColor('button_block', '#a4c0ab')
+        this.setColor('button_trx', '#a4c0ab')
+        this.setColor('button_block_resolved', '#a4c0ab')
+        this.setColor('button_pools_stats', '#00c02c')
       } else {
         this.setDisplay('blocks', 'none')
         this.setDisplay('transactions', 'block')
         this.setDisplay('blocks_resolved', 'none')
         this.setDisplay('pools_stats', 'none')
-        this.setColor('button_pools_stats', "#a4c0ab")
-        this.setColor('button_block', "#a4c0ab")
-        this.setColor('button_trx', "#00c02c")
-        this.setColor('button_block_resolved', "#a4c0ab")
+        this.setColor('button_pools_stats', '#a4c0ab')
+        this.setColor('button_block', '#a4c0ab')
+        this.setColor('button_trx', '#00c02c')
+        this.setColor('button_block_resolved', '#a4c0ab')
       }
     }
   }
@@ -483,7 +484,6 @@ export default {
   font-weight: bold;
   text-shadow: 0 0 3px #0804f3;
 }
-
 
 .transactionsWrapper table span:first-child {
   font-weight: bold;

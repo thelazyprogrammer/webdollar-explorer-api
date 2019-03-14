@@ -36,7 +36,7 @@
    </tr>
   </table>
 
-  <p class="transactionsTable" style="width: 680px; margin: 0 auto; padding: 10px; margin-top:30px;"> The pool information does not and will not contain its access link, as it might change over time. If one prefers to have its pool information available here, please file a Pull Request to the GitHub repository <a href="https://github.com/thelazyprogrammer/webdollar-explorer-api">here</a>.</p> 
+  <p class="transactionsTable" style="width: 680px; margin: 0 auto; padding: 10px; margin-top:30px;"> The pool information does not and will not contain its access link, as it might change over time. If one prefers to have its pool information available here, please file a Pull Request to the GitHub repository <a href="https://github.com/thelazyprogrammer/webdollar-explorer-api">here</a>.</p>
   </div>
 
 </template>
@@ -47,11 +47,11 @@ import SpecialAddresses from '@/services/SpecialAddresses'
 export default {
   name: 'pools',
 
-  components:{ },
+  components: { },
 
   data () {
     return {
-      pools: SpecialAddresses.pools.sort(function(a, b) {
+      pools: SpecialAddresses.pools.sort(function (a, b) {
         let mapStatus = {
           up: -1,
           down: 1

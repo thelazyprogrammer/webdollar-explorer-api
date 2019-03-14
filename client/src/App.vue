@@ -33,25 +33,25 @@
 
 <script>
 
-  import Status from '@/components/utils/Status.vue'
-  import WebsiteMenu from '@/components/utils/Menu.vue'
-  import Search from '@/components/utils/Search.vue'
+import Status from '@/components/utils/Status.vue'
+import WebsiteMenu from '@/components/utils/Menu.vue'
+import Search from '@/components/utils/Search.vue'
 
-  export default {
+export default {
 
-    name: 'App',
+  name: 'App',
 
-    components: {Status,Search,WebsiteMenu},
+  components: { Status, Search, WebsiteMenu },
 
-    data () {
-      return {
-      }
-    },
-
-    methods: {
+  data () {
+    return {
     }
+  },
 
+  methods: {
   }
+
+}
 
 </script>
 

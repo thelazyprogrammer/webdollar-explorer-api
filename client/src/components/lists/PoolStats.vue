@@ -48,36 +48,36 @@
 import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
 
-var moment = require('moment');
+var moment = require('moment')
 
 export default {
 
   name: 'stats',
-  props:{
-    stats:{ default:()=>{return [] }},
+  props: {
+    stats: { default: () => { return [] } }
   },
 
   methods: {
-    mapAddress(address) {
+    mapAddress (address) {
       address = Utils.mapAddress(address)
       if (address.length > 15) {
-       return (address).substring(0,10) + ".." + address.substring(address.length - 5)
+        return (address).substring(0, 10) + '..' + address.substring(address.length - 5)
       }
       return address
     },
-    formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number, decimals);
+    formatMoneyNumber (number, decimals) {
+      return Utils.formatMoneyNumber(number, decimals)
     },
-    formatPower(number) {
+    formatPower (number) {
       number = Number(number)
       if (isNaN(number)) { number = 0 }
       if (number > 1000000) {
-        return (Math.round(number / 100000)) / 100 + " M"
+        return (Math.round(number / 100000)) / 100 + ' M'
       }
       if (number > 1000) {
-        return (Math.round(number / 10) /100) + " K"
+        return (Math.round(number / 10) / 100) + ' K'
       }
-      return number + " "
+      return number + ' '
     }
   }
 

@@ -55,30 +55,30 @@
 import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
 
-var moment = require('moment');
+var moment = require('moment')
 
 export default {
 
   name: 'transactions',
-  props:{
-    blocks:{ default:()=>{return [] }},
+  props: {
+    blocks: { default: () => { return [] } },
     showMiner: { default: true },
     showResolver: { default: false },
-    showAlgorithm: { default: false },
+    showAlgorithm: { default: false }
   },
 
   methods: {
-    mapAddress(address) {
+    mapAddress (address) {
       address = Utils.mapAddress(address)
       if (address.length > 15) {
-       return (address).substring(0,10) + ".." + address.substring(address.length - 5)
+        return (address).substring(0, 10) + '..' + address.substring(address.length - 5)
       }
       return address
     },
-    formatMoneyNumber(number, decimals){
-      return Utils.formatMoneyNumber(number, decimals);
+    formatMoneyNumber (number, decimals) {
+      return Utils.formatMoneyNumber(number, decimals)
     },
-    formatDate(timestamp){
+    formatDate (timestamp) {
       let blockDate = new Date(timestamp * 1000)
       return moment(blockDate).fromNow()
     }

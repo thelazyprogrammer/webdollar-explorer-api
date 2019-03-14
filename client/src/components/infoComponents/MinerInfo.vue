@@ -115,52 +115,51 @@ export default {
 
   data () {
     return {
-      copyText: "Address copied",
-      copyTextClass: "showNoCopyMessage"
+      copyText: 'Address copied',
+      copyTextClass: 'showNoCopyMessage'
     }
   },
 
-  props:{
-    miner: { default:()=>{return [] }}
+  props: {
+    miner: { default: () => { return [] } }
   },
 
   methods: {
-    getLabel(address) {
+    getLabel (address) {
       let label = Utils.mapAddress(address)
       if (label != address) {
         return label
       }
-      return
     },
-    formatMoneyNumber(number, decimals) {
+    formatMoneyNumber (number, decimals) {
       if (!number) {
         return 0
       }
-      return Utils.formatMoneyNumber(number, decimals);
+      return Utils.formatMoneyNumber(number, decimals)
     },
-    formatSupplyRatio(ratio) {
+    formatSupplyRatio (ratio) {
       if (ratio < 0) {
         return 0
       }
       return ratio
     },
-    onCopy() {
-      this.copyTextClass = "showCopyMessage"
-      setTimeout(function() {
-        this.copyTextClass = "showNoCopyMessage"
+    onCopy () {
+      this.copyTextClass = 'showCopyMessage'
+      setTimeout(function () {
+        this.copyTextClass = 'showNoCopyMessage'
       }.bind(this), 2000)
     },
-    getPossiblePoSReward(balance) {
-        let totalDailyReward = 6000 * 60 * 60 * 24 / 40
-        let daysPassed = (new Date() - new Date(1524743407 * 1000)) / (1000 * 60 * 60 * 24)
-        let currSupply = (totalDailyReward * Math.round(daysPassed) + 4156801128)
-        let posReward = 0.6666
-        let share = posReward * totalDailyReward / currSupply
-        let dailyReward = share * balance / 10000
-        let monthlyReward = dailyReward * 30 * 97 / 100
-        // PoS reward decreases 3% per month and 9% per year
-        let yearlyReward = monthlyReward * 12
-        return this.formatMoneyNumber(monthlyReward * 10000)
+    getPossiblePoSReward (balance) {
+      let totalDailyReward = 6000 * 60 * 60 * 24 / 40
+      let daysPassed = (new Date() - new Date(1524743407 * 1000)) / (1000 * 60 * 60 * 24)
+      let currSupply = (totalDailyReward * Math.round(daysPassed) + 4156801128)
+      let posReward = 0.6666
+      let share = posReward * totalDailyReward / currSupply
+      let dailyReward = share * balance / 10000
+      let monthlyReward = dailyReward * 30 * 97 / 100
+      // PoS reward decreases 3% per month and 9% per year
+      let yearlyReward = monthlyReward * 12
+      return this.formatMoneyNumber(monthlyReward * 10000)
     }
   }
 

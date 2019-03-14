@@ -22,7 +22,6 @@
 
 <script>
 
-import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
 import Transactions from '@/components/lists/Transactions.vue'
 import Miners from '@/components/lists/Miners.vue'
@@ -31,7 +30,7 @@ import Loading from '@/components/utils/Loading'
 export default {
   name: 'webd_daily',
 
-  components:{ Miners, Transactions, Loading },
+  components: { Miners, Transactions, Loading },
 
   data () {
     return {
@@ -47,18 +46,18 @@ export default {
     this.getLatestTransactions()
   },
   methods: {
-    async getLatestTransactions() {
+    async getLatestTransactions () {
       this.trxs_loaded = false
       try {
         let response = await BlocksService.fetchLatestTransactions()
-        this.trxs= response.data.trxs
+        this.trxs = response.data.trxs
       } catch (exception) {
         console.error(exception)
         this.trxs = []
       }
       this.trxs_loaded = true
     },
-    async getLatestMiners() {
+    async getLatestMiners () {
       this.miners_loaded = false
       try {
         let response = await BlocksService.fetchLatestMiners()
@@ -68,7 +67,7 @@ export default {
         this.miners = []
       }
       this.miners_loaded = true
-    },
+    }
 
   }
 }
