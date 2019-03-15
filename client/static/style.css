@@ -221,12 +221,19 @@ a.add_post_link {
   border-bottom: solid 1px #fec02c;
   width: 100%;
   min-width: 680px;
-  background-color: #292929;
+  background: rgba(0,0,0,1);
+  background: -moz-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(41,40,40,1) 50%, rgba(0,0,0,1) 100%);
+  background: -webkit-gradient(left top, right top, color-stop(0%, rgba(0,0,0,1)), color-stop(50%, rgba(41,40,40,1)), color-stop(100%, rgba(0,0,0,1)));
+  background: -webkit-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(41,40,40,1) 50%, rgba(0,0,0,1) 100%);
+  background: -o-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(41,40,40,1) 50%, rgba(0,0,0,1) 100%);
+  background: -ms-linear-gradient(left, rgba(0,0,0,1) 0%, rgba(41,40,40,1) 50%, rgba(0,0,0,1) 100%);
+  background: linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(41,40,40,1) 50%, rgba(0,0,0,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#000000', GradientType=1 );
 }
 
 #logo{
-  width: 40px;
-  padding: 15px;
+  width: 50px;
+  padding: 12px;
   cursor: pointer;
 }
 
@@ -272,6 +279,7 @@ a.add_post_link {
 
 .logoLink{
   float:left;
+  margin-top: -5px;
 }
 
 #search_wrapper{
