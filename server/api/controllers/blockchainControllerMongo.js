@@ -376,6 +376,8 @@ exports.get_latest_trx = async function (req, res) {
     trxs: latest_trxs,
     trxs_number: latest_trxs.length
   })
+
+  mongoDB.close()
   return
 }
 
@@ -470,6 +472,8 @@ exports.get_latest_miners = async function (req, res) {
     miners: latest_miners,
     miners_number: latest_miners.length
   })
+
+  mongoDB.close()
   return
 }
 
@@ -496,6 +500,8 @@ async function getTransactions(miner, pageNumber, pageSize) {
       trxs = pending_trx.trxs.concat(trxs)
     }
   }
+
+  mongoDB.close()
 
   return {
     trxs: trxs,
