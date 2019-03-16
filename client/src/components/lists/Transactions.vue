@@ -116,8 +116,7 @@ export default {
     },
     formatDateGMT (timestamp) {
       if (timestamp) {
-        let offset = new Date(timestamp * 1000).getTimezoneOffset()
-        return moment(timestamp * 1000).utcOffset(offset).format('DD.MM.YYYY HH:mm')
+        return moment(timestamp * 1000).format('DD.MM.YYYY HH:mm')
       } else {
         return ''
       }
