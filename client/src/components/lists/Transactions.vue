@@ -60,7 +60,7 @@
       </td>
 
       <td align="left">
-       {{ formatDate(trx.timestamp) }}
+       {{ formatDate(trx.timestamp) }} <br/> <span style="font-size: 0.7em"> {{ formatDateGMT(trx.timestamp) }} </span>
       </td>
     </tr>
 
@@ -112,6 +112,14 @@ export default {
         return fromNow.replace(' ago', '')
       } else {
         return 'not mined yet'
+      }
+    },
+    formatDateGMT (timestamp) {
+      if (timestamp) {
+        let offset = new Date(timestamp * 1000).getTimezoneOffset()
+        return moment(timestamp * 1000).utcOffset(offset).format('DD.MM.YYYY HH:mm')
+      } else {
+        return ''
       }
     }
 
