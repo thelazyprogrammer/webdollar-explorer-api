@@ -494,9 +494,11 @@ async function getTransactions(miner, pageNumber, pageSize) {
   let trxsNumber = await trxsNumberTask
   let pages = Math.ceil(trxsNumber / pageSize)
 
+  let pendingTrxsNumber = 0
   if (pageNumber == 1) {
     let pending_trx = await get_pending_trx(miner)
     if (pending_trx && pending_trx.trxs && pending_trx.trxs.length > 0) {
+      pendingTrxsNumber = pending_trx.trxs.length
       trxs = pending_trx.trxs.concat(trxs)
     }
   }
@@ -505,7 +507,7 @@ async function getTransactions(miner, pageNumber, pageSize) {
 
   return {
     trxs: trxs,
-    trxs_number: trxsNumber,
+    trxs_number: trxsNumber + pendingTrxsNumber,
     pages: pages
   }
 }
