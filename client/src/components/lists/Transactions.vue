@@ -60,7 +60,7 @@
       </td>
 
       <td align="left">
-       {{ formatDate(trx.timestamp) }} <br/> <span style="font-size: 0.7em"> {{ formatDateGMT(trx.timestamp) }} </span>
+       {{ formatDate(trx.timestamp) }} <br/> <span style="font-size: 0.8em"> {{ formatDateGMT(trx.timestamp) }} </span>
       </td>
     </tr>
 
