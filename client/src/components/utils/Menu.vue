@@ -26,6 +26,10 @@
         <div v-on:click="this.collapseMenuBack">Hall of Fame</div>
       </router-link>
 
+      <router-link to="/transactions" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">Transactions</div>
+      </router-link>
+
       <router-link to="/pending_trx" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
         <div v-on:click="this.collapseMenuBack">Pending Transactions</div>
       </router-link>

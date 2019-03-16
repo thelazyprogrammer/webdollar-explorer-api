@@ -48,7 +48,7 @@ export default {
     return Api().get('latest_miners')
   },
 
-  fetchTransactions (pageNumber, minerAddress) {
+  fetchTransactions (pageNumber, minerAddress, isFrom, isTo, isPool) {
     if (!pageNumber) {
       pageNumber = 1
     }
@@ -56,6 +56,16 @@ export default {
     if (minerAddress) {
       extraURLParams += '&miner=' + encodeURIComponent(minerAddress)
     }
+    if (isFrom) {
+      extraURLParams += '&is_from=' + isFrom
+    }
+    if (isTo) {
+      extraURLParams += '&is_to=' + isTo
+    }
+    if (isPool) {
+      extraURLParams += '&is_to=' + isPool
+    }
+
     return Api().get('trx' + extraURLParams)
   },
 

@@ -12,6 +12,7 @@ import Stars from '@/components/pages/Stars'
 import pendingTransactions from '@/components/pages/PendingTransactions'
 import webdToday from '@/components/pages/WebdToday'
 import Forks from '@/components/pages/Forks'
+import Transactions from '@/components/pages/Transactions'
 
 Vue.use(Router)
 
@@ -81,6 +82,11 @@ export default new Router({
       path: '/forks',
       name: 'Forkmon',
       component: Forks
+    },
+    {
+      path: '/transactions',
+      name: 'Transactions',
+      component: Transactions
     }
   ]
 })
