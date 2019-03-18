@@ -11,6 +11,16 @@
         <option>OnlyTo</option>
       </select>
     </div>
+    <div align="center">
+      <label for="trx_type"> Type </label>
+      <select id="trx_type" v-model="trx_type" v-on:change="getTransactionsAddress">
+        <option>Any</option>
+        <option>SISO</option>
+        <option>SIMO</option>
+        <option>MISO</option>
+        <option>MIMO</option>
+      </select>
+    </div>
     <div v-if="trxs_loaded">
       <div v-if="trxs.length != 0">
 
@@ -51,6 +61,8 @@ export default {
       prev_address: '',
       address_type: '',
       prev_address_type: '',
+      trx_type: '',
+      trx_address_type: '',
       trxs_loaded: false,
       trxs_number: 0,
       no_addr: false,
@@ -86,6 +98,12 @@ export default {
           this.is_from = false
         }
       }
+
+      if (this.trx_type !== this.prev_trx_type) {
+        this.prev_trx_type = this.trx_type
+        isChanged = true
+      }
+
       if (isChanged) {
         this.page_number = 1
         this.getTransactions()
@@ -96,7 +114,7 @@ export default {
         if (pageNumber) {
           this.page_number = pageNumber
         }
-        let response = await BlocksService.fetchTransactions(this.page_number, this.address, this.is_from, this.is_to)
+        let response = await BlocksService.fetchTransactions(this.page_number, this.address, this.is_from, this.is_to, this.trx_type)
         this.trxs = response.data.trxs
         this.pages = response.data.pages
         this.page_number = response.data.page_number

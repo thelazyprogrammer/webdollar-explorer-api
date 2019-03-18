@@ -477,11 +477,12 @@ exports.get_latest_miners = async function (req, res) {
   return
 }
 
-async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, isPool) {
+async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxType) {
   let MongoClient = require('mongodb').MongoClient;
   let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
   let blockChainDB = mongoDB.db(config.mongodb.db);
   let transactionsQuery = {}
+
   if (address && !isFrom && !isTo) {
     transactionsQuery.addresses = {$all: [address]}
   }
@@ -491,6 +492,29 @@ async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, isPo
   if (address && isTo) {
     transactionsQuery["to.address"] = {$all: [address]}
   }
+  if (trxType) {
+    let sizeFrom = 1
+    let sizeTo = 1
+    switch (trxType) {
+      case("SISO"):
+        transactionsQuery["from.address"] = {$size: sizeFrom}
+        transactionsQuery["to.address"] = {$size: sizeTo}
+        break
+      case("SIMO"):
+        transactionsQuery["from.address"] = {$size: sizeFrom}
+        transactionsQuery["to.address.1"] =  {$exists: true}
+        break
+      case("MISO"):
+        transactionsQuery["from.address.1"] = {$exists: true}
+        transactionsQuery["to.address"] = {$size: sizeTo }
+        break
+      case("MIMO"):
+        transactionsQuery["from.address.1"] = {$exists: true}
+        transactionsQuery["to.address.1"] = {$exists: true}
+        break
+    }
+  }
+
   let trxsTask = blockChainDB.collection(config.mongodb.trx_collection).find(transactionsQuery)
     .sort( { block_number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
   let trxsNumberTask = blockChainDB.collection(config.mongodb.trx_collection).find(transactionsQuery)
@@ -527,7 +551,7 @@ exports.get_trx = async function (req, res) {
   let miner = ''
   let isFrom = false
   let isTo = false
-  let isPool = false
+  let trxType = ''
   if (req.query.miner && req.query.miner.length === 40) {
     miner = req.query.miner
   }
@@ -537,8 +561,8 @@ exports.get_trx = async function (req, res) {
   if (req.query.is_to && req.query.is_to === 'true') {
     isTo = true
   }
-  if (req.query.is_pool && req.query.is_pool === 'true') {
-    isPool = true
+  if (req.query.trx_type && ["SISO", "SIMO", "MISO", "MIMO"].indexOf(req.query.trx_type) > -1 ) {
+    trxType = req.query.trx_type
   }
   let pageNumber = Number.parseInt(req.query.page_number)
   let pageSize = Number.parseInt(req.query.page_size)
@@ -549,7 +573,7 @@ exports.get_trx = async function (req, res) {
     pageSize = 15
   }
 
-  let trxData = await getTransactions(miner, pageNumber, pageSize, isFrom, isTo, isPool)
+  let trxData = await getTransactions(miner, pageNumber, pageSize, isFrom, isTo, trxType)
 
   res.json({
     trxs: trxData.trxs,
