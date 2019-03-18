@@ -14,7 +14,7 @@
     <div v-if="trxs_loaded">
       <div v-if="trxs.length != 0">
 
-        <div class="addressTab transactionsWrapper" id="transactions">
+        <div class="addressTab transactionsWrapper" id="transactions_all">
           <paginate v-if="this.trxs && this.trxs.length && this.pages > 1" page="this.page_number"
             :page-count="this.pages" :click-handler="getTransactions" :prev-text="'Prev'"  :next-text="'Next'"
             :container-class="'pagination-wrapper'">
@@ -66,7 +66,6 @@ export default {
   methods: {
     async getTransactionsAddress (valueChanged) {
       let isChanged = false
-      let pageNumber = this.page_number
       if ((this.prev_address !== this.address && this.address.length === 40) || !this.address) {
         this.prev_address = this.address
         isChanged = true
