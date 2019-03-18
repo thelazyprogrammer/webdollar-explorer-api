@@ -497,16 +497,55 @@ async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxT
     let sizeTo = 1
     switch (trxType) {
       case("SISO"):
-        transactionsQuery["from.address"] = {$size: sizeFrom}
-        transactionsQuery["to.address"] = {$size: sizeTo}
+        if (!transactionsQuery["from.address"]) {
+          transactionsQuery["from.address"] = {$size: sizeFrom}
+        } else {
+          transactionsQuery = {$and: [
+            {"from.address": {$size: sizeFrom}},
+            {"from.address": transactionsQuery["from.address"]},
+          ]}
+          delete transactionsQuery["from.address"]
+        }
+        if (!transactionsQuery["to.address"]) {
+          transactionsQuery["to.address"] = {$size: sizeTo}
+        } else {
+          if (!transactionsQuery["$and"]) {
+            transactionsQuery = {$and: [
+              {"to.address": {$size: sizeFrom}},
+              {"to.address": transactionsQuery["to.address"]},
+            ]}
+          } else {
+            transactionsQuery["$and"].push({"to.address": {$size: sizeFrom}}),
+            transactionsQuery["$and"].push({"to.address": transactionsQuery["to.address"]})
+          }
+          delete transactionsQuery["to.address"]
+        }
         break
       case("SIMO"):
-        transactionsQuery["from.address"] = {$size: sizeFrom}
-        transactionsQuery["to.address.1"] =  {$exists: true}
+        if (!transactionsQuery["from.address"]) {
+          transactionsQuery["to.address.1"] =  {$exists: true}
+          transactionsQuery["from.address"] = {$size: sizeFrom}
+        } else {
+          transactionsQuery = {$and: [
+            {"from.address": {$size: sizeFrom}},
+            {"from.address": transactionsQuery["from.address"]},
+            {"to.address.1": {$exists: true}}
+          ]}
+          delete transactionsQuery["from.address"]
+        }
         break
       case("MISO"):
-        transactionsQuery["from.address.1"] = {$exists: true}
-        transactionsQuery["to.address"] = {$size: sizeTo }
+        if (!transactionsQuery["to.address"]) {
+          transactionsQuery["from.address.1"] =  {$exists: true}
+          transactionsQuery["to.address"] = {$size: sizeTo}
+        } else {
+          transactionsQuery = {$and: [
+            {"to.address": {$size: sizeTo}},
+            {"to.address": transactionsQuery["to.address"]},
+            {"from.address.1": {$exists: true}}
+          ]}
+          delete transactionsQuery["to.address"]
+        }
         break
       case("MIMO"):
         transactionsQuery["from.address.1"] = {$exists: true}
