@@ -58,6 +58,7 @@
 import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
 import PoolsService from '@/services/PoolsService'
+import ExchangeService from '@/services/ExchangeService'
 import Transactions from '@/components/lists/Transactions.vue'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
 import LightBlocks from '@/components/lists/LightMinedBlocks.vue'
@@ -217,8 +218,20 @@ export default {
       }
       return []
     },
+
+    async getWebdValue () {
+      let value = ''
+      try {
+        await ExchangeService.fetchWebdValue()
+      } catch (ex) {
+        console.log(ex)
+      }
+      console.log(value)
+    },
+
     async getMiner (miner, startDate, endDate) {
       this.miner = {}
+      this.getWebdValue()
       miner = window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length)
       let minerTask = BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
       let blocksTask = BlocksService.fetchBlocks(1, miner)
