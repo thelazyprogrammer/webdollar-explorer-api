@@ -25,7 +25,7 @@
             Estimated value <a href="https://p2pb2b.io/trade/WEBD_ETH" class="webAddress"> p2pb2b.io </a>
           </span>
         <span v-if="miner.balance">
-          {{ 0 }} <span class="labelAddress">ETH</span>
+          {{ this.estimated_value * miner.balance }} <span class="labelAddress">ETH</span>
         </span>
       </div>
 
@@ -113,13 +113,13 @@ export default {
   data () {
     return {
       copyText: 'Address copied',
-      copyTextClass: 'showNoCopyMessage',
-      estimated_value: 0
+      copyTextClass: 'showNoCopyMessage'
     }
   },
 
   props: {
-    miner: { default: () => { return [] } }
+    miner: { default: () => { return [] } },
+    estimated_value: { default: () => { return 0 } }
   },
 
   methods: {

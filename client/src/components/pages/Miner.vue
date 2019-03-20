@@ -3,7 +3,7 @@
 
     <div id="address" v-if="miner && miner.address" class="table-wrap">
 
-     <miner-info :miner="this.miner"></miner-info>
+     <miner-info :estimated_value="this.estimated_value" :miner="this.miner"></miner-info>
      <div class="sliderWrapper">
          <vue-slider @drag-end="onTimeIntervalChange" :tooltipDir.sync="tooltipDir" :piecewise.sync="piecewise" :data.sync="data" :value.sync="value"></vue-slider>
      </div>
@@ -87,7 +87,8 @@ export default {
       tooltipDir: ['top', 'bottom'],
       data: { default: function () { return this.getDates() } },
       value: { default: function () { return this.getStartEndDates() } },
-      poolStats: []
+      poolStats: [],
+      estimated_value: 0
     }
   },
   beforeRouteUpdate (to) {
@@ -222,11 +223,12 @@ export default {
     async getWebdValue () {
       let value = ''
       try {
-        await ExchangeService.fetchWebdValue()
+        value = await ExchangeService.fetchWebdValue()
+        this.estimated_value = value.data.result.last
+        console.log(this.estimated_value)
       } catch (ex) {
         console.log(ex)
       }
-      console.log(value)
     },
 
     async getMiner (miner, startDate, endDate) {

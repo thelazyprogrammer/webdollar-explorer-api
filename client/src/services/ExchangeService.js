@@ -5,7 +5,7 @@ require('axios-debug-log')
 export default {
 
   fetchWebdValue () {
-    return P2PExchangeApi().get('')
+    return P2PExchangeApi().get('', { headers: {} })
   }
 
 }
