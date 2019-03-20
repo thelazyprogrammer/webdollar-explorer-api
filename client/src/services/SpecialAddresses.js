@@ -9,6 +9,11 @@ export default {
       name: 'GYMBASE_COLD_1',
       'status': 'up',
       address: 'WEBD$gCJDtpe$grMQ#jezcq+FdX6eMUGMa24yIT$'
+    },
+    {
+      name: 'P2PB2BIO_COLD_1',
+      'status': 'up',
+      address: 'WEBD$gDNzWkHmJC3ZcB1gINt58Uspj$mV9+wDkH$'
     }
   ],
   pools: [
