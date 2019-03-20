@@ -3,21 +3,10 @@
     <div v-if="miner" class="minerTable">
 
       <div>
-        <span>
-          Address
-        </span>
+        <span>Address <span v-if="getLabelFull(miner.address)" class="labelAddress">{{getLabelFull(miner.address)}}</span></span>
         <span>
           <a class="webdAddress" :href="'#/miner/' + miner.address">{{ miner.address }}</a>
         </span>
-      </div>
-
-      <div v-if="getLabel(miner.address)">
-          <span>
-            Label
-          </span>
-        <span>
-            <a class="webdAddress" :href="'#/miner/' + miner.address">{{ getLabel(miner.address) }}</a>
-          </span>
       </div>
 
       <div>
@@ -29,6 +18,15 @@
             <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
             <span v-clipboard:success="onCopy" v-clipboard:copy="miner.address" title="Copy address to clipboard" style="cursor: pointer; color: #fec02c!important; padding: 0px;"> &Xi; </span> <span style="font-size: xx-small; color: #fec02c!important;" :class="copyTextClass"> {{copyText }}</span>
           </span>
+      </div>
+
+      <div v-if="miner.balance && this.estimated_value">
+          <span>
+            Estimated value <a href="https://p2pb2b.io/trade/WEBD_ETH" class="webAddress"> p2pb2b.io </a>
+          </span>
+        <span v-if="miner.balance">
+          {{ 0 }} <span class="labelAddress">ETH</span>
+        </span>
       </div>
 
       <div v-if="miner.miner_balance">
@@ -115,7 +113,8 @@ export default {
   data () {
     return {
       copyText: 'Address copied',
-      copyTextClass: 'showNoCopyMessage'
+      copyTextClass: 'showNoCopyMessage',
+      estimated_value: 0
     }
   },
 
@@ -129,6 +128,13 @@ export default {
       if (label !== address) {
         return label
       }
+    },
+    getLabelFull (address) {
+      let label = Utils.mapAddress(address)
+      if (label !== address) {
+        return label
+      }
+      return ''
     },
     formatMoneyNumber (number, decimals) {
       if (!number) {
@@ -239,5 +245,10 @@ export default {
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
+}
+
+.labelAddress {
+  color: #fec02c!important;
+  text-decoration: none;
 }
 </style>
