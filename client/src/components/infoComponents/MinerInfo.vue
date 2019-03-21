@@ -3,21 +3,22 @@
     <div v-if="miner" class="minerTable">
 
       <div>
-        <span>Address<span v-if="getLabel(miner.address)" class="labelAddress">{{getLabel(miner.address)}}</span></span>
+        <span>Address<span v-if="getLabel(miner.address)" class="labelAddress">{{getLabel(miner.address)}}</span>
+          <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
+          <span v-clipboard:success="onCopy" v-clipboard:copy="miner.address" title="Copy address to clipboard" style="cursor: pointer; color: #fec02c!important; padding: 0px;"> &Xi; </span> <span style="font-size: xx-small; color: #fec02c!important;" :class="copyTextClass"> {{copyText }}</span>
+        </span>
         <span>
           <a class="webdAddress" :href="'#/miner/' + miner.address">{{ miner.address }}</a>
         </span>
       </div>
 
       <div>
-          <span>
-            Balance
-          </span>
         <span>
-            {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span v-if="miner.balance > 100000" title='Percentage of the Total Supply'>[{{ this.formatSupplyRatio(this.miner.total_supply_ratio) }}%] </span>
-            <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
-            <span v-clipboard:success="onCopy" v-clipboard:copy="miner.address" title="Copy address to clipboard" style="cursor: pointer; color: #fec02c!important; padding: 0px;"> &Xi; </span> <span style="font-size: xx-small; color: #fec02c!important;" :class="copyTextClass"> {{copyText }}</span>
-          </span>
+          Balance
+        </span>
+        <span>
+          {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span v-if="miner.balance > 100000" title='Percentage of the Total Supply'>[{{ this.formatSupplyRatio(this.miner.total_supply_ratio) }}%] </span>
+         </span>
       </div>
 
       <div v-if="miner.balance && miner.balance > 1000 && this.estimated_value">

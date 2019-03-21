@@ -7,7 +7,7 @@
     <blocks-list v-if="this.blocks" :showMiner="true" :blocks="this.blocks"></blocks-list>
       <paginate v-if="this.blocks" page="this.blocks.page_number"
             :page-count="this.blocks.pages" :click-handler="changeAddress" :prev-text="'Prev'"  :next-text="'Next'"
-            :container-class="'pagination-wrapper'">
+            :container-class="'pagination-wrapper paginatio-wrapper-last'">
       </paginate>
 
     <loading v-else></loading>

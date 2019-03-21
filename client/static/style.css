@@ -67,7 +67,7 @@ h2, h3, h4{
 }
 
 @media screen and (max-width: 580px) {
-  .pagination-wrapper {
+  .pagination-wrapper-last {
     margin: 0 0 10em 0!important;
   }
   #donate p {
@@ -508,8 +508,11 @@ a.add_post_link {
   margin-left: 30px;
 }
 
-.pagination-wrapper {
+.pagination-wrapper-last, .pagination-wrapper-first {
   margin: 0;
+}
+
+.pagination-wrapper {
   display: flex;
   justify-content: center!important;
   padding-left: 0;

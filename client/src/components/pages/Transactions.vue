@@ -1,7 +1,7 @@
 <template>
   <div class="blocks">
     <h2> Transactions ({{ this.trxs_number }})</h2>
-    <div align="center">
+    <div class="transactionsWrapper">
       <label for="address_input"> Address </label>
       <input style="width:27em" id="address_input" type="text" v-model="address" v-on:input="getTransactionsAddress">
       <label for="address_type"> Direction </label>
@@ -11,7 +11,7 @@
         <option>OnlyTo</option>
       </select>
     </div>
-    <div align="center">
+    <div align="center" style="padding: 0.1em;">
       <label for="trx_type"> Type </label>
       <select id="trx_type" v-model="trx_type" v-on:change="getTransactionsAddress">
         <option>Any</option>
@@ -27,12 +27,12 @@
         <div class="addressTab transactionsWrapper" id="transactions_all">
           <paginate v-if="this.trxs && this.trxs.length && this.pages > 1" page="this.page_number"
             :page-count="this.pages" :click-handler="getTransactions" :prev-text="'Prev'"  :next-text="'Next'"
-            :container-class="'pagination-wrapper'">
+            :container-class="'pagination-wrapper pagination-wrapper-first'">
           </paginate>
           <transactions :transactions="this.trxs" :address="no_addr"></transactions>
           <paginate v-if="this.trxs && this.trxs.length && this.pages > 1" page="this.page_number"
             :page-count="this.pages" :click-handler="getTransactions" :prev-text="'Prev'"  :next-text="'Next'"
-            :container-class="'pagination-wrapper'">
+            :container-class="'pagination-wrapper pagination-wrapper-last'">
           </paginate>
         </div>
       </div>
