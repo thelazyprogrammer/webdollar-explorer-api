@@ -3,7 +3,7 @@
     <div v-if="miner" class="minerTable">
 
       <div>
-        <span>Address <span v-if="getLabelFull(miner.address)" class="labelAddress">{{getLabelFull(miner.address)}}</span></span>
+        <span>Address<span v-if="getLabel(miner.address)" class="labelAddress">{{getLabel(miner.address)}}</span></span>
         <span>
           <a class="webdAddress" :href="'#/miner/' + miner.address">{{ miner.address }}</a>
         </span>
@@ -14,18 +14,18 @@
             Balance
           </span>
         <span>
-            {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span title='Percentage of the Total Supply'>[{{ this.formatSupplyRatio(this.miner.total_supply_ratio) }}%] </span>
+            {{ this.formatMoneyNumber(miner.balance*10000,4) }} <span v-if="miner.balance > 100000" title='Percentage of the Total Supply'>[{{ this.formatSupplyRatio(this.miner.total_supply_ratio) }}%] </span>
             <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
             <span v-clipboard:success="onCopy" v-clipboard:copy="miner.address" title="Copy address to clipboard" style="cursor: pointer; color: #fec02c!important; padding: 0px;"> &Xi; </span> <span style="font-size: xx-small; color: #fec02c!important;" :class="copyTextClass"> {{copyText }}</span>
           </span>
       </div>
 
-      <div v-if="miner.balance && this.estimated_value">
+      <div v-if="miner.balance && miner.balance > 1000 && this.estimated_value">
           <span>
-            Estimated value <a href="https://p2pb2b.io/trade/WEBD_ETH" class="webAddress"> p2pb2b.io </a>
+            Estimated value <a href="https://p2pb2b.io/trade/WEBD_ETH" class="webAddress">p2pb2b.io</a>
           </span>
         <span v-if="miner.balance">
-          {{ this.estimated_value * miner.balance }} <span class="labelAddress">ETH</span>
+          {{ Math.round(this.estimated_value * miner.balance * 1000) / 1000 }} <span class="labelAddress">ETH</span>
         </span>
       </div>
 
@@ -129,13 +129,6 @@ export default {
         return label
       }
     },
-    getLabelFull (address) {
-      let label = Utils.mapAddress(address)
-      if (label !== address) {
-        return label
-      }
-      return ''
-    },
     formatMoneyNumber (number, decimals) {
       if (!number) {
         return 0
@@ -146,7 +139,7 @@ export default {
       if (ratio < 0) {
         return 0
       }
-      return ratio
+      return Math.round(ratio * 1000) / 1000
     },
     onCopy () {
       this.copyTextClass = 'showCopyMessage'

@@ -222,6 +222,9 @@ export default {
 
     async getWebdValue () {
       let value = ''
+      if (this.estimated_value) {
+        return
+      }
       try {
         value = await ExchangeService.fetchWebdValue()
         this.estimated_value = value.data.result.last
