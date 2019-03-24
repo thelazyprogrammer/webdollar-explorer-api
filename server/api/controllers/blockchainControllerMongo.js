@@ -391,15 +391,25 @@ exports.get_latest_miners = async function (req, res) {
   toTimestamp = toTimestamp.getTime() / 1000 - 60 * 60 * 0
   let fromTimestamp = toTimestamp - 60 * 60 * 24
 
+  let pages = 1
+  let pageNumber = Number.parseInt(req.query.page_number)
+  let pageSize = Number.parseInt(req.query.page_size)
+  if (isNaN(pageNumber) || !pageNumber) {
+    pageNumber = 1
+  }
+  if (isNaN(pageSize) || !pageSize || pageSize > 25 || pageSize < 10) {
+    pageSize = 10
+  }
+
   let MongoClient = require('mongodb').MongoClient;
   let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
   let blockChainDB = mongoDB.db(config.mongodb.db);
 
-  let miners = await blockChainDB.collection(config.mongodb.collection).aggregate([
+  let minersQuery = [
     {
         '$match': {
           number: {
-            '$gte': POS_FORK_BLOCK
+            '$gte': 0
           },
           timestamp:  { $gte: fromTimestamp, $lte: toTimestamp }
         },
@@ -422,14 +432,30 @@ exports.get_latest_miners = async function (req, res) {
       }
     },
     {
-      $limit: maxMiners
+      $facet: {
+        paginatedResults: [{ $skip: (pageNumber - 1) * pageSize }, { $limit: pageSize }],
+        totalCount: [
+          {
+            $count: 'count'
+          }
+        ]
+      }
     }
-  ]).toArray()
+  ]
+  let minersResults = await blockChainDB.collection(config.mongodb.collection).aggregate(minersQuery).toArray()
+  let miners = []
+  let minersNumber = 0
+  if (minersResults && minersResults.length == 1 && minersResults[0].paginatedResults) {
+    miners = minersResults[0].paginatedResults
+    minersNumber = minersResults[0].totalCount[0].count
+    pages = Math.ceil(minersNumber / pageSize)
+  }
+
   let pow_miners_query = [
     {
         '$match': {
           number: {
-            '$gte': POS_FORK_BLOCK
+            '$gte': 0
           },
           timestamp:  { $gte: fromTimestamp, $lte: toTimestamp },
           algorithm:  'pow'
@@ -470,7 +496,10 @@ exports.get_latest_miners = async function (req, res) {
   }
   res.json({
     miners: latest_miners,
-    miners_number: latest_miners.length
+    miners_number: minersNumber,
+    pages: pages,
+    page_size: pageSize,
+    page_number: pageNumber
   })
 
   mongoDB.close()
