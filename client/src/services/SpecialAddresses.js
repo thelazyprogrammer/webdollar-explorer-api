@@ -39,8 +39,15 @@ export default {
       min_amount: 20
     },
     {
-      name: 'WMP',
+      name: 'WMP-ASIA',
       address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
+      'status': 'up',
+      fee: 2,
+      min_amount: 20
+    },
+    {
+      name: 'WMP',
+      address: 'WEBD$gDEVpp1z9QNZ+MvBjbk+Md76iWZK2WZmqn$',
       'status': 'up',
       fee: 2,
       min_amount: 20
