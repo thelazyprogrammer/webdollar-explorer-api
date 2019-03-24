@@ -52,6 +52,7 @@ h2, h3, h4{
 .labelAddress {
   color: #fec02c!important;
   text-decoration: none;
+  margin-right: 0px!important;
 }
 
 .minedBlocksList{
