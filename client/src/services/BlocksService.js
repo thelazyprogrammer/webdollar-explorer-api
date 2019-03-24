@@ -52,7 +52,7 @@ export default {
     return Api().get('latest_miners' + extraURLParams)
   },
 
-  fetchTransactions (pageNumber, minerAddress, isFrom, isTo, trxType) {
+  fetchTransactions (pageNumber, minerAddress, isFrom, isTo, trxType, trxOrder, startDate, endDate) {
     if (!pageNumber) {
       pageNumber = 1
     }
@@ -68,6 +68,12 @@ export default {
     }
     if (trxType) {
       extraURLParams += '&trx_type=' + trxType
+    }
+    if (trxOrder) {
+      extraURLParams += '&trx_order=' + trxOrder
+    }
+    if (startDate && endDate) {
+      extraURLParams += '&start_date=' + startDate + '&end_date=' + endDate
     }
 
     return Api().get('trx' + extraURLParams)

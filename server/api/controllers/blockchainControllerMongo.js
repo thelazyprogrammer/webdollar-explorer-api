@@ -506,7 +506,7 @@ exports.get_latest_miners = async function (req, res) {
   return
 }
 
-async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxType) {
+async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxType, trxOrder, fromDate, toDate) {
   let MongoClient = require('mongodb').MongoClient;
   let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
   let blockChainDB = mongoDB.db(config.mongodb.db);
@@ -583,8 +583,53 @@ async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxT
     }
   }
 
+  let orderQuery = {
+    block_number: -1
+  }
+
+  if (trxOrder) {
+    switch (trxOrder) {
+      case("DateAsc"):
+        orderQuery = {
+          block_number: 1
+        }
+        break
+      case("ValueDesc"):
+        orderQuery = {
+          from_amount: -1
+        }
+        break
+      case("ValueAsc"):
+        orderQuery = {
+          from_amount: 1
+        }
+        break
+      case("FeeDesc"):
+        orderQuery = {
+          fee: -1
+        }
+        break
+      case("FeeAsc"):
+        orderQuery = {
+          fee: 1
+        }
+        break
+      }
+  }
+
+  if (fromDate && toDate) {
+    if (!transactionsQuery) {
+      transactionsQuery.timestamp = { $gte: fromDate, $lte: toDate }
+    } else {
+      transactionsQuery = {$and: [
+        transactionsQuery,
+        { timestamp: { $gte: fromDate, $lte: toDate } }
+      ]}
+    }
+  }
+
   let trxsTask = blockChainDB.collection(config.mongodb.trx_collection).find(transactionsQuery)
-    .sort( { block_number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+    .sort(orderQuery).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
   let trxsNumberTask = blockChainDB.collection(config.mongodb.trx_collection).find(transactionsQuery)
     .count()
 
@@ -620,6 +665,10 @@ exports.get_trx = async function (req, res) {
   let isFrom = false
   let isTo = false
   let trxType = ''
+  let trxOrder = ''
+  let start = new Date(1524743407 * 1000).getTime() / 1000
+  let end = new Date().getTime() / 1000
+
   if (req.query.miner && req.query.miner.length === 40) {
     miner = req.query.miner
   }
@@ -632,6 +681,10 @@ exports.get_trx = async function (req, res) {
   if (req.query.trx_type && ["SISO", "SIMO", "MISO", "MIMO"].indexOf(req.query.trx_type) > -1 ) {
     trxType = req.query.trx_type
   }
+  if (req.query.trx_order && ["DateDesc", "DateAsc", "ValueDesc", "ValueAsc", "FeeDesc", "FeeAsc"]
+    .indexOf(req.query.trx_order) > -1 ) {
+    trxOrder = req.query.trx_order
+  }
   let pageNumber = Number.parseInt(req.query.page_number)
   let pageSize = Number.parseInt(req.query.page_size)
   if (isNaN(pageNumber) || !pageNumber) {
@@ -641,7 +694,13 @@ exports.get_trx = async function (req, res) {
     pageSize = 15
   }
 
-  let trxData = await getTransactions(miner, pageNumber, pageSize, isFrom, isTo, trxType)
+  if (req.query.start_date && req.query.end_date) {
+    start = new Date(req.query.start_date).getTime() / 1000
+    end = new Date(req.query.end_date).getTime() / 1000
+  }
+
+  let trxData = await getTransactions(miner, pageNumber, pageSize, isFrom, isTo, trxType,
+    trxOrder, start, end)
 
   res.json({
     trxs: trxData.trxs,
