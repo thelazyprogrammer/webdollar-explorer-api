@@ -21,18 +21,9 @@
          </span>
       </div>
 
-      <div v-if="miner.balance && miner.balance > 1000 && this.estimated_value">
-          <span>
-            Estimated value <a href="https://p2pb2b.io/trade/WEBD_ETH" class="webAddress">p2pb2b.io</a>
-          </span>
-        <span v-if="miner.balance">
-          {{ Math.round(this.estimated_value * miner.balance * 1000) / 1000 }} <span class="labelAddress">ETH</span>
-        </span>
-      </div>
-
       <div v-if="miner.miner_balance">
           <span>
-            Mined amount
+            Mined
           </span>
         <span v-if="miner.miner_balance">
           {{ this.formatMoneyNumber(miner.miner_balance*10000,4) }}
@@ -41,7 +32,7 @@
 
       <div v-if="miner.miner_balance_pow && miner.miner_balance != miner.miner_balance_pow">
           <span>
-            PoW mined amount
+            PoW mined
           </span>
         <span>
           {{ this.formatMoneyNumber(miner.miner_balance_pow*10000,4) }}
@@ -50,7 +41,7 @@
 
       <div v-if="miner.miner_balance_pos">
           <span>
-            PoS mined amount
+            PoS mined
           </span>
         <span>
           {{ this.formatMoneyNumber(miner.miner_balance_pos*10000,4) }}
@@ -59,11 +50,29 @@
 
       <div v-if="miner.miner_balance_res">
           <span>
-            PoS resolved amount
+            PoS resolved
           </span>
         <span>
           {{ this.formatMoneyNumber(miner.miner_balance_res*10000,4) }}
         </span>
+      </div>
+
+      <div v-if="miner.trx_to_balance">
+          <span>
+            Sent
+          </span>
+        <span>
+            {{ this.formatMoneyNumber(miner.trx_to_balance*10000,4) }}
+          </span>
+      </div>
+
+      <div v-if="miner.trx_from_balance">
+          <span>
+            Received
+          </span>
+        <span>
+            {{ this.formatMoneyNumber(miner.trx_from_balance*10000,4) }}
+          </span>
       </div>
 
       <div v-if="miner.balance && miner.balance > 0">
@@ -77,23 +86,15 @@
         <span v-else> 0 </span>
       </div>
 
-      <div v-if="miner.trx_to_balance">
+      <div v-if="miner.balance && miner.balance > 1000 && this.estimated_value">
           <span>
-            Sent amount
+            Value estimate <a href="https://p2pb2b.io/trade/WEBD_ETH" class="webAddress">p2pb2b.io</a>
           </span>
-        <span>
-            {{ this.formatMoneyNumber(miner.trx_to_balance*10000,4) }}
-          </span>
+        <span v-if="miner.balance">
+          {{ Math.round(this.estimated_value * miner.balance * 1000) / 1000 }} <span class="labelAddress">ETH</span>
+        </span>
       </div>
 
-      <div v-if="miner.trx_from_balance">
-          <span>
-            Received amount
-          </span>
-        <span>
-            {{ this.formatMoneyNumber(miner.trx_from_balance*10000,4) }}
-          </span>
-      </div>
     </div>
 
     <div v-else>
@@ -241,8 +242,4 @@ export default {
   opacity: 1;
 }
 
-.labelAddress {
-  color: #fec02c!important;
-  text-decoration: none;
-}
 </style>

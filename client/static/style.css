@@ -49,6 +49,11 @@ h2, h3, h4{
   font-size: 0.97em;
 }
 
+.labelAddress {
+  color: #fec02c!important;
+  text-decoration: none;
+}
+
 .minedBlocksList{
   width: 680px;
 }
@@ -60,7 +65,7 @@ h2, h3, h4{
 
 /* If the screen size is 600px wide or less, set the font-size of <div> to 30px */
 @media screen and (max-width: 680px) {
-  .webdAddress {
+  .webdAddress, .labelAddress {
     font-size: 0.8em;
     overflow-x: auto;
   }
