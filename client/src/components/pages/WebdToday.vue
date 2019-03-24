@@ -2,8 +2,8 @@
   <div class="blocks">
     <div v-if="miners_loaded">
       <div v-if="miners.length != 0">
-        <h2> Top daily miners </h2>
-        <miners :miners="miners"></miners>
+        <h2> Top daily miners ({{this.miners_number}})</h2>
+        <miners :page_number="this.miners_page_number" :miners="miners"></miners>
         <paginate v-if="this.miners && this.miners.length && this.miners_pages > 1" page="this.miners_page_number"
           :page-count="this.miners_pages" :click-handler="getLatestMiners" :prev-text="'Prev'"  :next-text="'Next'"
           :container-class="'pagination-wrapper pagination-wrapper-last'">
@@ -44,7 +44,8 @@ export default {
       miners_loaded: false,
       no_addr: false,
       miners_pages: 1,
-      miners_page_number: 1
+      miners_page_number: 1,
+      miners_number: 0
     }
   },
   mounted () {
@@ -70,6 +71,7 @@ export default {
         this.miners = response.data.miners
         this.miners_page_number = response.data.page_number
         this.miners_pages = response.data.pages
+        this.miners_number = response.data.miners_number
       } catch (exception) {
         console.error(exception)
         this.miners = []

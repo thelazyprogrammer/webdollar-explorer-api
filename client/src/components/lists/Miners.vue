@@ -15,7 +15,7 @@
       </tr>
       <tr v-bind:key="miner._id" v-for="(miner,index) in miners">
         <td align="left">
-         {{ index + 1 }}
+         {{ (page_size * (page_number - 1)) + index + 1 }}
         </td>
         <td align="center">
           <a :href="'#/miner/' + miner._id">{{ mapAddress(miner._id) }} </a>
@@ -55,7 +55,9 @@ export default {
   name: 'miners',
 
   props: {
-    miners: { default: () => { return [] } }
+    miners: { default: () => { return [] } },
+    page_number: { default: () => { return 1 } },
+    page_size: { default: () => { return 10 } }
   },
 
   methods: {
