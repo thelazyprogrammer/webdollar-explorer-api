@@ -4,6 +4,10 @@
       <div v-if="miners.length != 0">
         <h2> Top daily miners </h2>
         <miners :miners="miners"></miners>
+        <paginate v-if="this.miners && this.miners.length && this.miners_pages > 1" page="this.miners_page_number"
+          :page-count="this.miners_pages" :click-handler="getLatestMiners" :prev-text="'Prev'"  :next-text="'Next'"
+          :container-class="'pagination-wrapper pagination-wrapper-last'">
+        </paginate>
       </div>
       <h2 v-else> No daily miners found </h2>
     </div>
@@ -38,7 +42,9 @@ export default {
       trxs_loaded: false,
       miners: [],
       miners_loaded: false,
-      no_addr: false
+      no_addr: false,
+      miners_pages: 1,
+      miners_page_number: 1
     }
   },
   mounted () {
@@ -57,16 +63,18 @@ export default {
       }
       this.trxs_loaded = true
     },
-    async getLatestMiners () {
-      this.miners_loaded = false
+    async getLatestMiners (pageNumber) {
+      this.miners_loaded = pageNumber || false
       try {
-        let response = await BlocksService.fetchLatestMiners()
+        let response = await BlocksService.fetchLatestMiners(pageNumber)
         this.miners = response.data.miners
+        this.miners_page_number = response.data.page_number
+        this.miners_pages = response.data.pages
       } catch (exception) {
         console.error(exception)
         this.miners = []
       }
-      this.miners_loaded = true
+      this.miners_loaded = pageNumber || true
     }
 
   }

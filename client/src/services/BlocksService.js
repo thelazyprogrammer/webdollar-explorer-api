@@ -44,8 +44,12 @@ export default {
     return Api().get('latest_trx')
   },
 
-  fetchLatestMiners () {
-    return Api().get('latest_miners')
+  fetchLatestMiners (pageNumber) {
+    if (!pageNumber) {
+      pageNumber = 1
+    }
+    let extraURLParams = '?page_number=' + pageNumber
+    return Api().get('latest_miners' + extraURLParams)
   },
 
   fetchTransactions (pageNumber, minerAddress, isFrom, isTo, trxType) {
