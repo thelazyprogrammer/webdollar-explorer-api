@@ -1,17 +1,17 @@
 export default {
   custom: [
     {
-      name: 'GYMBASE_HOT_1',
+      name: 'GYMBASE_1',
       'status': 'up',
       address: 'WEBD$gB0EmSvxL@Jzsdaejb@Ar1ZZbfXvfSQg$z$'
     },
     {
-      name: 'GYMBASE_COLD_1',
+      name: 'GYMBASE_2',
       'status': 'up',
       address: 'WEBD$gCJDtpe$grMQ#jezcq+FdX6eMUGMa24yIT$'
     },
     {
-      name: 'P2PB2B_COLD_1',
+      name: 'P2PB2B_1',
       'status': 'up',
       address: 'WEBD$gDNzWkHmJC3ZcB1gINt58Uspj$mV9+wDkH$'
     }
@@ -113,6 +113,12 @@ export default {
   fame: {
     total_donations: 0,
     donors: [
+      {
+        address: 'WEBD$gAcEHtrF5TqQiZezvwLDXvXoF0kW1qmoyP$',
+        amount: 1500000,
+        label: 'WebDollar Team',
+        block_id: 657870
+      },
       {
         address: 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
         amount: 200000,
