@@ -86,12 +86,13 @@
         <span v-else> 0 </span>
       </div>
 
-      <div v-if="miner.balance && miner.balance > 1000 && this.estimated_value">
+      <div v-if="miner.balance && miner.balance > 1000 && this.estimated_value && this.estimated_value_usd">
           <span>
-            Value estimate <a href="https://p2pb2b.io/trade/WEBD_ETH" class="webAddress">p2pb2b.io</a>
+            Value estimate
           </span>
         <span v-if="miner.balance">
-          {{ Math.round(this.estimated_value * miner.balance * 1000) / 1000 }} <span class="labelAddress">ETH</span>
+          <span class="labelAddress">{{ Math.round(this.estimated_value_usd * miner.balance * 1000) / 1000 }} USD</span>
+          <span class="labelAddress">{{ Math.round(this.estimated_value * miner.balance * 1000) / 1000 }} ETH </span>
         </span>
       </div>
 
@@ -121,7 +122,8 @@ export default {
 
   props: {
     miner: { default: () => { return [] } },
-    estimated_value: { default: () => { return 0 } }
+    estimated_value: { default: () => { return 0 } },
+    estimated_value_usd: { default: () => { return 0 } }
   },
 
   methods: {

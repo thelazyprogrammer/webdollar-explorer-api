@@ -3,7 +3,7 @@
 
     <div id="address" v-if="miner && miner.address" class="table-wrap">
 
-     <miner-info :estimated_value="this.estimated_value" :miner="this.miner"></miner-info>
+     <miner-info :estimated_value="this.estimated_value" :estimated_value_usd="this.estimated_value_usd" :miner="this.miner"></miner-info>
      <div class="sliderWrapper">
          <vue-slider @drag-end="onTimeIntervalChange" :tooltipDir.sync="tooltipDir" :piecewise.sync="piecewise" :data.sync="data" :value.sync="value"></vue-slider>
      </div>
@@ -88,7 +88,8 @@ export default {
       data: { default: function () { return this.getDates() } },
       value: { default: function () { return this.getStartEndDates() } },
       poolStats: [],
-      estimated_value: 0
+      estimated_value: 0,
+      estimated_value_usd: 0
     }
   },
   beforeRouteUpdate (to) {
@@ -221,14 +222,11 @@ export default {
     },
 
     async getWebdValue () {
-      let value = ''
-      if (this.estimated_value) {
-        return
-      }
       try {
-        value = await ExchangeService.fetchWebdValue()
-        this.estimated_value = value.data.result.last
-        console.log(this.estimated_value)
+        let valueUsd = await ExchangeService.fetchWebdValueCoinGeko('USD')
+        this.estimated_value_usd = valueUsd.data.webdollar.usd
+        let valueEth = await ExchangeService.fetchWebdValueCoinGeko('ETH')
+        this.estimated_value = valueEth.data.webdollar.eth
       } catch (ex) {
         console.log(ex)
       }
