@@ -91,8 +91,8 @@
             Value estimate
           </span>
         <span v-if="miner.balance">
-          <span class="labelAddress">{{ Math.round(this.estimated_value_usd * miner.balance * 1000) / 1000 }} USD</span>
-          <span class="labelAddress">{{ Math.round(this.estimated_value * miner.balance * 1000) / 1000 }} ETH </span>
+          <span class="labelAddress">{{ this.formatMoneyNumber((Math.round(this.estimated_value_usd * miner.balance * 1000) / 1000) * 10000, 10000) }} USD</span>
+          <span class="labelAddress">{{ this.formatMoneyNumber((Math.round(this.estimated_value * miner.balance * 1000) / 1000)*10000, 10000) }} ETH </span>
         </span>
       </div>
 
