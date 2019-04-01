@@ -2,8 +2,8 @@
   <div >
     <div v-if="miner" class="minerTable">
 
-      <div style="display: block;text-align:center;">
-        <img style="width:30px; height:30px; margin-bottom: -6px" :src="'http://robohash.org/' + encodeURIComponent(miner.address) + '?set=set4'" />
+      <div style="display: block;text-align:center; height: 58px;">
+        <img style="width:50px; height:50px; margin-bottom: -15px" :src="'http://robohash.org/' + encodeURIComponent(miner.address) + '?set=set4'" />
         <span style="font-size: 0.9em;"> {{getLabel(miner.address)}} </span>
         <span style="font-size: 0.9em; color: #fec02c!important"> {{ miner.address }} </span>
         <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
