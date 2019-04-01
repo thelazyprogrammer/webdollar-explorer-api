@@ -270,7 +270,7 @@ export default {
     {
       initial_amount: 580875474.0000,
       address: 'WEBD$gD5@1VU3ZiJ1siQxib#wAb4xeQTUS2zscn$',
-      name: 'DEV_FUNDS_3',
+      name: 'GENESIS_1',
       owner: 'WebDollar Team'
     },
     {
@@ -282,7 +282,7 @@ export default {
     {
       initial_amount: 622074519,
       address: 'WEBD$gDx8CjURuVS+LSI91ufs@LH2QpIdSzaAxT$',
-      name: 'DEV_FUNDS_2',
+      name: 'GENESIS_2',
       owner: 'WebDollar Team'
     },
     {
