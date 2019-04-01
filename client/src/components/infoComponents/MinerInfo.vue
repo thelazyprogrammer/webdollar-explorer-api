@@ -2,14 +2,12 @@
   <div >
     <div v-if="miner" class="minerTable">
 
-      <div>
-        <span>Address<span v-if="getLabel(miner.address)" class="labelAddress">{{getLabel(miner.address)}}</span>
-          <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
-          <span v-clipboard:success="onCopy" v-clipboard:copy="miner.address" title="Copy address to clipboard" style="cursor: pointer; color: #fec02c!important; padding: 0px;"> &Xi; </span> <span style="font-size: xx-small; color: #fec02c!important;" :class="copyTextClass"> {{copyText }}</span>
-        </span>
-        <span>
-          <a class="webdAddress" :href="'#/miner/' + miner.address">{{ miner.address }}</a>
-        </span>
+      <div style="display: block;text-align:center;">
+        <img style="width:30px; height:30px; margin-bottom: -6px" :src="'http://robohash.org/' + encodeURIComponent(miner.address) + '?set=set4'" />
+        <span style="font-size: 0.9em;"> {{getLabel(miner.address)}} </span>
+        <span style="font-size: 0.9em; color: #fec02c!important"> {{ miner.address }} </span>
+        <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
+        <span v-clipboard:success="onCopy" v-clipboard:copy="miner.address" title="Copy address to clipboard" style="cursor: pointer; color: #fec02c!important; padding: 0px;"> &Xi; </span> <span style="font-size: xx-small; color: #fec02c!important;" :class="copyTextClass"> {{copyText }}</span>
       </div>
 
       <div>
