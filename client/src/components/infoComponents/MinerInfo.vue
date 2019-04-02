@@ -3,7 +3,7 @@
     <div v-if="miner" class="minerTable">
 
       <div style="display: block;text-align:center; height: 58px;">
-        <img style="width:50px; height:50px; margin-bottom: -15px" :src="'https://robohash.org/' + encodeURIComponent(miner.address) + '?set=set4'" />
+        <img style="width:50px; height:50px; margin-bottom: -15px" :src="'https://robohash.org/' + encodeURIComponent(miner.address) + '?set=set4&size=50x50'" />
         <span style="font-size: 0.9em;"> {{getLabel(miner.address)}} </span>
         <span style="font-size: 0.9em; color: #fec02c!important"> {{ miner.address }} </span>
         <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
