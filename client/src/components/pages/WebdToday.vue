@@ -2,10 +2,10 @@
   <div class="blocks">
     <div v-if="status.result" class="webdToday transactionsWrapper">
       <h2> WEBD TODAY </h2>
-      <span> WEBD PRICE: </span> <span>{{ status.webd_price }} $</span>
       <span> LATEST BLOCK: </span> <span style="width: 70px!important;"> <router-link v-bind:to="{ name: 'Block', params: { block_id: status.last_block}}"> {{ status.last_block }} </router-link></span>
-      <span> CURRENT SUPPLY: </span> <span> {{ formatMoneyNumber(status.current_supply) }} </span>
-      <span> MARKET CAP: </span> <span> {{ formatMoneyNumber(status.current_supply * status.webd_price) }} $</span>
+      <span> CURRENT SUPPLY: </span> <span style="width: 160px!important"> {{ formatMoneyNumber(status.current_supply) }} WEBD </span>
+      <span> WEBD PRICE: </span> <span v-if="status.webd_price">{{ status.webd_price }} $</span>
+      <span> MARKET CAP: </span> <span v-if="status.webd_price"> {{ formatMoneyNumber(status.current_supply * status.webd_price) }} $</span>
     </div>
     <div v-if="miners_loaded">
       <div v-if="miners.length != 0">
@@ -64,12 +64,16 @@ export default {
     this.getLatestTransactions()
     this.getWebdInfo()
   },
+  destroyed () {
+    this.status = {}
+  },
   methods: {
     formatMoneyNumber (number) {
       return Utils.formatMoneyNumber(number * 10000, 0)
     },
     async getWebdInfo () {
-      const response = await StatusService.getStatus()
+      let response = await StatusService.getStatus()
+      this.status.result = true
       if (response.data && response.data.last_block) {
         this.status.result = true
         this.status.last_block = response.data.last_block
