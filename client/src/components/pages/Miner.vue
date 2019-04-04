@@ -222,13 +222,38 @@ export default {
     },
 
     async getWebdValue () {
+      if (this.estimated_value && this.estimated_value_usd) {
+        return
+      }
+
       try {
-        let valueUsd = await ExchangeService.fetchWebdValueCoinGeko('USD')
-        this.estimated_value_usd = valueUsd.data.webdollar.usd
-        let valueEth = await ExchangeService.fetchWebdValueCoinGeko('ETH')
-        this.estimated_value = valueEth.data.webdollar.eth
+        let valueUsd = await ExchangeService.fetchWebdValue('USD')
+        this.estimated_value_usd = valueUsd.data.result.last
       } catch (ex) {
         console.log(ex)
+      }
+      if (!this.estimated_value_usd) {
+        try {
+          let valueUsd = await ExchangeService.fetchWebdValueCoinGeko('USD')
+          this.estimated_value_usd = valueUsd.data.webdollar.usd
+        } catch (ex) {
+          console.log(ex)
+        }
+      }
+
+      try {
+        let valueEth = await ExchangeService.fetchWebdValue('ETH')
+        this.estimated_value = valueEth.data.result.last
+      } catch (ex) {
+        console.log(ex)
+      }
+      if (!this.estimated_value) {
+        try {
+          let valueEth = await ExchangeService.fetchWebdValueCoinGeko('ETH')
+          this.estimated_value = valueEth.data.webdollar.eth
+        } catch (ex) {
+          console.log(ex)
+        }
       }
     },
 

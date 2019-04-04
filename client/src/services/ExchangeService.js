@@ -5,8 +5,8 @@ require('axios-debug-log')
 
 export default {
 
-  fetchWebdValue () {
-    return P2PExchangeApi().get('', { headers: {} })
+  fetchWebdValue (currency) {
+    return P2PExchangeApi().get('?market=WEBD_' + currency)
   },
 
   fetchWebdValueCoinGeko (currency) {
