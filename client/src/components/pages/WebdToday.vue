@@ -1,11 +1,11 @@
 <template>
   <div class="blocks">
-    <div v-if="status.result" class="webdToday transactionsWrapper">
+    <div v-if="status_result" class="webdToday transactionsWrapper">
       <h2> WEBD TODAY </h2>
-      <span> LATEST BLOCK: </span> <span style="width: 70px!important;"> <router-link v-bind:to="{ name: 'Block', params: { block_id: status.last_block}}"> {{ status.last_block }} </router-link></span>
-      <span> CURRENT SUPPLY: </span> <span style="width: 160px!important"> {{ formatMoneyNumber(status.current_supply) }} WEBD </span>
-      <span> WEBD PRICE: </span> <span v-if="status.webd_price">{{ status.webd_price }} $</span>
-      <span> MARKET CAP: </span> <span v-if="status.webd_price"> {{ formatMoneyNumber(status.current_supply * status.webd_price) }} $</span>
+      <span> LATEST BLOCK: </span> <span style="width: 70px!important;"> <router-link v-bind:to="{ name: 'Block', params: { block_id: status_last_block}}"> {{ status_last_block }} </router-link></span>
+      <span> CURRENT SUPPLY: </span> <span style="width: 160px!important"> {{ formatMoneyNumber(status_current_supply) }} WEBD </span>
+      <span> WEBD PRICE: </span> <span>{{ status_webd_price }} $</span>
+      <span> MARKET CAP: </span> <span> {{ formatMoneyNumber(status_current_supply * status_webd_price) }} $</span>
     </div>
     <div v-if="miners_loaded">
       <div v-if="miners.length != 0">
@@ -56,7 +56,10 @@ export default {
       miners_pages: 1,
       miners_page_number: 1,
       miners_number: 0,
-      status: {}
+      status_result: false,
+      status_last_block: 0,
+      status_current_supply: 0,
+      status_webd_price: 0
     }
   },
   mounted () {
@@ -73,14 +76,14 @@ export default {
     },
     async getWebdInfo () {
       let response = await StatusService.getStatus()
-      this.status.result = true
+      this.status_result = true
       if (response.data && response.data.last_block) {
-        this.status.result = true
-        this.status.last_block = response.data.last_block
-        this.status.current_supply = (4156801128 + (this.status.last_block - 40) * 6000)
+        this.status_last_block = response.data.last_block
+        this.status_current_supply = (4156801128 + (this.status_last_block - 40) * 6000)
         try {
           let valueUsd = await ExchangeService.fetchWebdValueCoinGeko('USD')
-          this.status.webd_price = valueUsd.data.webdollar.usd
+          this.status_webd_price = valueUsd.data.webdollar.usd
+          this.status_result = true
         } catch (ex) {
           console.log(ex)
         }
