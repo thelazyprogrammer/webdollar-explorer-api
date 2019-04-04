@@ -6,8 +6,20 @@
 
     <div class="dropDown" :style="{display: (mobileMenuOpened) ? 'block':'none'}">
 
-      <router-link to="/today" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
-        <div v-on:click="this.collapseMenuBack">WEBD Today</div>
+      <router-link to="/" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">Home</div>
+      </router-link>
+
+      <router-link to="/blocks" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">Blocks</div>
+      </router-link>
+
+      <router-link to="/transactions" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">Transactions</div>
+      </router-link>
+
+      <router-link to="/pending_trx" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
+        <div v-on:click="this.collapseMenuBack">Pending Transactions</div>
       </router-link>
 
       <router-link to="/pools" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
@@ -24,14 +36,6 @@
 
       <router-link to="/fame" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
         <div v-on:click="this.collapseMenuBack">Hall of Fame</div>
-      </router-link>
-
-      <router-link to="/transactions" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
-        <div v-on:click="this.collapseMenuBack">Transactions</div>
-      </router-link>
-
-      <router-link to="/pending_trx" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">
-        <div v-on:click="this.collapseMenuBack">Pending Transactions</div>
       </router-link>
 
       <router-link to="/forks" :class="this.mobileMenuOpened && this.isMobile ? 'openedMenuLink' : '' ">

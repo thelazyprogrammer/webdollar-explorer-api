@@ -2,7 +2,7 @@
 
   <div class="container">
 
-    <h2>Last mined blocks</h2>
+    <h2>Blocks</h2>
 
     <blocks-list v-if="this.blocks" :showMiner="true" :blocks="this.blocks"></blocks-list>
       <paginate v-if="this.blocks" page="this.blocks.page_number"

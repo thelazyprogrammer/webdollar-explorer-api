@@ -21,7 +21,7 @@ export default new Router({
     {
       path: '/',
       name: 'Landing',
-      component: Blocks
+      component: webdToday
     },
     {
       path: '/blocks',
