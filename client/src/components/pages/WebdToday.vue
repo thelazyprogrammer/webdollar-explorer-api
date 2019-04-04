@@ -1,12 +1,19 @@
 <template>
   <div class="blocks">
+    <div v-if="status.result" class="webdToday transactionsWrapper">
+      <h2> WEBD TODAY </h2>
+      <span> WEBD PRICE: </span> <span>{{ status.webd_price }} $</span>
+      <span> LATEST BLOCK: </span> <span style="width: 70px!important;"> <router-link v-bind:to="{ name: 'Block', params: { block_id: status.last_block}}"> {{ status.last_block }} </router-link></span>
+      <span> CURRENT SUPPLY: </span> <span> {{ formatMoneyNumber(status.current_supply) }} </span>
+      <span> MARKET CAP: </span> <span> {{ formatMoneyNumber(status.current_supply * status.webd_price) }} $</span>
+    </div>
     <div v-if="miners_loaded">
       <div v-if="miners.length != 0">
-        <h2> Top daily miners ({{this.miners_number}})</h2>
+        <h2> Daily miners ({{this.miners_number}})</h2>
         <miners :page_number="this.miners_page_number" :miners="miners"></miners>
         <paginate v-if="this.miners && this.miners.length && this.miners_pages > 1" page="this.miners_page_number"
           :page-count="this.miners_pages" :click-handler="getLatestMiners" :prev-text="'Prev'"  :next-text="'Next'"
-          :container-class="'pagination-wrapper pagination-wrapper-last'">
+          :container-class="'pagination-wrapper pagination-wrapper-first'">
         </paginate>
       </div>
       <h2 v-else> No daily miners found </h2>
@@ -26,10 +33,13 @@
 
 <script>
 
+import Utils from '@/services/utils'
 import BlocksService from '@/services/BlocksService'
+import StatusService from '@/services/StatusService'
 import Transactions from '@/components/lists/Transactions.vue'
 import Miners from '@/components/lists/Miners.vue'
 import Loading from '@/components/utils/Loading'
+import ExchangeService from '@/services/ExchangeService'
 
 export default {
   name: 'webd_daily',
@@ -45,14 +55,34 @@ export default {
       no_addr: false,
       miners_pages: 1,
       miners_page_number: 1,
-      miners_number: 0
+      miners_number: 0,
+      status: {}
     }
   },
   mounted () {
     this.getLatestMiners()
     this.getLatestTransactions()
+    this.getWebdInfo()
   },
   methods: {
+    formatMoneyNumber (number) {
+      return Utils.formatMoneyNumber(number * 10000, 0)
+    },
+    async getWebdInfo () {
+      const response = await StatusService.getStatus()
+      if (response.data && response.data.last_block) {
+        this.status.result = true
+        this.status.last_block = response.data.last_block
+        this.status.current_supply = (4156801128 + (this.status.last_block - 40) * 6000)
+        try {
+          let valueUsd = await ExchangeService.fetchWebdValueCoinGeko('USD')
+          this.status.webd_price = valueUsd.data.webdollar.usd
+        } catch (ex) {
+          console.log(ex)
+        }
+      }
+    },
+
     async getLatestTransactions () {
       this.trxs_loaded = false
       try {
@@ -84,29 +114,4 @@ export default {
 </script>
 
 <style type="text/css">
-
-  .result{
-    display: block;
-    padding: 10px 0;
-  }
-
-  .blockContainer{
-    border:solid 1px #5f5f5f;
-    text-align: center;
-    width: 600px;
-    margin: 0 auto;
-  }
-
-  .title{
-    border-bottom:solid 1px #5f5f5f;
-  }
-
-  .textTitle{
-    width: 100%;
-    background-color: #3a3a3a;
-    box-sizing: border-box;
-    padding: 10px 0;
-    display: block;
-  }
-
 </style>
