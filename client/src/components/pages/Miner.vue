@@ -314,7 +314,7 @@ export default {
         }
       }
       if (minerNumber > 0) {
-        minerPool.address = 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$'
+        minerPool.address = 'WEBD$gDEVpp1z9QNZ+MvBjbk+Md76iWZK2WZmqn$'
         minerPool.miners = minerNumber
         minerPool.power = hashes
         this.poolStats.push(minerPool)
