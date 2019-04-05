@@ -65,9 +65,9 @@ export default {
     }
   },
   mounted () {
+    this.getWebdInfo()
     this.getLatestMiners()
     this.getLatestTransactions()
-    this.getWebdInfo()
   },
   destroyed () {
     this.status = {}
