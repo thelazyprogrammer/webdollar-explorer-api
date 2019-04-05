@@ -16,7 +16,10 @@ exports.get_status_mongo = async function(req, res) {
   }
   try {
     let blockChainDB = mongoDB.db(config.mongodb.db);
-    let block = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 } ).limit(1).toArray()
+    let blockTask = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 } ).limit(1).toArray()
+    let trxTask = await blockChainDB.collection(config.mongodb.trx_collection).find({}).sort( { number: -1 } ).count()
+    let block = await blockTask
+    let trxCount = await trxTask
     let isSynchronized = false
     let currentTimestamp = new Date().getTime()
     if (currentTimestamp - block[0].timestamp * 1000 < MAX_SYNC_OFFSET) {
@@ -27,10 +30,13 @@ exports.get_status_mongo = async function(req, res) {
       is_synchronized : isSynchronized,
       current_timestamp : currentTimestamp,
       block_timestamp : block[0].timestamp * 1000,
-      last_block : block[0].number
+      last_block : block[0].number,
+      current_supply: 4156801128 + (block[0].number - 40) * 6000,
+      trx_number: trxCount
     }
     res.json(statusResult)
   } catch (ex) {
+    console.log(ex)
     res.json()
   } finally {
     mongoDB.close()
