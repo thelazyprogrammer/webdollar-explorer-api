@@ -571,7 +571,7 @@ a.add_post_link {
     color: #fec02c;
     display: inline-block;
     float: left;
-    width: 55px;
+    width: 53px;
     word-spacing: 1px;
     text-align: left;
   }
@@ -583,4 +583,12 @@ a.add_post_link {
     display: inline-block;
     float: left;
     text-align: left;
+  }
+
+  .whiteLink {
+    color: #fff!important;
+  }
+
+  .whiteLink:hover {
+    color: #fec02c!important;
   }
