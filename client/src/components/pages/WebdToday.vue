@@ -1,12 +1,12 @@
 <template>
   <div class="blocks">
     <div v-if="status_result" class="webdToday transactionsWrapper">
-      <h2> WEBD TODAY </h2>
-      <span> LATEST BLOCK: </span> <span style="width: 55px!important;"> <router-link class="whiteLink active" v-bind:to="{ name: 'Blocks' }"> {{ status_last_block }} </router-link></span>
-      <span> CURRENT SUPPLY: </span> <span style="width: 105px!important"> {{ formatMoneyNumber(status_current_supply) }}</span>
+      <h2 style="width:0px; padding:0px;"></h2>
+      <span style="padding-left: 10px"> LATEST BLOCK: </span> <span style="width: 55px!important;"> <router-link class="whiteLink active" v-bind:to="{ name: 'Blocks' }"> {{ status_last_block }} </router-link></span>
+      <span> CURRENT SUPPLY: </span> <span style="width: 110px!important"> {{ formatMoneyNumber(status_current_supply) }}</span>
       <span> TRX NUMBER: </span> <span style="width: 55px!important"><router-link class="whiteLink active" v-bind:to="{ name: 'Transactions' }"> {{ status_trx_number }} </router-link></span>
-      <span> WEBD PRICE: </span> <span style="width: 90px!important">${{ status_webd_price }}</span>
-      <span> MARKET CAP: </span> <span>${{ formatMoneyNumber(status_current_supply * status_webd_price) }}</span>
+      <span> WEBD PRICE: </span> <span style="width: 95px!important">${{ status_webd_price }}</span>
+      <span> MARKET CAP: </span> <span style="width: 90px!important">${{ formatMoneyNumber(status_current_supply * status_webd_price) }}</span>
     </div>
     <div v-if="miners_loaded">
       <div v-if="miners.length != 0">
