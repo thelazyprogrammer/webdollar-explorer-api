@@ -1,25 +1,24 @@
-import WMPPoolApi from '@/services/WMPPoolApi'
-import BACMPoolApi from '@/services/BACMPoolApi'
-import COFFEEPoolApi from '@/services/COFFEEPoolApi'
-import ROXANAPoolApi from '@/services/ROXANAPoolApi'
-
+import axios from 'axios'
 require('axios-debug-log')
 
+const POOL_API = {
+  'WMP-ASIA': 'https://singapore.webdollarminingpool.com/pools/miners',
+  'WMP': 'https://server.webdollarminingpool.com/pools/miners',
+  'Roxana': 'https://webdollarpool.win:80/pools/miners',
+  'BACMpool': 'https://pool.bacm.ro/pools/miners',
+  '2Moon2Pool': 'https://2moonpool.ddns.net:3335/pools/miners',
+  'EuroPool': 'https://webd-europool.ddns.net:2222/pools/miners',
+  'CoffeePool': 'https://webd.pool.coffee:8443/pool'
+}
+
+function getAxiosWrapper (poolApi) {
+  return axios.create({
+    baseURL: poolApi
+  })
+}
+
 export default {
-
-  fetchPoolStatsWMP (miner) {
-    return WMPPoolApi().get('miners')
-  },
-
-  fetchPoolStatsBACM (miner) {
-    return BACMPoolApi().get('miners')
-  },
-
-  fetchPoolStatsROXANA (miner) {
-    return ROXANAPoolApi().get('miners')
-  },
-
-  fetchPoolStatsCOFFEE (miner) {
-    return COFFEEPoolApi().get()
+  fetchPoolStats (pool) {
+    return getAxiosWrapper(POOL_API[pool]).get()
   }
 }

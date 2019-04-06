@@ -56,6 +56,7 @@
 /* eslint-disable no-unmodified-loop-condition */
 
 import Utils from '@/services/utils'
+import SpecialAddresses from '@/services/SpecialAddresses'
 import BlocksService from '@/services/BlocksService'
 import PoolsService from '@/services/PoolsService'
 import ExchangeService from '@/services/ExchangeService'
@@ -299,89 +300,39 @@ export default {
 
       this.poolStats = []
       let poolStats = []
-      try {
-        poolStats = await PoolsService.fetchPoolStatsWMP()
-      } catch (ex) {}
-      let poolMiners = poolStats.data || []
-      let minerNumber = 0
-      let minerPool = {}
-      let hashes = 0
-      for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
-        if (poolMiners[minerIndex].address === miner) {
-          minerPool = poolMiners[minerIndex]
-          if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
-          minerNumber++
-        }
-      }
-      if (minerNumber > 0) {
-        minerPool.address = 'WEBD$gDEVpp1z9QNZ+MvBjbk+Md76iWZK2WZmqn$'
-        minerPool.miners = minerNumber
-        minerPool.power = hashes
-        this.poolStats.push(minerPool)
-      }
-
-      poolStats = []
-      hashes = 0
-      try {
-        poolStats = await PoolsService.fetchPoolStatsBACM()
-      } catch (ex) {}
-      poolMiners = poolStats.data || []
-      minerNumber = 0
-      for (var minerIndex1 = 0; minerIndex1 < poolMiners.length; minerIndex1++) {
-        if (poolMiners[minerIndex1].address === miner) {
-          minerPool = poolMiners[minerIndex1]
-          if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
-          minerNumber++
-        }
-      }
-      if (minerNumber > 0) {
-        minerPool.address = 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$'
-        minerPool.miners = minerNumber
-        minerPool.power = hashes
-        this.poolStats.push(minerPool)
-      }
-      poolStats = []
-      hashes = 0
-      try {
-        poolStats = await PoolsService.fetchPoolStatsROXANA()
-      } catch (ex) {}
-      poolMiners = poolStats.data || []
-      minerNumber = 0
-      for (var minerIndex2 = 0; minerIndex2 < poolMiners.length; minerIndex2++) {
-        if (poolMiners[minerIndex2].address === miner) {
-          minerPool = poolMiners[minerIndex2]
-          if (minerPool.hashes_alt) { hashes += minerPool.hashes_alt }
-          minerNumber++
-        }
-      }
-      if (minerNumber > 0) {
-        minerPool.address = 'WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$'
-        minerPool.miners = minerNumber
-        minerPool.power = hashes
-        this.poolStats.push(minerPool)
-      }
-
-      poolStats = []
-      try {
-        poolStats = await PoolsService.fetchPoolStatsCOFFEE()
-      } catch (ex) {}
-      poolMiners = poolStats.data.miners || []
-      minerNumber = 0
-      minerPool = {}
-      for (var minerIndex3 = 0; minerIndex3 < poolMiners.length; minerIndex3++) {
-        if (poolMiners[minerIndex3].address === miner) {
-          minerPool = poolMiners[minerIndex3]
-          minerPool.power = minerPool.hashes
-          break
-        }
-      }
-      if (minerPool.address) {
-        minerPool.address = 'WEBD$gCMxAKX96yhmaygo@NG+vnb4cz1eYoYpMv$'
-        minerPool.miners = minerPool.instances
-        minerPool.reward_sent = minerPool.total_sent * 10000
-        minerPool.reward_total = minerPool.reward_total * 10000
-        minerPool.power = minerPool.hps
-        this.poolStats.push(minerPool)
+      let pools = SpecialAddresses.pools.filter((a) => { return a.status === 'up' })
+      for (let p = 0; p < pools.length; p++) {
+        let pool = pools[p]
+        try {
+          poolStats = await PoolsService.fetchPoolStats(pool.name)
+          let poolMiners = poolStats.data || []
+          if (poolStats.data && poolStats.data.miners) {
+            poolMiners = poolStats.data.miners
+          }
+          let minerNumber = 0
+          let minerPool = {}
+          let hashes = 0
+          for (var minerIndex = 0; minerIndex < poolMiners.length; minerIndex++) {
+            if (poolMiners[minerIndex].address === miner) {
+              minerPool = poolMiners[minerIndex]
+              if (minerPool.hashes_alt) {
+                hashes += minerPool.hashes_alt
+              } else {
+                hashes = minerPool.hps
+                minerPool.power = minerPool.hps
+                minerPool.reward_sent = minerPool.total_sent * 10000
+                minerPool.reward_total = minerPool.reward_total * 10000
+              }
+              minerNumber++
+            }
+          }
+          if (minerNumber > 0) {
+            minerPool.address = pool.address
+            minerPool.miners = minerNumber
+            minerPool.power = hashes
+            this.poolStats.push(minerPool)
+          }
+        } catch (ex) {}
       }
     },
 

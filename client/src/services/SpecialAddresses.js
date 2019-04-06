@@ -114,6 +114,20 @@ export default {
       'status': 'down',
       fee: 1,
       min_amount: 20
+    },
+    {
+      name: 'EuroPool',
+      address: 'WEBD$gAdwcILUb9ac5WmXHV+BLBR7eKH9@9wEXH$',
+      'status': 'up',
+      fee: 1,
+      min_amount: 20
+    },
+    {
+      name: '2Moon2Pool',
+      address: 'WEBD$gDIR0gQdFEPzCip1AN8qwosSiRJhdzJjQ3$',
+      'status': 'up',
+      fee: 2,
+      min_amount: 20
     }
   ],
 
