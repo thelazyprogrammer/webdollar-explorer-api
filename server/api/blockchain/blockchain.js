@@ -1,6 +1,5 @@
-var request = require('request'),
-  config = require('../../config');
-
+var request = require('request')
+var config = require('../../config')
 
 exports.getSyncInfo = function (callback) {
   try {
@@ -9,7 +8,6 @@ exports.getSyncInfo = function (callback) {
         console.error(error)
         console.error(body)
         callback()
-        return
       } else {
         try {
           var raw_blocks = JSON.parse(body).blocks
@@ -18,13 +16,11 @@ exports.getSyncInfo = function (callback) {
         } catch (e) {
           console.log(e)
           callback()
-          return
         }
       }
-    });
+    })
   } catch (e) {
     console.log(e)
     callback()
   }
 }
-

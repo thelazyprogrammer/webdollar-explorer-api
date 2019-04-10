@@ -1,15 +1,14 @@
-const config = require('../../config');
+const config = require('../../config')
 
 // if the current block is older than MAX_SYNC_OFFSET seconds,
 // then the explorer is unsynced
 let MAX_SYNC_OFFSET = 600 * 1000
 
+exports.get_status_mongo = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=40')
 
-exports.get_status_mongo = async function(req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=40")
-
-  var MongoClient = require('mongodb').MongoClient;
+  var MongoClient = require('mongodb').MongoClient
   try {
     var mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
   } catch (ex) {
@@ -17,9 +16,9 @@ exports.get_status_mongo = async function(req, res) {
     return
   }
   try {
-    let blockChainDB = mongoDB.db(config.mongodb.db);
-    let blockTask = await blockChainDB.collection(config.mongodb.collection).find({}).sort( { number: -1 } ).limit(1).toArray()
-    let trxTask = await blockChainDB.collection(config.mongodb.trx_collection).find({}).sort( { number: -1 } ).count()
+    let blockChainDB = mongoDB.db(config.mongodb.db)
+    let blockTask = await blockChainDB.collection(config.mongodb.collection).find({}).sort({ number: -1 }).limit(1).toArray()
+    let trxTask = await blockChainDB.collection(config.mongodb.trx_collection).find({}).sort({ number: -1 }).count()
     let block = await blockTask
     let trxCount = await trxTask
     let isSynchronized = false
@@ -29,10 +28,10 @@ exports.get_status_mongo = async function(req, res) {
     }
 
     let statusResult = {
-      is_synchronized : isSynchronized,
-      current_timestamp : currentTimestamp,
-      block_timestamp : block[0].timestamp * 1000,
-      last_block : block[0].number,
+      is_synchronized: isSynchronized,
+      current_timestamp: currentTimestamp,
+      block_timestamp: block[0].timestamp * 1000,
+      last_block: block[0].number,
       current_supply: 4156801128 + (block[0].number - 40) * 6000,
       trx_number: trxCount
     }
@@ -44,4 +43,3 @@ exports.get_status_mongo = async function(req, res) {
     mongoDB.close()
   }
 }
-

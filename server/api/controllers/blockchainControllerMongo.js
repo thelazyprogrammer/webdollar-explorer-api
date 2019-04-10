@@ -1,13 +1,13 @@
-'use strict';
-var crypto = require('crypto'),
-  request = require('request'),
-  requestPromise = require('request-promise'),
-  config = require('../../config'),
-  blockchainUtils = require('../blockchain/utils');
+'use strict'
+var crypto = require('crypto')
+var request = require('request')
+var requestPromise = require('request-promise')
+var config = require('../../config')
+var blockchainUtils = require('../blockchain/utils')
 
 const AMOUNT_DIVIDER = 10000
 const REWARD = AMOUNT_DIVIDER * 6000
-const ADDRESS_CACHE_DB = "address"
+const ADDRESS_CACHE_DB = 'address'
 const BALANCE_RATIO_DECIMALS = 5
 const MAX_POOLED_TRXS = 15
 const MAX_BLOCKS = 25
@@ -17,7 +17,7 @@ const MAX_LATEST_BLOCKS = 15
 
 const POS_FORK_BLOCK = 567810
 
-function getEmptyAddress(miner_address) {
+function getEmptyAddress (miner_address) {
   return {
     'address': miner_address,
     'balance': 0,
@@ -38,9 +38,9 @@ function getEmptyAddress(miner_address) {
   }
 }
 
-exports.latest_blocks_mongo = async function(req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=40")
+exports.latest_blocks_mongo = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=40')
 
   let pageNumber = Number.parseInt(req.query.page_number)
   let pageSize = Number.parseInt(req.query.page_size)
@@ -50,8 +50,8 @@ exports.latest_blocks_mongo = async function(req, res) {
   if (isNaN(pageSize) || !pageSize || pageSize > 25 || pageSize < 15) {
     pageSize = MAX_LATEST_BLOCKS
   }
-  let miner = undefined
-  let resolver = undefined
+  let miner
+  let resolver
   if (req.query.miner) {
     miner = req.query.miner
   }
@@ -60,7 +60,7 @@ exports.latest_blocks_mongo = async function(req, res) {
   }
 
   let blocks = []
-  let MongoClient = require('mongodb').MongoClient;
+  let MongoClient = require('mongodb').MongoClient
   try {
     var mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
   } catch (ex) {
@@ -69,7 +69,7 @@ exports.latest_blocks_mongo = async function(req, res) {
     return
   }
   try {
-    let blockChainDB = mongoDB.db(config.mongodb.db);
+    let blockChainDB = mongoDB.db(config.mongodb.db)
     let findQuery = {}
     if (miner) {
       findQuery.miner = miner
@@ -80,17 +80,17 @@ exports.latest_blocks_mongo = async function(req, res) {
     }
     let blockNumberTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).count()
 
-    let blocksTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).sort( { number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+    let blocksTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).sort({ number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
 
     let blocks = await blocksTask
     let blockNumber = await blockNumberTask
     let pages = Math.ceil(blockNumber / pageSize)
     res.json({
-        result: true,
-        blocks: blocks,
-        page_number: pageNumber,
-        pages: pages,
-        blocks_number: blockNumber
+      result: true,
+      blocks: blocks,
+      page_number: pageNumber,
+      pages: pages,
+      blocks_number: blockNumber
     })
     return
   } catch (ex) {
@@ -102,16 +102,16 @@ exports.latest_blocks_mongo = async function(req, res) {
   }
 }
 
-exports.read_a_block_mongo = async function(req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=120")
+exports.read_a_block_mongo = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=120')
 
   var blockNumber = parseInt(req.params.blockId)
   var block = {}
   try {
-    let MongoClient = require('mongodb').MongoClient;
+    let MongoClient = require('mongodb').MongoClient
     let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
-    let blockChainDB = mongoDB.db(config.mongodb.db);
+    let blockChainDB = mongoDB.db(config.mongodb.db)
 
     let block_db = await blockChainDB.collection(config.mongodb.collection).find({ number: blockNumber }).toArray()
     if (block_db.length == 1) {
@@ -133,8 +133,8 @@ exports.read_a_block_mongo = async function(req, res) {
 }
 
 exports.read_an_address_mongo = async function (req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=40")
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=40')
 
   var miner_address = req.params.address
   let start = new Date(1524743407 * 1000).getTime() / 1000
@@ -146,11 +146,11 @@ exports.read_an_address_mongo = async function (req, res) {
   var miner = getEmptyAddress(miner_address)
 
   if (miner_address.length != 40) {
-    console.log("Address " + miner_address + " is not 40 char long")
-    res.json(miner);
+    console.log('Address ' + miner_address + ' is not 40 char long')
+    res.json(miner)
     return
   }
-  console.log("getting miner " + miner_address)
+  console.log('getting miner ' + miner_address)
   miner.balance = 0
   miner.miner_balance = 0
   miner.trx_to_balance = 0
@@ -161,74 +161,75 @@ exports.read_an_address_mongo = async function (req, res) {
   miner.transactions_number = 0
   miner.blocks_number = 0
   try {
-    let MongoClient = require('mongodb').MongoClient;
+    let MongoClient = require('mongodb').MongoClient
     let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
-    let blockChainDB = mongoDB.db(config.mongodb.db);
+    let blockChainDB = mongoDB.db(config.mongodb.db)
     let miner_balance_task = blockChainDB.collection(config.mongodb.collection).aggregate([
       { $match: {
-           miner: miner.address,
-           timestamp: { $gte: start, $lte: end},
-           reward: { $gt: 0 }
-        }
+        miner: miner.address,
+        timestamp: { $gte: start, $lte: end },
+        reward: { $gt: 0 }
+      }
       },
       { $group: {
-          _id: 1,
-          balance: {
-             $sum: "$reward"
-          }
+        _id: 1,
+        balance: {
+          $sum: '$reward'
         }
+      }
       }
     ]).toArray()
     let miner_balance_pos_task = blockChainDB.collection(config.mongodb.collection).aggregate([
       { $match: {
-           miner: miner.address,
-           timestamp: { $gte: start, $lte: end},
-           algorithm: 'pos',
-           reward: { $gt: 0 }
-        }
+        miner: miner.address,
+        timestamp: { $gte: start, $lte: end },
+        algorithm: 'pos',
+        reward: { $gt: 0 }
+      }
       },
       { $group: {
-          _id: 1,
-          balance: {
-             $sum: "$reward"
-          }
+        _id: 1,
+        balance: {
+          $sum: '$reward'
         }
+      }
       }
     ]).toArray()
 
     let miner_balance_res_task = blockChainDB.collection(config.mongodb.collection).aggregate([
       { $match: {
-           resolver: miner.address,
-           timestamp: { $gte: start, $lte: end},
-           miner: { $ne: miner.address },
-           algorithm: 'pos',
-           reward: { $gt: 0 }
-        }
+        resolver: miner.address,
+        timestamp: { $gte: start, $lte: end },
+        miner: { $ne: miner.address },
+        algorithm: 'pos',
+        reward: { $gt: 0 }
+      }
       },
       { $group: {
-          _id: 1,
-          balance: {
-             $sum: "$reward"
-          }
+        _id: 1,
+        balance: {
+          $sum: '$reward'
         }
+      }
       }
     ]).toArray()
 
     let miner_blocks_resolved_number_task = await blockChainDB.collection(config.mongodb.collection).find({
-        timestamp: { $gte: start, $lte: end},
-        resolver: miner.address, miner: {$ne: miner.address}}).count()
+      timestamp: { $gte: start, $lte: end },
+      resolver: miner.address,
+      miner: { $ne: miner.address } }).count()
 
     // get min/max block number between dates
     let max_block_number_array = await blockChainDB.collection(config.mongodb.trx_collection).find({
-        addresses: {$all: [miner.address]},
-        timestamp: { $gte: start, $lte: end},
-      }
-    ).sort( { block_number: -1 }).limit(1).toArray()
+      addresses: { $all: [miner.address] },
+      timestamp: { $gte: start, $lte: end }
+    }
+    ).sort({ block_number: -1 }).limit(1).toArray()
     let min_block_number_array = await blockChainDB.collection(config.mongodb.trx_collection).find({
-        addresses: {$all: [miner.address]},
-        timestamp: { $gte: start, $lte: end},
-      }
-    ).sort( { block_number: 1 }).limit(1).toArray()
+      addresses: { $all: [miner.address] },
+      timestamp: { $gte: start, $lte: end }
+    }
+    ).sort({ block_number: 1 }).limit(1).toArray()
     let min_block_number = 0
     let max_block_number = 0
     if (min_block_number_array && min_block_number_array.length == 1) {
@@ -240,51 +241,51 @@ exports.read_an_address_mongo = async function (req, res) {
 
     // get general min/max block timestamps
     let gen_max_block_number_array = await blockChainDB.collection(config.mongodb.collection).find({
-        addresses: {$all: [miner.address]}
-      }
-    ).sort( { number: -1 }).limit(1).toArray()
+      addresses: { $all: [miner.address] }
+    }
+    ).sort({ number: -1 }).limit(1).toArray()
     let gen_min_block_number_array = await blockChainDB.collection(config.mongodb.collection).find({
-        addresses: {$all: [miner.address]},
-      }
-    ).sort( { number: 1 }).limit(1).toArray()
+      addresses: { $all: [miner.address] }
+    }
+    ).sort({ number: 1 }).limit(1).toArray()
 
     let trx_to_balance_task = blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
-           address: miner.address,
-           block_number: { $gte: min_block_number, $lte: max_block_number },
-           type: 0,
-           amount: { $gt: 0 }
-        }
+        address: miner.address,
+        block_number: { $gte: min_block_number, $lte: max_block_number },
+        type: 0,
+        amount: { $gt: 0 }
+      }
       },
       { $group: {
-          _id: 1,
-          balance: {
-             $sum: "$amount"
-          }
+        _id: 1,
+        balance: {
+          $sum: '$amount'
         }
+      }
       }
     ]).toArray()
 
     let trx_from_balance_task = blockChainDB.collection(config.mongodb.mtrx_collection).aggregate([
       { $match: {
-           address: miner.address,
-           block_number: { $gte: min_block_number, $lte: max_block_number },
-           amount: { $gt: 0 },
-           type: 1
-        }
+        address: miner.address,
+        block_number: { $gte: min_block_number, $lte: max_block_number },
+        amount: { $gt: 0 },
+        type: 1
+      }
       },
       { $group: {
-          _id: 1,
-          balance: {
-             $sum: "$amount"
-          }
+        _id: 1,
+        balance: {
+          $sum: '$amount'
         }
+      }
       }
     ]).toArray()
 
     let last_block_task = blockChainDB.collection(config.mongodb.collection).find({
-      timestamp: { $gte: start, $lte: end},
-    }).sort( { number: -1 }).limit(1).toArray()
+      timestamp: { $gte: start, $lte: end }
+    }).sort({ number: -1 }).limit(1).toArray()
 
     // WAIT FOR TASKS
     let miner_balance = await miner_balance_task
@@ -315,7 +316,7 @@ exports.read_an_address_mongo = async function (req, res) {
     if (miner_balance.length == 1) {
       miner.miner_balance = miner_balance[0].balance
       if (miner_balance_pos.length == 1) {
-          miner.miner_balance_pos = miner_balance_pos[0].balance
+        miner.miner_balance_pos = miner_balance_pos[0].balance
       }
       miner.miner_balance_pow = (miner.miner_balance - miner.miner_balance_pos) / 10000
       miner.miner_balance_pos = miner.miner_balance_pos / 10000
@@ -326,7 +327,7 @@ exports.read_an_address_mongo = async function (req, res) {
     if (trx_from_balance.length == 1) {
       miner.trx_from_balance = trx_from_balance[0].balance
     }
-    miner.balance = (miner.miner_balance - miner.trx_to_balance + miner.trx_from_balance) /10000
+    miner.balance = (miner.miner_balance - miner.trx_to_balance + miner.trx_from_balance) / 10000
     miner.total_supply_ratio = (miner.balance / totalSupply * 100).toFixed(BALANCE_RATIO_DECIMALS)
     miner.miner_balance = miner.miner_balance / 10000
     miner.trx_to_balance = miner.trx_to_balance / 10000
@@ -337,26 +338,25 @@ exports.read_an_address_mongo = async function (req, res) {
     console.log(ex)
   }
   res.json(miner)
-  return
 }
 
 exports.get_latest_trx = async function (req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=120")
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=120')
 
   let maxTransactions = 10
   let toTimestamp = new Date()
   toTimestamp = toTimestamp.getTime() / 1000 - 60 * 60 * 0
   let fromTimestamp = toTimestamp - 60 * 60 * 24
 
-  let MongoClient = require('mongodb').MongoClient;
+  let MongoClient = require('mongodb').MongoClient
   let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
-  let blockChainDB = mongoDB.db(config.mongodb.db);
+  let blockChainDB = mongoDB.db(config.mongodb.db)
 
   let latest_trxs = await blockChainDB.collection(config.mongodb.trx_collection).aggregate([
     {
       $match: {
-        timestamp: { $gte: fromTimestamp, $lte: toTimestamp},
+        timestamp: { $gte: fromTimestamp, $lte: toTimestamp }
       }
     },
     {
@@ -370,7 +370,7 @@ exports.get_latest_trx = async function (req, res) {
   ]).toArray()
 
   if (!latest_trxs) {
-    latest_trx  = []
+    latest_trx = []
   }
   res.json({
     trxs: latest_trxs,
@@ -378,13 +378,11 @@ exports.get_latest_trx = async function (req, res) {
   })
 
   mongoDB.close()
-  return
 }
 
-
 exports.get_latest_miners = async function (req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=120")
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=120')
 
   let maxMiners = 10
   let toTimestamp = new Date()
@@ -401,29 +399,29 @@ exports.get_latest_miners = async function (req, res) {
     pageSize = 10
   }
 
-  let MongoClient = require('mongodb').MongoClient;
+  let MongoClient = require('mongodb').MongoClient
   let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
-  let blockChainDB = mongoDB.db(config.mongodb.db);
+  let blockChainDB = mongoDB.db(config.mongodb.db)
 
   let minersQuery = [
     {
-        '$match': {
-          number: {
-            '$gte': 0
-          },
-          timestamp:  { $gte: fromTimestamp, $lte: toTimestamp }
+      '$match': {
+        number: {
+          '$gte': 0
         },
+        timestamp: { $gte: fromTimestamp, $lte: toTimestamp }
+      }
     },
     {
-          '$group': {
-            '_id': '$miner',
-            'blocks': {
-              '$sum': 1
-            },
-            'reward': {
-              '$sum': '$reward'
-            }
-          }
+      '$group': {
+        '_id': '$miner',
+        'blocks': {
+          '$sum': 1
+        },
+        'reward': {
+          '$sum': '$reward'
+        }
+      }
     },
     {
       $sort: {
@@ -453,22 +451,22 @@ exports.get_latest_miners = async function (req, res) {
 
   let pow_miners_query = [
     {
-        '$match': {
-          number: {
-            '$gte': 0
-          },
-          timestamp:  { $gte: fromTimestamp, $lte: toTimestamp },
-          algorithm:  'pow'
+      '$match': {
+        number: {
+          '$gte': 0
         },
+        timestamp: { $gte: fromTimestamp, $lte: toTimestamp },
+        algorithm: 'pow'
+      }
     },
     {
-          '$group': {
-            '_id': '$miner',
-            'blocks': {
-              '$sum': 1
-            },
-          }
-    },
+      '$group': {
+        '_id': '$miner',
+        'blocks': {
+          '$sum': 1
+        }
+      }
+    }
   ]
 
   let latest_miners = []
@@ -480,18 +478,17 @@ exports.get_latest_miners = async function (req, res) {
     let pow_miners = await blockChainDB.collection(config.mongodb.collection).aggregate(pow_miners_query).toArray()
     latest_miners = miners
     let total_amount = 6000 * 60 * 60 * 24 / 45 * 10000
-    miners.forEach(function(m) {
-        m.ratio = Math.round(m.reward / total_amount * 100 * 100) / 100
-        m.pow_blocks = 0
-        if (pow_miners && pow_miners.length > 0) {
-          pow_miners.forEach(function (posMiner){
-            if (posMiner._id == m._id) {
-              m.pow_blocks = posMiner.blocks
-              return
-            }
-          })
-        }
-        m.pos_blocks = m.blocks - m.pow_blocks
+    miners.forEach(function (m) {
+      m.ratio = Math.round(m.reward / total_amount * 100 * 100) / 100
+      m.pow_blocks = 0
+      if (pow_miners && pow_miners.length > 0) {
+        pow_miners.forEach(function (posMiner) {
+          if (posMiner._id == m._id) {
+            m.pow_blocks = posMiner.blocks
+          }
+        })
+      }
+      m.pos_blocks = m.blocks - m.pow_blocks
     })
   }
   res.json({
@@ -503,82 +500,81 @@ exports.get_latest_miners = async function (req, res) {
   })
 
   mongoDB.close()
-  return
 }
 
-async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxType, trxOrder, fromDate, toDate) {
-  let MongoClient = require('mongodb').MongoClient;
+async function getTransactions (address, pageNumber, pageSize, isFrom, isTo, trxType, trxOrder, fromDate, toDate) {
+  let MongoClient = require('mongodb').MongoClient
   let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
-  let blockChainDB = mongoDB.db(config.mongodb.db);
+  let blockChainDB = mongoDB.db(config.mongodb.db)
   let transactionsQuery = {}
 
   if (address && !isFrom && !isTo) {
-    transactionsQuery.addresses = {$all: [address]}
+    transactionsQuery.addresses = { $all: [address] }
   }
   if (address && isFrom) {
-    transactionsQuery["from.address"] = {$all: [address]}
+    transactionsQuery['from.address'] = { $all: [address] }
   }
   if (address && isTo) {
-    transactionsQuery["to.address"] = {$all: [address]}
+    transactionsQuery['to.address'] = { $all: [address] }
   }
   if (trxType) {
     let sizeFrom = 1
     let sizeTo = 1
     switch (trxType) {
-      case("SISO"):
-        if (!transactionsQuery["from.address"]) {
-          transactionsQuery["from.address"] = {$size: sizeFrom}
+      case ('SISO'):
+        if (!transactionsQuery['from.address']) {
+          transactionsQuery['from.address'] = { $size: sizeFrom }
         } else {
-          transactionsQuery = {$and: [
-            {"from.address": {$size: sizeFrom}},
-            {"from.address": transactionsQuery["from.address"]},
-          ]}
-          delete transactionsQuery["from.address"]
+          transactionsQuery = { $and: [
+            { 'from.address': { $size: sizeFrom } },
+            { 'from.address': transactionsQuery['from.address'] }
+          ] }
+          delete transactionsQuery['from.address']
         }
-        if (!transactionsQuery["to.address"]) {
-          transactionsQuery["to.address"] = {$size: sizeTo}
+        if (!transactionsQuery['to.address']) {
+          transactionsQuery['to.address'] = { $size: sizeTo }
         } else {
-          if (!transactionsQuery["$and"]) {
-            transactionsQuery = {$and: [
-              {"to.address": {$size: sizeFrom}},
-              {"to.address": transactionsQuery["to.address"]},
-            ]}
+          if (!transactionsQuery['$and']) {
+            transactionsQuery = { $and: [
+              { 'to.address': { $size: sizeFrom } },
+              { 'to.address': transactionsQuery['to.address'] }
+            ] }
           } else {
-            transactionsQuery["$and"].push({"to.address": {$size: sizeFrom}}),
-            transactionsQuery["$and"].push({"to.address": transactionsQuery["to.address"]})
+            transactionsQuery['$and'].push({ 'to.address': { $size: sizeFrom } }),
+            transactionsQuery['$and'].push({ 'to.address': transactionsQuery['to.address'] })
           }
-          delete transactionsQuery["to.address"]
+          delete transactionsQuery['to.address']
         }
         break
-      case("SIMO"):
-        if (!transactionsQuery["from.address"]) {
-          transactionsQuery["to.address.1"] =  {$exists: true}
-          transactionsQuery["from.address"] = {$size: sizeFrom}
+      case ('SIMO'):
+        if (!transactionsQuery['from.address']) {
+          transactionsQuery['to.address.1'] = { $exists: true }
+          transactionsQuery['from.address'] = { $size: sizeFrom }
         } else {
-          transactionsQuery = {$and: [
-            {"from.address": {$size: sizeFrom}},
-            {"from.address": transactionsQuery["from.address"]},
-            {"to.address.1": {$exists: true}}
-          ]}
-          delete transactionsQuery["from.address"]
+          transactionsQuery = { $and: [
+            { 'from.address': { $size: sizeFrom } },
+            { 'from.address': transactionsQuery['from.address'] },
+            { 'to.address.1': { $exists: true } }
+          ] }
+          delete transactionsQuery['from.address']
         }
         break
-      case("MISO"):
-        if (!transactionsQuery["to.address"]) {
-          transactionsQuery["from.address.1"] =  {$exists: true}
-          transactionsQuery["to.address"] = {$size: sizeTo}
+      case ('MISO'):
+        if (!transactionsQuery['to.address']) {
+          transactionsQuery['from.address.1'] = { $exists: true }
+          transactionsQuery['to.address'] = { $size: sizeTo }
         } else {
-          transactionsQuery = {$and: [
-            {"to.address": {$size: sizeTo}},
-            {"to.address": transactionsQuery["to.address"]},
-            {"from.address.1": {$exists: true}}
-          ]}
-          delete transactionsQuery["to.address"]
+          transactionsQuery = { $and: [
+            { 'to.address': { $size: sizeTo } },
+            { 'to.address': transactionsQuery['to.address'] },
+            { 'from.address.1': { $exists: true } }
+          ] }
+          delete transactionsQuery['to.address']
         }
         break
-      case("MIMO"):
-        transactionsQuery["from.address.1"] = {$exists: true}
-        transactionsQuery["to.address.1"] = {$exists: true}
+      case ('MIMO'):
+        transactionsQuery['from.address.1'] = { $exists: true }
+        transactionsQuery['to.address.1'] = { $exists: true }
         break
     }
   }
@@ -589,42 +585,42 @@ async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxT
 
   if (trxOrder) {
     switch (trxOrder) {
-      case("DateAsc"):
+      case ('DateAsc'):
         orderQuery = {
           block_number: 1
         }
         break
-      case("ValueDesc"):
+      case ('ValueDesc'):
         orderQuery = {
           from_amount: -1
         }
         break
-      case("ValueAsc"):
+      case ('ValueAsc'):
         orderQuery = {
           from_amount: 1
         }
         break
-      case("FeeDesc"):
+      case ('FeeDesc'):
         orderQuery = {
           fee: -1
         }
         break
-      case("FeeAsc"):
+      case ('FeeAsc'):
         orderQuery = {
           fee: 1
         }
         break
-      }
+    }
   }
 
   if (fromDate && toDate) {
     if (!transactionsQuery) {
       transactionsQuery.timestamp = { $gte: fromDate, $lte: toDate }
     } else {
-      transactionsQuery = {$and: [
+      transactionsQuery = { $and: [
         transactionsQuery,
         { timestamp: { $gte: fromDate, $lte: toDate } }
-      ]}
+      ] }
     }
   }
 
@@ -655,10 +651,9 @@ async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxT
   }
 }
 
-
 exports.get_trx = async function (req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=40")
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=40')
 
   let maxTransactions = 15
   let miner = ''
@@ -678,11 +673,11 @@ exports.get_trx = async function (req, res) {
   if (req.query.is_to && req.query.is_to === 'true') {
     isTo = true
   }
-  if (req.query.trx_type && ["SISO", "SIMO", "MISO", "MIMO"].indexOf(req.query.trx_type) > -1 ) {
+  if (req.query.trx_type && ['SISO', 'SIMO', 'MISO', 'MIMO'].indexOf(req.query.trx_type) > -1) {
     trxType = req.query.trx_type
   }
-  if (req.query.trx_order && ["DateDesc", "DateAsc", "ValueDesc", "ValueAsc", "FeeDesc", "FeeAsc"]
-    .indexOf(req.query.trx_order) > -1 ) {
+  if (req.query.trx_order && ['DateDesc', 'DateAsc', 'ValueDesc', 'ValueAsc', 'FeeDesc', 'FeeAsc']
+    .indexOf(req.query.trx_order) > -1) {
     trxOrder = req.query.trx_order
   }
   let pageNumber = Number.parseInt(req.query.page_number)
@@ -708,12 +703,11 @@ exports.get_trx = async function (req, res) {
     page_number: pageNumber,
     pages: trxData.pages
   })
-  return
 }
 
-exports.get_uncle = async function(req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=40")
+exports.get_uncle = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=40')
 
   let pageNumber = Number.parseInt(req.query.page_number)
   let pageSize = Number.parseInt(req.query.page_size)
@@ -723,8 +717,8 @@ exports.get_uncle = async function(req, res) {
   if (isNaN(pageSize) || !pageSize || pageSize > 25 || pageSize < 15) {
     pageSize = 15
   }
-  let miner = undefined
-  let resolver = undefined
+  let miner
+  let resolver
   if (req.query.miner) {
     miner = req.query.miner
   }
@@ -733,7 +727,7 @@ exports.get_uncle = async function(req, res) {
   }
 
   let uncles = []
-  let MongoClient = require('mongodb').MongoClient;
+  let MongoClient = require('mongodb').MongoClient
   try {
     var mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
   } catch (ex) {
@@ -742,7 +736,7 @@ exports.get_uncle = async function(req, res) {
     return
   }
   try {
-    let blockChainDB = mongoDB.db(config.mongodb.db);
+    let blockChainDB = mongoDB.db(config.mongodb.db)
     let findQuery = {}
     if (miner) {
       findQuery.miner = miner
@@ -751,7 +745,7 @@ exports.get_uncle = async function(req, res) {
       findQuery.resolver = resolver
       findQuery.miner = { $ne: resolver }
     }
-    let blocksTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).sort( { number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
+    let blocksTask = blockChainDB.collection(config.mongodb.collection).find(findQuery).sort({ number: -1 }).skip((pageNumber - 1) * pageSize).limit(pageSize).toArray()
 
     let blocks = await blocksTask
     let blocksNumber = blocks.length
@@ -764,12 +758,12 @@ exports.get_uncle = async function(req, res) {
         }).toArray()
       } catch (ex) {
         console.log(ex)
-        console.log("Failed to get uncles")
+        console.log('Failed to get uncles')
       }
       let parents = []
       if (uncles && uncles.length) {
         if (uncles.length > 1) {
-          console.log(uncles.length + " forks for: " + blocks[i + 1].number)
+          console.log(uncles.length + ' forks for: ' + blocks[i + 1].number)
         }
         for (var uncle = 0; uncle < uncles.length; uncle++) {
           let hash = uncles[uncle].hash + uncles[uncle].miner + uncles[uncle].resolver + uncles[uncle].resolver2
@@ -802,22 +796,22 @@ exports.get_uncle = async function(req, res) {
         unclesMapped[hashBlock].is_fork = false
       } else {
         unclesMapped[hashBlock] = {
-                        number: blocks[i].number,
-                        timestamp: blocks[i].timestamp,
-                        difficulty: 13,
-                        hash: hashBlock,
-                        parents: parents,
-                        is_fork: false
+          number: blocks[i].number,
+          timestamp: blocks[i].timestamp,
+          difficulty: 13,
+          hash: hashBlock,
+          parents: parents,
+          is_fork: false
         }
       }
     }
     let pages = Math.ceil(blocksNumber / pageSize)
     res.json({
-        result: true,
-        uncles: unclesMapped,
-        page_number: pageNumber,
-        pages: pages,
-        uncles_number: blocksNumber
+      result: true,
+      uncles: unclesMapped,
+      page_number: pageNumber,
+      pages: pages,
+      uncles_number: blocksNumber
     })
     return
   } catch (ex) {
@@ -829,62 +823,61 @@ exports.get_uncle = async function(req, res) {
   }
 }
 
-async function get_pending_trx(address) {
+async function get_pending_trx (address) {
   var options = {
-        uri: config.webdollar.pouchdb_sync_url + '/transactions/pending',
-        json: true
-  };
+    uri: config.webdollar.pouchdb_sync_url + '/transactions/pending',
+    json: true
+  }
 
   let pending_transactions = await requestPromise(options)
   let transactions = []
-    pending_transactions.forEach(function(transaction) {
-      try {
-        let transaction_parsed = {
-          fee: 0,
-          from: {
-            amount: 0,
-            address: [],
-            addresses: transaction.from.addresses
-          },
-          to: {
-            address: [],
-            addresses: transaction.to.addresses
-          }
+  pending_transactions.forEach(function (transaction) {
+    try {
+      let transaction_parsed = {
+        fee: 0,
+        from: {
+          amount: 0,
+          address: [],
+          addresses: transaction.from.addresses
+        },
+        to: {
+          address: [],
+          addresses: transaction.to.addresses
         }
-        var to_amount = 0
-        var isValidTrx = false
-        transaction.from.addresses.forEach(function(from) {
-          if (address && from.address == address) {
-            isValidTrx = true
-          }
-          transaction_parsed.from.address.push(from.address)
-          transaction_parsed.from.amount += parseInt(from.amount)
-        })
-
-        transaction.to.addresses.forEach(function(to) {
-          if (address && to.address == address) {
-            isValidTrx = true
-          }
-          transaction_parsed.to.address.push(to.address)
-          to_amount += parseInt(to.amount)
-        })
-
-        transaction_parsed.fee = transaction_parsed.from.amount - to_amount
-        if (isValidTrx) {
-          transactions.push(transaction_parsed)
-        }
-      } catch (ex) {
-        console.log(ex)
       }
-    })
-    return {
-      trxs: transactions,
-      trxs_number: transactions.length
+      var to_amount = 0
+      var isValidTrx = false
+      transaction.from.addresses.forEach(function (from) {
+        if (address && from.address == address) {
+          isValidTrx = true
+        }
+        transaction_parsed.from.address.push(from.address)
+        transaction_parsed.from.amount += parseInt(from.amount)
+      })
+
+      transaction.to.addresses.forEach(function (to) {
+        if (address && to.address == address) {
+          isValidTrx = true
+        }
+        transaction_parsed.to.address.push(to.address)
+        to_amount += parseInt(to.amount)
+      })
+
+      transaction_parsed.fee = transaction_parsed.from.amount - to_amount
+      if (isValidTrx) {
+        transactions.push(transaction_parsed)
+      }
+    } catch (ex) {
+      console.log(ex)
     }
+  })
+  return {
+    trxs: transactions,
+    trxs_number: transactions.length
+  }
 }
 
-async function getStars(address, depth, addresses, stars, first) {
-
+async function getStars (address, depth, addresses, stars, first) {
   let first_depth = depth * 13
   if (first || depth == MAX_DEPTH + 1) {
     first_depth = 1001
@@ -900,12 +893,12 @@ async function getStars(address, depth, addresses, stars, first) {
   try {
     let trxsData = await getTransactions(address, 1, 60)
     let current_addresses = []
-    trxsData.trxs.forEach(function(transaction) {
+    trxsData.trxs.forEach(function (transaction) {
       let is_from = false
       let is_to = false
       let from_addresses = []
       let to_addresses = []
-      transaction.from.address.forEach(function(from) {
+      transaction.from.address.forEach(function (from) {
         if (!addresses.includes(from)) {
           from_addresses.push(from)
         }
@@ -913,7 +906,7 @@ async function getStars(address, depth, addresses, stars, first) {
           is_from = true
         }
       })
-      transaction.to.address.forEach(function(to) {
+      transaction.to.address.forEach(function (to) {
         if (!addresses.includes(to)) {
           to_addresses.push(to)
         }
@@ -929,26 +922,26 @@ async function getStars(address, depth, addresses, stars, first) {
       }
     })
 
-    current_addresses.forEach(function(curr_address) {
+    current_addresses.forEach(function (curr_address) {
       if (!addresses.includes(curr_address)) {
-        console.log("Found star: " + curr_address)
+        console.log('Found star: ' + curr_address)
         addresses.push(curr_address)
         stars.nodes.push({
           id: curr_address,
           group: (depth + 1) * 13
-        });
+        })
         stars.links.push({
           source: address,
           target: curr_address,
           value: 1
-        });
+        })
       }
     })
     if (depth == 1) {
       return Promise.resolve(stars)
     } else {
       let stars1 = []
-      current_addresses.forEach(function(curr_address) {
+      current_addresses.forEach(function (curr_address) {
         stars1 = Promise.resolve(getStars(curr_address, depth - 1, addresses, stars))
       })
       return Promise.resolve(stars1)
@@ -960,27 +953,25 @@ async function getStars(address, depth, addresses, stars, first) {
 }
 
 exports.get_stars = async function (req, res) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=240")
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=240')
 
-  let address = req.params.address;
-  let depth = 1;
+  let address = req.params.address
+  let depth = 1
   if (req.query.depth) {
-    depth = parseInt(req.query.depth);
+    depth = parseInt(req.query.depth)
   }
 
   if (address.length != 40 || depth > MAX_DEPTH + 1) {
-    res.json(false);
+    res.json(false)
     return
   }
-  console.log("Getting stars for address: " + address + ", depth: " + depth)
+  console.log('Getting stars for address: ' + address + ', depth: ' + depth)
   let stars = []
   try {
-    stars = await getStars(address, depth, [], { nodes: [], links: []}, true)
+    stars = await getStars(address, depth, [], { nodes: [], links: [] }, true)
   } catch (ex) {
     console.log(ex)
   }
-  res.json(stars);
-  return;
+  res.json(stars)
 }
-

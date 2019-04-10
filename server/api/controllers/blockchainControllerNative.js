@@ -1,13 +1,13 @@
-'use strict';
-var crypto = require('crypto'),
-  request = require('request'),
-  requestPromise = require('request-promise'),
-  config = require('../../config'),
-  blockchainUtils = require('../blockchain/utils');
+'use strict'
+var crypto = require('crypto')
+var request = require('request')
+var requestPromise = require('request-promise')
+var config = require('../../config')
+var blockchainUtils = require('../blockchain/utils')
 
 const AMOUNT_DIVIDER = 10000
 const REWARD = AMOUNT_DIVIDER * 6000
-const ADDRESS_CACHE_DB = "address"
+const ADDRESS_CACHE_DB = 'address'
 const BALANCE_RATIO_DECIMALS = 5
 const MAX_POOLED_TRXS = 15
 const MAX_BLOCKS = 25
@@ -17,7 +17,7 @@ const MAX_LATEST_BLOCKS = 14
 
 const POS_FORK_BLOCK = 567810
 
-function getEmptyAddress(miner_address) {
+function getEmptyAddress (miner_address) {
   return {
     'address': miner_address,
     'balance': 0,
@@ -38,12 +38,12 @@ function getEmptyAddress(miner_address) {
   }
 }
 
-exports.latest_blocks = function(req, res) {
-  var blocks = [];
-  var max_block_length;
+exports.latest_blocks = function (req, res) {
+  var blocks = []
+  var max_block_length
 
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=10")
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=10')
 
   request.get(config.webdollar.pouchdb_sync_url + '/blocks/' + MAX_LATEST_BLOCKS, function (error, response, body) {
     if (error) {
@@ -52,14 +52,14 @@ exports.latest_blocks = function(req, res) {
     } else {
       try {
         var raw_blocks = JSON.parse(body).blocks
-        raw_blocks.forEach(function(block) {
+        raw_blocks.forEach(function (block) {
           block.reward = block.reward
           block.number = block.id
           block.timestamp = parseInt(block.raw_timestamp) + 1524742312
           block.miner = blockchainUtils.decodeMinerAddress(block.miner_address)
           blocks.push(block)
         })
-      } catch(ex) {
+      } catch (ex) {
         console.error(body)
         console.error(ex.message)
       }
@@ -67,16 +67,15 @@ exports.latest_blocks = function(req, res) {
 
     blocks = blocks.sort((a, b) => Number(b.block_id) - Number(a.block_id))
     res.json(blocks)
-    return
-  });
+  })
 }
 
-exports.read_a_block = function(req, res) {
-  var blockId = parseInt(req.params.blockId);
+exports.read_a_block = function (req, res) {
+  var blockId = parseInt(req.params.blockId)
   var block = {}
 
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=40")
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=40')
 
   request.get(config.webdollar.pouchdb_sync_url + '/block/' + blockId, function (error, response, body) {
     if (error) {
@@ -92,7 +91,7 @@ exports.read_a_block = function(req, res) {
         block.timestamp = date.toUTCString()
         var transactions_parsed = []
 
-        block.trxs.forEach(function(transaction) {
+        block.trxs.forEach(function (transaction) {
           var transaction_parsed = transaction
           transaction_parsed.block_number = block.id
           transaction_parsed.timestamp = date.getTime() / 1000
@@ -102,13 +101,13 @@ exports.read_a_block = function(req, res) {
           transaction_parsed.from.address = []
           transaction_parsed.from.amount = 0
 
-          transaction_parsed.from.addresses.forEach(function(from) {
+          transaction_parsed.from.addresses.forEach(function (from) {
             transaction_parsed.from.address.push(from.address)
             transaction_parsed.from.amount += parseInt(from.amount)
           })
 
           transaction_parsed.to.address = []
-          transaction_parsed.to.addresses.forEach(function(to) {
+          transaction_parsed.to.addresses.forEach(function (to) {
             transaction_parsed.to.address.push(to.address)
             to_amount += parseInt(to.amount)
           })
@@ -120,19 +119,18 @@ exports.read_a_block = function(req, res) {
 
         block.trxs = transactions_parsed
         block.transactions_number = block.trxs.length
-      } catch(ex) {
+      } catch (ex) {
         console.error(body)
         console.error(ex.message)
       }
     }
     res.json(block)
-    return
-  });
+  })
 }
 
 exports.read_an_address = function (req, res) {
-  res.header("Cache-Control", "public, max-age=40")
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Cache-Control', 'public, max-age=40')
+  res.header('Access-Control-Allow-Origin', '*')
 
   var miner_address = req.params.address
   var show_all_transactions = false
@@ -145,8 +143,8 @@ exports.read_an_address = function (req, res) {
   var miner = getEmptyAddress(miner_address)
 
   if (miner_address.length != 40) {
-    console.log("Address " + miner_address + " is not 40 char long")
-    res.json(miner);
+    console.log('Address ' + miner_address + ' is not 40 char long')
+    res.json(miner)
     return
   }
   request.get(config.webdollar.pouchdb_sync_url + '/address/' + encodeURIComponent(miner_address), function (error, response, body) {
@@ -165,7 +163,7 @@ exports.read_an_address = function (req, res) {
       }
 
       var blocks_parsed = []
-      miner_received.minedBlocks.forEach(function(block) {
+      miner_received.minedBlocks.forEach(function (block) {
         var block_parsed = block
         block_parsed.block_id = block_parsed.blockId
         block_parsed.number = block_parsed.blockId
@@ -182,9 +180,9 @@ exports.read_an_address = function (req, res) {
       miner.trx_to_balance = 0
       miner.trx_from_balance = 0
 
-      miner_received.transactions =  miner_received.transactions.sort((a, b) => Number(b.blockId) - Number(a.blockId))
+      miner_received.transactions = miner_received.transactions.sort((a, b) => Number(b.blockId) - Number(a.blockId))
       miner.pooled_trxs = 0
-      miner_received.transactions.forEach(function(transaction) {
+      miner_received.transactions.forEach(function (transaction) {
         var transaction_parsed = transaction
         transaction_parsed.block_number = transaction.blockId
         transaction_parsed.id = transaction.blockId
@@ -200,7 +198,7 @@ exports.read_an_address = function (req, res) {
         if (transaction_parsed.transaction.from.addresses.length > 1 || transaction_parsed.transaction.to.addresses.length > 1) {
           miner.pooled_trxs += 1
         }
-        transaction_parsed.transaction.from.addresses.forEach(function(from) {
+        transaction_parsed.transaction.from.addresses.forEach(function (from) {
           transaction_parsed.from.address.push(from.address)
           transaction_parsed.from.amount += parseInt(from.amount)
           if (miner.address == from.address) {
@@ -211,7 +209,7 @@ exports.read_an_address = function (req, res) {
         transaction_parsed.to = {
           address: []
         }
-        transaction_parsed.transaction.to.addresses.forEach(function(to) {
+        transaction_parsed.transaction.to.addresses.forEach(function (to) {
           transaction_parsed.to.address.push(to.address)
           to_amount += parseInt(to.amount)
           if (miner.address == to.address) {
@@ -228,10 +226,10 @@ exports.read_an_address = function (req, res) {
       miner.transactions_number = miner.transactions.length
       miner.blocks_number = miner.blocks.length
       if (!show_all_transactions && miner.pooled_trxs > MAX_POOLED_TRXS) {
-         miner.transactions = miner.transactions.slice(0,MAX_POOLED_TRXS)
+        miner.transactions = miner.transactions.slice(0, MAX_POOLED_TRXS)
       }
       if (!show_all_transactions && miner.blocks.length > MAX_BLOCKS) {
-          miner.blocks = miner.blocks.slice(0,MAX_BLOCKS)
+        miner.blocks = miner.blocks.slice(0, MAX_BLOCKS)
       }
       miner.miner_balance = (miner.balance * AMOUNT_DIVIDER + miner.trx_to_balance - miner.trx_from_balance) / AMOUNT_DIVIDER
       miner.trx_to_balance = miner.trx_to_balance / AMOUNT_DIVIDER
@@ -242,14 +240,13 @@ exports.read_an_address = function (req, res) {
     } catch (exception) {
       console.log(exception.message)
       res.json(miner)
-      return
     }
   })
 }
 
 exports.get_pending_trx = async function (req, res) {
-  res.header("Cache-Control", "public, max-age=1")
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Cache-Control', 'public, max-age=1')
+  res.header('Access-Control-Allow-Origin', '*')
 
   request.get(config.webdollar.pouchdb_sync_url + '/transactions/pending', function (error, response, body) {
     if (error) {
@@ -265,7 +262,7 @@ exports.get_pending_trx = async function (req, res) {
     try {
       pending_transactions = JSON.parse(body)
     } catch (ex) {}
-    pending_transactions.forEach(function(transaction) {
+    pending_transactions.forEach(function (transaction) {
       try {
         let transaction_parsed = {
           fee: 0,
@@ -281,12 +278,12 @@ exports.get_pending_trx = async function (req, res) {
         }
         var to_amount = 0
 
-        transaction.from.addresses.forEach(function(from) {
+        transaction.from.addresses.forEach(function (from) {
           transaction_parsed.from.address.push(from.address)
           transaction_parsed.from.amount += parseInt(from.amount)
         })
 
-        transaction.to.addresses.forEach(function(to) {
+        transaction.to.addresses.forEach(function (to) {
           transaction_parsed.to.address.push(to.address)
           to_amount += parseInt(to.amount)
         })
@@ -294,16 +291,13 @@ exports.get_pending_trx = async function (req, res) {
         transaction_parsed.fee = transaction_parsed.from.amount - to_amount
 
         transactions.push(transaction_parsed)
-    } catch (ex) {
-      console.log(ex)
-    }
-
+      } catch (ex) {
+        console.log(ex)
+      }
     })
     res.json({
       trxs: transactions,
       trxs_number: transactions.length
     })
-    return
   })
 }
-
