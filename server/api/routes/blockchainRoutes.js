@@ -5,7 +5,7 @@ module.exports = function(app) {
   const statusController = require('../controllers/statusController');
   const config = require('../../config');
 
-  let status_route = config.enable_mongodb ? statusController.get_status_mongo: statusController.get_status
+  let status_route = statusController.get_status_mongo
   let latest_blocks_route = config.enable_mongodb ? blockchainMongo.latest_blocks_mongo : blockchainNative.latest_blocks
   let read_an_address_route = config.enable_mongodb ? blockchainMongo.read_an_address_mongo: blockchainNative.read_an_address
   let read_a_block_route = config.enable_mongodb ? blockchainMongo.read_a_block_mongo: blockchainNative.read_a_block

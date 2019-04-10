@@ -103,8 +103,8 @@ exports.latest_blocks_mongo = async function(req, res) {
 }
 
 exports.read_a_block_mongo = async function(req, res) {
-  res.header("Cache-Control", "public, max-age=40")
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=120")
 
   var blockNumber = parseInt(req.params.blockId)
   var block = {}
@@ -133,8 +133,8 @@ exports.read_a_block_mongo = async function(req, res) {
 }
 
 exports.read_an_address_mongo = async function (req, res) {
-  res.header("Cache-Control", "public, max-age=40")
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=40")
 
   var miner_address = req.params.address
   let start = new Date(1524743407 * 1000).getTime() / 1000
@@ -341,8 +341,8 @@ exports.read_an_address_mongo = async function (req, res) {
 }
 
 exports.get_latest_trx = async function (req, res) {
-  res.header("Cache-Control", "public, max-age=1")
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=120")
 
   let maxTransactions = 10
   let toTimestamp = new Date()
@@ -383,8 +383,8 @@ exports.get_latest_trx = async function (req, res) {
 
 
 exports.get_latest_miners = async function (req, res) {
-  res.header("Cache-Control", "public, max-age=1")
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=120")
 
   let maxMiners = 10
   let toTimestamp = new Date()
@@ -657,8 +657,8 @@ async function getTransactions(address, pageNumber, pageSize, isFrom, isTo, trxT
 
 
 exports.get_trx = async function (req, res) {
-  res.header("Cache-Control", "public, max-age=1")
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=40")
 
   let maxTransactions = 15
   let miner = ''
@@ -713,7 +713,7 @@ exports.get_trx = async function (req, res) {
 
 exports.get_uncle = async function(req, res) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Cache-Control", "public, max-age=5")
+  res.header("Cache-Control", "public, max-age=40")
 
   let pageNumber = Number.parseInt(req.query.page_number)
   let pageSize = Number.parseInt(req.query.page_size)
@@ -792,9 +792,9 @@ exports.get_uncle = async function(req, res) {
         let parent = await blockChainDB.collection(config.mongodb.collection).find({
           hash: blocks[i].previous_hash
         }).toArray()
-	if (parent && parent.length == 1) {
+        if (parent && parent.length == 1) {
           parents = [ parent[0].hash + parent[0].miner + parent[0].resolver + parent[0].resolver2 ]
-	}
+        }
       }
       let hashBlock = blocks[i].hash + blocks[i].miner + blocks[i].resolver + blocks[i].resolver2
       if (unclesMapped[hashBlock]) {
@@ -960,8 +960,8 @@ async function getStars(address, depth, addresses, stars, first) {
 }
 
 exports.get_stars = async function (req, res) {
-  res.header("Cache-Control", "public, max-age=1")
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cache-Control", "public, max-age=240")
 
   let address = req.params.address;
   let depth = 1;
