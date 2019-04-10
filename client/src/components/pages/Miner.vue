@@ -228,8 +228,8 @@ export default {
       }
 
       try {
-        let valueUsd = await ExchangeService.fetchWebdValue('USD')
-        this.estimated_value_usd = valueUsd.data.result.last
+        // let valueUsd = await ExchangeService.fetchWebdValue('USD')
+        // this.estimated_value_usd = valueUsd.data.result.last
       } catch (ex) {
         console.log(ex)
       }
@@ -243,8 +243,8 @@ export default {
       }
 
       try {
-        let valueEth = await ExchangeService.fetchWebdValue('ETH')
-        this.estimated_value = valueEth.data.result.last
+        // let valueEth = await ExchangeService.fetchWebdValue('ETH')
+        // this.estimated_value = valueEth.data.result.last
       } catch (ex) {
         console.log(ex)
       }
