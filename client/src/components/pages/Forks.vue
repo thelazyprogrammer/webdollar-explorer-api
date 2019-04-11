@@ -31,7 +31,7 @@ export default {
       forks: [],
       is_loaded: true,
       pixels_per_second: 2,
-      node_width: 300,
+      node_width: 200,
       node_height: 20,
       loaderInterval: ''
     }
