@@ -1,6 +1,6 @@
 <template>
   <div class="blocks">
-    <div v-if="status_result" class="webdToday transactionsWrapper">
+    <div class="webdToday transactionsWrapper">
       <h2 style="width:0px; padding:0px;"></h2>
       <span style="padding-left: 10px"> LATEST BLOCK: </span> <span style="width: 55px!important;"> <router-link class="whiteLink active" v-bind:to="{ name: 'Blocks' }"> {{ status_last_block }} </router-link></span>
       <span> CURRENT SUPPLY: </span> <span style="width: 110px!important"> {{ formatMoneyNumber(status_current_supply) }}</span>
