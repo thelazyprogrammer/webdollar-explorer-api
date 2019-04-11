@@ -416,10 +416,6 @@ export default {
   margin: 100px auto;
 }
 
-.transactionsTable{
-  width: 1000px!important
-}
-
   .minedBlocksAndTransactions{
     display: grid;
     grid-template-columns: 460px 1fr;
