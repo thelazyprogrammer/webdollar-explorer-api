@@ -443,7 +443,8 @@ exports.get_latest_miners = async function (req, res) {
   let minersResults = await blockChainDB.collection(config.mongodb.collection).aggregate(minersQuery).toArray()
   let miners = []
   let minersNumber = 0
-  if (minersResults && minersResults.length == 1 && minersResults[0].paginatedResults) {
+  if (minersResults && minersResults.length == 1 && minersResults[0].paginatedResults
+    && minersResults[0].totalCount && minersResults[0].totalCount[0]) {
     miners = minersResults[0].paginatedResults
     minersNumber = minersResults[0].totalCount[0].count
     pages = Math.ceil(minersNumber / pageSize)
