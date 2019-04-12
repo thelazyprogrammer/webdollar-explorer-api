@@ -6,6 +6,7 @@ import Miner from '@/components/pages/Miner'
 import Search from '@/components/utils/Search'
 import Fame from '@/components/pages/Fame'
 import Pools from '@/components/pages/Pools'
+import Pool from '@/components/pages/Pool'
 import Genesis from '@/components/pages/Genesis'
 import OldGenesis from '@/components/pages/OldGenesis'
 import Stars from '@/components/pages/Stars'
@@ -52,6 +53,11 @@ export default new Router({
       path: '/pools',
       name: 'Pools',
       component: Pools
+    },
+    {
+      path: '/pool/:pool_name',
+      name: 'Pool',
+      component: Pool
     },
     {
       path: '/genesis',

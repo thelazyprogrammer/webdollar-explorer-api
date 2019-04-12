@@ -78,6 +78,8 @@ export default {
       showMiner: 'doNotShowClass',
       showTransactions: 'showClass',
       miner: { default: function () { return { } } },
+      estimated_value: 0,
+      estimated_value_usd: 0,
       blocksr: { default: function () { return { } } },
       searchAddress: '',
       searchStart: '',
@@ -88,9 +90,7 @@ export default {
       tooltipDir: ['top', 'bottom'],
       data: { default: function () { return this.getDates() } },
       value: { default: function () { return this.getStartEndDates() } },
-      poolStats: [],
-      estimated_value: 0,
-      estimated_value_usd: 0
+      poolStats: []
     }
   },
   beforeRouteUpdate (to) {

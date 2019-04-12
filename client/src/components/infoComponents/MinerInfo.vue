@@ -97,7 +97,7 @@
     </div>
 
     <div v-else>
-      There are no blocks <br /><br />
+      There is no information <br /><br />
     </div>
 
   </div>

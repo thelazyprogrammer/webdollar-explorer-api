@@ -15,7 +15,7 @@
     <tr v-bind:key='pool.address' v-for="pool in pools" :class="pool.status + 'Pool'">
 
       <td align="left">
-       <a :href="'#/miner/' + pool.address">{{ pool.name }} </a>
+       <a :href="'#/pool/' + pool.name">{{ pool.name }} </a>
       </td>
 
       <td align="left">
