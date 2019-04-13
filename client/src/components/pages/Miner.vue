@@ -13,7 +13,8 @@
           <button id="button_trx" v-if="miner.transactions_number" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
           <button id="button_block" v-if="miner.blocks_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{ getTrxNumber(miner.blocks_number, miner.blocks.length)}})</button>
           <button id="button_block_resolved" v-if="this.blocksr_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(this.blocksr_number, this.blocksr.length)}})</button>
-          <button id="button_pools_stats" v-if="this.poolStats.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_stats')">Live Pool Stats<br></button>
+          <button id="button_pools_stats" v-if="this.poolStats.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_stats')">Live Pool Stats<br>({{ this.poolStats.length }})</button>
+          <button id="button_pools_miners" v-if="this.pool_miners.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_miners')">Live Pool Miners<br> ({{ this.pool_miners.length }})</button>
         </div>
 
         <div class="addressTab transactionsWrapper" id="transactions">
@@ -43,6 +44,10 @@
         <div class="addressTab transactionsWrapper" id="pools_stats">
           <pool-stats :stats="this.poolStats"></pool-stats>
         </div>
+
+       <div class="addressTab transactionsWrapper" id="pools_miners">
+          <pool-live-miners :page_number="1" :miners="pool_miners"></pool-live-miners>
+        </div>
       </div>
 
     </div>
@@ -64,11 +69,12 @@ import Transactions from '@/components/lists/Transactions.vue'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
 import LightBlocks from '@/components/lists/LightMinedBlocks.vue'
 import PoolStats from '@/components/lists/PoolStats.vue'
+import PoolLiveMiners from '@/components/lists/PoolLiveMiners.vue'
 import Loading from '@/components/utils/Loading'
 import vueSlider from 'vue-slider-component'
 export default {
 
-  components: { vueSlider, Transactions, MinerInfo, LightBlocks, Loading, PoolStats },
+  components: { vueSlider, Transactions, MinerInfo, LightBlocks, Loading, PoolStats, PoolLiveMiners },
 
   name: 'miner',
 
@@ -90,7 +96,8 @@ export default {
       tooltipDir: ['top', 'bottom'],
       data: { default: function () { return this.getDates() } },
       value: { default: function () { return this.getStartEndDates() } },
-      poolStats: []
+      poolStats: [],
+      pool_miners: []
     }
   },
   beforeRouteUpdate (to) {
@@ -100,6 +107,7 @@ export default {
   destroyed () {
     this.miner = {}
     this.poolStats = []
+    this.pool_miners = []
   },
 
   mounted () {
@@ -289,9 +297,11 @@ export default {
         let pool = pools[p]
         try {
           poolStats = await PoolsService.fetchPoolStats(pool.name)
-          let poolMiners = poolStats.data || []
+          let poolMiners = []
           if (poolStats.data && poolStats.data.miners) {
             poolMiners = poolStats.data.miners
+          } else {
+            poolMiners = poolStats.data
           }
           let minerNumber = 0
           let minerPool = {}
@@ -316,7 +326,36 @@ export default {
             minerPool.power = hashes
             this.poolStats.push(minerPool)
           }
-        } catch (ex) {}
+          if (miner === pool.address) {
+            let aggregateMiner = {
+              miner_ip: 'all',
+              reward_confirmed: 0,
+              totalPOSBalance: 0,
+              hashes_alt: 0,
+              address: miner
+            }
+            for (let mIndex = 0; mIndex < poolMiners.length; mIndex++) {
+              let m = poolMiners[mIndex]
+              if (m.reward_confirmed) aggregateMiner.reward_confirmed += m.reward_confirmed
+              if (m.totalPOSBalance) aggregateMiner.totalPOSBalance += m.totalPOSBalance
+              if (m.stakeBalance) aggregateMiner.totalPOSBalance += m.stakeBalance
+              if (m.hashes_alt) {
+                aggregateMiner.hashes_alt += m.hashes_alt
+              }
+              if (m.hashes && !m.hashes_alt) {
+                aggregateMiner.hashes_alt += m.hashes
+              }
+              if (m.hps) {
+                aggregateMiner.hashes_alt += m.hps
+              }
+            }
+            await poolMiners.push(aggregateMiner)
+            this.pool_miners = poolMiners.sort(function (a, b) { return Number(b.totalPOSBalance) - Number(a.totalPOSBalance) })
+            this.pool_miners = this.pool_miners.sort(function (a, b) { return Number(b.totalPOSBalance) - Number(a.totalPOSBalance) })
+          }
+        } catch (ex) {
+          console.log(ex)
+        }
       }
     },
 
@@ -334,6 +373,8 @@ export default {
         Utils.setColor('button_block', '#00c02c')
         Utils.setColor('button_trx', '#a4c0ab')
         Utils.setColor('button_block_resolved', '#a4c0ab')
+        Utils.setColor('button_pools_miners', '#a4c0ab')
+        Utils.setDisplay('pools_miners', 'none')
       } else if (name === 'blocks_resolved') {
         Utils.setDisplay('blocks', 'none')
         Utils.setDisplay('transactions', 'none')
@@ -343,6 +384,8 @@ export default {
         Utils.setColor('button_block', '#a4c0ab')
         Utils.setColor('button_trx', '#a4c0ab')
         Utils.setColor('button_block_resolved', '#00c02c')
+        Utils.setColor('button_pools_miners', '#a4c0ab')
+        Utils.setDisplay('pools_miners', 'none')
       } else if (name === 'pool_stats') {
         Utils.setDisplay('blocks', 'none')
         Utils.setDisplay('transactions', 'none')
@@ -352,6 +395,19 @@ export default {
         Utils.setColor('button_trx', '#a4c0ab')
         Utils.setColor('button_block_resolved', '#a4c0ab')
         Utils.setColor('button_pools_stats', '#00c02c')
+        Utils.setColor('button_pools_miners', '#a4c0ab')
+        Utils.setDisplay('pools_miners', 'none')
+      } else if (name === 'pool_miners') {
+        Utils.setDisplay('blocks', 'none')
+        Utils.setDisplay('transactions', 'none')
+        Utils.setDisplay('blocks_resolved', 'none')
+        Utils.setDisplay('pools_stats', 'none')
+        Utils.setDisplay('pools_miners', 'block')
+        Utils.setColor('button_block', '#a4c0ab')
+        Utils.setColor('button_trx', '#a4c0ab')
+        Utils.setColor('button_block_resolved', '#a4c0ab')
+        Utils.setColor('button_pools_stats', 'a4c0ab')
+        Utils.setColor('button_pools_miners', '#00c02c')
       } else {
         Utils.setDisplay('blocks', 'none')
         Utils.setDisplay('transactions', 'block')
@@ -361,6 +417,8 @@ export default {
         Utils.setColor('button_block', '#a4c0ab')
         Utils.setColor('button_trx', '#00c02c')
         Utils.setColor('button_block_resolved', '#a4c0ab')
+        Utils.setColor('button_pools_miners', '#a4c0ab')
+        Utils.setDisplay('pools_miners', 'none')
       }
     }
   }
@@ -368,4 +426,8 @@ export default {
 </script>
 
 <style type="text/css">
+#pools_miners {
+  display: none
+}
+
 </style>

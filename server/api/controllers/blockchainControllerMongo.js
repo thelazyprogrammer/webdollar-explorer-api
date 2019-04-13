@@ -636,7 +636,10 @@ async function getTransactions (address, pageNumber, pageSize, isFrom, isTo, trx
 
   let pendingTrxsNumber = 0
   if (pageNumber == 1) {
-    let pending_trx = await get_pending_trx(address)
+    let pending_trx = []
+    try {
+      pending_trx = await get_pending_trx(address)
+    } catch (ex) {}
     if (pending_trx && pending_trx.trxs && pending_trx.trxs.length > 0) {
       pendingTrxsNumber = pending_trx.trxs.length
       trxs = pending_trx.trxs.concat(trxs)
@@ -892,7 +895,9 @@ async function getStars (address, depth, addresses, stars, first) {
   }
 
   try {
-    let trxsData = await getTransactions(address, 1, 60)
+    let start = new Date().getTime() / 1000 - 3600 * 24
+    let end = new Date().getTime() / 1000
+    let trxsData = await getTransactions(address, 1, 1000, '', '', '', '', start, end)
     let current_addresses = []
     trxsData.trxs.forEach(function (transaction) {
       let is_from = false
@@ -925,7 +930,6 @@ async function getStars (address, depth, addresses, stars, first) {
 
     current_addresses.forEach(function (curr_address) {
       if (!addresses.includes(curr_address)) {
-        console.log('Found star: ' + curr_address)
         addresses.push(curr_address)
         stars.nodes.push({
           id: curr_address,
@@ -967,7 +971,6 @@ exports.get_stars = async function (req, res) {
     res.json(false)
     return
   }
-  console.log('Getting stars for address: ' + address + ', depth: ' + depth)
   let stars = []
   try {
     stars = await getStars(address, depth, [], { nodes: [], links: [] }, true)

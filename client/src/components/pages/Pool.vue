@@ -72,7 +72,6 @@ export default {
     async getPool (poolName) {
       if (!poolName) {
         poolName = this.$route.params.pool_name
-        console.log(poolName)
       }
       this.pool_data = await this.getPoolData(poolName)
       if (this.pool_data) {
@@ -84,14 +83,12 @@ export default {
     async getPoolLiveMiners (poolName) {
       if (!poolName) {
         poolName = this.$route.params.pool_name
-        console.log(poolName)
       }
       let poolStats = await PoolsService.fetchPoolStats(poolName)
       let poolMiners = poolStats.data || []
       if (poolStats.data && poolStats.data.miners) {
         poolMiners = poolStats.data.miners
       }
-      console.log(poolMiners)
       this.miners = poolMiners.sort((a, b) => { return b.totalPOSBalance - a.totalPOSBalance })
     },
     async getPoolData (poolName) {
