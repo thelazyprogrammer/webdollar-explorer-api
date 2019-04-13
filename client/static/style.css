@@ -592,3 +592,99 @@ a.add_post_link {
   .whiteLink:hover {
     color: #fec02c!important;
   }
+#blocks, #blocks_resolved, #transactions, #pool_stats {
+  display:none;
+}
+.doNotShowClass {
+ display:inherit;
+}
+.showClass {
+ display:none;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  margin: 100px auto;
+}
+  .minedBlocksAndTransactions{
+    display: grid;
+    grid-template-columns: 460px 1fr;
+  }
+  .minedBlocksAndTransactionsRevert{
+    display: block;
+  }
+.w3-bar .w3-bar-item {
+    padding: 8px 10px 10px 16px;
+    float: left;
+    width: auto;
+    border: none;
+    display: block;
+    outline: 0;
+    user-select: none;
+    height: 45px;
+}
+.w3-btn, .w3-button {
+    border: none;
+    height: 45px;
+    display: inline-block;
+    padding: 8px 16px;
+    vertical-align: middle;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    background-color: #00c02c;
+    text-align: center;
+    cursor: pointer;
+}
+.tabWrapper {
+    text-align: left;
+    width: 670px;
+    padding: 0 0 10px 0;
+    margin: 0 auto;
+    margin-top:40px;
+    border-radius: 15px;
+    overflow: hidden;
+}
+.sliderWrapper {
+    text-align: left;
+    width: 670px;
+    padding: 0 0 0 0;
+    margin: 0 auto;
+    margin-top:40px;
+}
+.transactionsWrapper table span:first-child {
+  font-weight: bold;
+  text-shadow: 0 0 3px #0804f3;
+}
+.transactionsWrapper table span:first-child {
+  font-weight: bold;
+  text-shadow: 0 0 3px #0804f3;
+}
+.latestTrx {
+    margin: 0px auto;
+    width: 680px;
+    border: none;
+    display: inline-block;
+    padding: 8px 16px;
+    vertical-align: middle;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    background-color: #00c02c;
+    text-align: center;
+    cursor: pointer;
+}
+.vue-slider-component .vue-slider-process {
+    border: 1px solid #fec02c;
+    background-color: #fec02c;
+}
+.vue-slider-component .vue-slider-tooltip {
+    border: 1px solid #fec02c;
+    background-color: #fec02c;
+}
+.vue-slider-component .vue-slider-piecewise-dot {
+  background-color: #00c02c;
+  width: 12px;
+  height: 12px;
+}

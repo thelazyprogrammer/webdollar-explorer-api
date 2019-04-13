@@ -66,6 +66,29 @@ export default {
       }
     })
     return label
-  }
+  },
 
+  setDisplay (el, type) {
+    if (document.getElementById(el)) {
+      document.getElementById(el).style.display = type
+    }
+  },
+
+  setColor (el, color) {
+    if (document.getElementById(el)) {
+      document.getElementById(el).style.backgroundColor = color
+    }
+  },
+
+  formatPower (number) {
+    number = Number(number)
+    if (isNaN(number)) { number = 0 }
+    if (number > 1000000) {
+      return (Math.round(number / 100000)) / 100 + ' Mh/s'
+    }
+    if (number > 1000) {
+      return (Math.round(number / 10) / 100) + ' Kh/s'
+    }
+    return number + ' h/s'
+  }
 }

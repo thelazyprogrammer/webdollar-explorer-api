@@ -7,7 +7,7 @@
      <div class="sliderWrapper">
          <vue-slider @drag-end="onTimeIntervalChange" :tooltipDir.sync="tooltipDir" :piecewise.sync="piecewise" :data.sync="data" :value.sync="value"></vue-slider>
      </div>
-     <div  :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
+     <div :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
 
         <div class="tabWrapper">
           <button id="button_trx" v-if="miner.transactions_number" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
@@ -228,33 +228,17 @@ export default {
       }
 
       try {
-        // let valueUsd = await ExchangeService.fetchWebdValue('USD')
-        // this.estimated_value_usd = valueUsd.data.result.last
+        let valueUsd = await ExchangeService.fetchWebdValueCoinGeko('USD')
+        this.estimated_value_usd = valueUsd.data.webdollar.usd
       } catch (ex) {
         console.log(ex)
-      }
-      if (!this.estimated_value_usd) {
-        try {
-          let valueUsd = await ExchangeService.fetchWebdValueCoinGeko('USD')
-          this.estimated_value_usd = valueUsd.data.webdollar.usd
-        } catch (ex) {
-          console.log(ex)
-        }
       }
 
       try {
-        // let valueEth = await ExchangeService.fetchWebdValue('ETH')
-        // this.estimated_value = valueEth.data.result.last
+        let valueEth = await ExchangeService.fetchWebdValueCoinGeko('ETH')
+        this.estimated_value = valueEth.data.webdollar.eth
       } catch (ex) {
         console.log(ex)
-      }
-      if (!this.estimated_value) {
-        try {
-          let valueEth = await ExchangeService.fetchWebdValueCoinGeko('ETH')
-          this.estimated_value = valueEth.data.webdollar.eth
-        } catch (ex) {
-          console.log(ex)
-        }
       }
     },
 
@@ -340,55 +324,43 @@ export default {
       return Utils.formatMoneyNumber(number, decimals)
     },
 
-    setDisplay (el, type) {
-      if (document.getElementById(el)) {
-        document.getElementById(el).style.display = type
-      }
-    },
-
-    setColor (el, color) {
-      if (document.getElementById(el)) {
-        document.getElementById(el).style.backgroundColor = color
-      }
-    },
-
     openTab (name) {
       if (name === 'blocks') {
-        this.setDisplay('blocks', 'block')
-        this.setDisplay('transactions', 'none')
-        this.setDisplay('blocks_resolved', 'none')
-        this.setDisplay('pools_stats', 'none')
-        this.setColor('button_pools_stats', '#a4c0ab')
-        this.setColor('button_block', '#00c02c')
-        this.setColor('button_trx', '#a4c0ab')
-        this.setColor('button_block_resolved', '#a4c0ab')
+        Utils.setDisplay('blocks', 'block')
+        Utils.setDisplay('transactions', 'none')
+        Utils.setDisplay('blocks_resolved', 'none')
+        Utils.setDisplay('pools_stats', 'none')
+        Utils.setColor('button_pools_stats', '#a4c0ab')
+        Utils.setColor('button_block', '#00c02c')
+        Utils.setColor('button_trx', '#a4c0ab')
+        Utils.setColor('button_block_resolved', '#a4c0ab')
       } else if (name === 'blocks_resolved') {
-        this.setDisplay('blocks', 'none')
-        this.setDisplay('transactions', 'none')
-        this.setDisplay('blocks_resolved', 'block')
-        this.setDisplay('pools_stats', 'none')
-        this.setColor('button_pools_stats', '#a4c0ab')
-        this.setColor('button_block', '#a4c0ab')
-        this.setColor('button_trx', '#a4c0ab')
-        this.setColor('button_block_resolved', '#00c02c')
+        Utils.setDisplay('blocks', 'none')
+        Utils.setDisplay('transactions', 'none')
+        Utils.setDisplay('blocks_resolved', 'block')
+        Utils.setDisplay('pools_stats', 'none')
+        Utils.setColor('button_pools_stats', '#a4c0ab')
+        Utils.setColor('button_block', '#a4c0ab')
+        Utils.setColor('button_trx', '#a4c0ab')
+        Utils.setColor('button_block_resolved', '#00c02c')
       } else if (name === 'pool_stats') {
-        this.setDisplay('blocks', 'none')
-        this.setDisplay('transactions', 'none')
-        this.setDisplay('blocks_resolved', 'none')
-        this.setDisplay('pools_stats', 'block')
-        this.setColor('button_block', '#a4c0ab')
-        this.setColor('button_trx', '#a4c0ab')
-        this.setColor('button_block_resolved', '#a4c0ab')
-        this.setColor('button_pools_stats', '#00c02c')
+        Utils.setDisplay('blocks', 'none')
+        Utils.setDisplay('transactions', 'none')
+        Utils.setDisplay('blocks_resolved', 'none')
+        Utils.setDisplay('pools_stats', 'block')
+        Utils.setColor('button_block', '#a4c0ab')
+        Utils.setColor('button_trx', '#a4c0ab')
+        Utils.setColor('button_block_resolved', '#a4c0ab')
+        Utils.setColor('button_pools_stats', '#00c02c')
       } else {
-        this.setDisplay('blocks', 'none')
-        this.setDisplay('transactions', 'block')
-        this.setDisplay('blocks_resolved', 'none')
-        this.setDisplay('pools_stats', 'none')
-        this.setColor('button_pools_stats', '#a4c0ab')
-        this.setColor('button_block', '#a4c0ab')
-        this.setColor('button_trx', '#00c02c')
-        this.setColor('button_block_resolved', '#a4c0ab')
+        Utils.setDisplay('blocks', 'none')
+        Utils.setDisplay('transactions', 'block')
+        Utils.setDisplay('blocks_resolved', 'none')
+        Utils.setDisplay('pools_stats', 'none')
+        Utils.setColor('button_pools_stats', '#a4c0ab')
+        Utils.setColor('button_block', '#a4c0ab')
+        Utils.setColor('button_trx', '#00c02c')
+        Utils.setColor('button_block_resolved', '#a4c0ab')
       }
     }
   }
@@ -396,116 +368,4 @@ export default {
 </script>
 
 <style type="text/css">
-#blocks, #blocks_resolved, #transactions, #pool_stats {
-  display:none;
-}
-
-.doNotShowClass {
- display:inherit;
-}
-
-.showClass {
- display:none;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-
-  position: relative;
-  margin: 100px auto;
-}
-
-  .minedBlocksAndTransactions{
-    display: grid;
-    grid-template-columns: 460px 1fr;
-  }
-
-  .minedBlocksAndTransactionsRevert{
-    display: block;
-  }
-
-.w3-bar .w3-bar-item {
-    padding: 8px 10px 10px 16px;
-    float: left;
-    width: auto;
-    border: none;
-    display: block;
-    outline: 0;
-    user-select: none;
-    height: 45px;
-}
-
-.w3-btn, .w3-button {
-    border: none;
-    height: 45px;
-    display: inline-block;
-    padding: 8px 16px;
-    vertical-align: middle;
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    background-color: #00c02c;
-    text-align: center;
-    cursor: pointer;
-}
-
-.tabWrapper {
-    text-align: left;
-    width: 670px;
-    padding: 0 0 10px 0;
-    margin: 0 auto;
-    margin-top:40px;
-    border-radius: 15px;
-    overflow: hidden;
-}
-
-.sliderWrapper {
-    text-align: left;
-    width: 670px;
-    padding: 0 0 0 0;
-    margin: 0 auto;
-    margin-top:40px;
-}
-
-.transactionsWrapper table span:first-child {
-  font-weight: bold;
-  text-shadow: 0 0 3px #0804f3;
-}
-
-.transactionsWrapper table span:first-child {
-  font-weight: bold;
-  text-shadow: 0 0 3px #0804f3;
-}
-
-.latestTrx {
-    margin: 0px auto;
-    width: 680px;
-    border: none;
-    display: inline-block;
-    padding: 8px 16px;
-    vertical-align: middle;
-    overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    background-color: #00c02c;
-    text-align: center;
-    cursor: pointer;
-}
-
-.vue-slider-component .vue-slider-process {
-    border: 1px solid #fec02c;
-    background-color: #fec02c;
-}
-
-.vue-slider-component .vue-slider-tooltip {
-    border: 1px solid #fec02c;
-    background-color: #fec02c;
-}
-
-.vue-slider-component .vue-slider-piecewise-dot {
-  background-color: #00c02c;
-  width: 12px;
-  height: 12px;
-}
 </style>
