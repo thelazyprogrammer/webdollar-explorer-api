@@ -336,22 +336,30 @@ export default {
             }
             for (let mIndex = 0; mIndex < poolMiners.length; mIndex++) {
               let m = poolMiners[mIndex]
+              m.reward_confirmed = m.reward_total
               if (m.reward_confirmed) aggregateMiner.reward_confirmed += m.reward_confirmed
-              if (m.totalPOSBalance) aggregateMiner.totalPOSBalance += m.totalPOSBalance
-              if (m.stakeBalance) aggregateMiner.totalPOSBalance += m.stakeBalance
+              if (m.stakeBalance) m.totalPOSBalance = Number(m.stakeBalance)
+              if (m.totalPOSBalance) {
+                aggregateMiner.totalPOSBalance += m.totalPOSBalance
+              }
+              if (m.hps) {
+                m.hashes_alt = m.hps
+              }
               if (m.hashes_alt) {
                 aggregateMiner.hashes_alt += m.hashes_alt
               }
               if (m.hashes && !m.hashes_alt) {
                 aggregateMiner.hashes_alt += m.hashes
               }
-              if (m.hps) {
-                aggregateMiner.hashes_alt += m.hps
-              }
             }
-            await poolMiners.push(aggregateMiner)
-            this.pool_miners = poolMiners.sort(function (a, b) { return Number(b.totalPOSBalance) - Number(a.totalPOSBalance) })
-            this.pool_miners = this.pool_miners.sort(function (a, b) { return Number(b.totalPOSBalance) - Number(a.totalPOSBalance) })
+            poolMiners.push(aggregateMiner)
+            this.pool_miners = poolMiners.sort((c, d) => {
+              let a = Number(c.totalPOSBalance)
+              let b = Number(d.totalPOSBalance)
+              if (isNaN(a)) a = 0
+              if (isNaN(b)) b = 0
+              return b - a
+            })
           }
         } catch (ex) {
           console.log(ex)
