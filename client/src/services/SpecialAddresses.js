@@ -22,6 +22,7 @@ export default {
       address: 'WEBD$gDU+tP3@42@L9$Is463vDJi4IKrabPNNn$$',
       'status': 'down',
       fee: 2,
+      level: 10,
       min_amount: 20
     },
     {
@@ -29,6 +30,7 @@ export default {
       address: 'WEBD$gCGdPQLohdeHQqa+ptoJ@QK2LCvN7IS5JX$',
       'status': 'down',
       fee: 2,
+      level: 10,
       min_amount: 20
     },
     {
@@ -36,12 +38,14 @@ export default {
       address: 'WEBD$gAN3MXFnwhwoZyoCzLy+z@pArrYdsDb8iv$',
       'status': 'down',
       fee: 2,
+      level: 10,
       min_amount: 20
     },
     {
       name: 'WMP-ASIA',
       address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
       'status': 'up',
+      level: 10,
       fee: 2,
       min_amount: 20
     },
@@ -49,6 +53,7 @@ export default {
       name: 'WMP',
       address: 'WEBD$gDEVpp1z9QNZ+MvBjbk+Md76iWZK2WZmqn$',
       'status': 'up',
+      level: 6,
       fee: 2,
       min_amount: 20
     },
@@ -56,6 +61,7 @@ export default {
       name: 'Roxana',
       address: 'WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$',
       'status': 'up',
+      level: 7,
       fee: 1,
       min_amount: 20
     },
@@ -64,6 +70,7 @@ export default {
       address: 'WEBD$gD31okwh74pgbLBo4p8WfGpVPyLzcnX+6b$',
       'status': 'down',
       fee: 1,
+      level: 10,
       min_amount: 20
     },
     {
@@ -71,6 +78,7 @@ export default {
       address: 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
       'status': 'up',
       fee: 1,
+      level: 4,
       min_amount: 20
     },
     {
@@ -78,6 +86,7 @@ export default {
       address: 'WEBD$gBMQp$yXWiZjHUvkrR7u7uqM7g8wUn6TTj$',
       'status': 'down',
       fee: 1,
+      level: 10,
       min_amount: 20
     },
     {
@@ -85,6 +94,7 @@ export default {
       address: 'WEBD$gAd7esyzrkepdYj#DNDSfJy02aqDCPm5Pj$',
       'status': 'down',
       fee: 1,
+      level: 10,
       min_amount: 20
     },
     {
@@ -92,6 +102,7 @@ export default {
       address: 'WEBD$gCMxAKX96yhmaygo@NG+vnb4cz1eYoYpMv$',
       'status': 'up',
       fee: 2,
+      level: 5,
       min_amount: 20
     },
     {
@@ -99,6 +110,7 @@ export default {
       address: 'WEBD$gAosJ5+2tFnS$q5EsZZGVHKEU#cHnPJbZz$',
       'status': 'down',
       fee: 'x',
+      level: 10,
       min_amount: 'x'
     },
     {
@@ -106,12 +118,14 @@ export default {
       address: 'WEBD$gDxAThfTjR0ENk#5EA7j8yWq1uhQLat+FP$',
       'status': 'down',
       fee: 'x',
+      level: 10,
       min_amount: 'x'
     },
     {
       name: 'GYMBASE_POOL_1',
       address: 'WEBD$gCwr#P50K@S6n@S3STdkkyvkIAr9mIG7gP$',
       'status': 'down',
+      level: 10,
       fee: 1,
       min_amount: 20
     },
@@ -120,12 +134,14 @@ export default {
       address: 'WEBD$gAdwcILUb9ac5WmXHV+BLBR7eKH9@9wEXH$',
       'status': 'up',
       fee: 1,
+      level: 10,
       min_amount: 20
     },
     {
       name: '2Moon2Pool',
       address: 'WEBD$gDIR0gQdFEPzCip1AN8qwosSiRJhdzJjQ3$',
       'status': 'up',
+      level: 10,
       fee: 2,
       min_amount: 20
     }
