@@ -7,9 +7,9 @@
       <tr>
         <td>No.</td>
         <td>Miner</td>
-        <td>Reward</td>
+        <td>Potential</td>
         <td>Stake</td>
-        <td>HashPower</td>
+        <td>PoW</td>
       </tr>
       <tr v-bind:key="miner.miner_ip" v-for="(miner,index) in miners">
         <td align="left">
