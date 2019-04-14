@@ -46,7 +46,7 @@
         </div>
 
        <div class="addressTab transactionsWrapper" id="pools_miners">
-          <pool-live-miners :page_number="1" :miners="pool_miners"></pool-live-miners>
+          <pool-live-miners :page_number="1" :miners="this.pool_miners"></pool-live-miners>
         </div>
       </div>
 
@@ -100,7 +100,7 @@ export default {
       pool_miners: []
     }
   },
-  beforeRouteUpdate (to) {
+  async beforeRouteUpdate (to) {
     this.getMiner()
   },
 
@@ -113,6 +113,7 @@ export default {
   mounted () {
     this.miner = {}
     this.poolStats = []
+    this.pool_miners = []
     this.getMiner(window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length))
   },
 
@@ -252,7 +253,11 @@ export default {
 
     async getMiner (miner, startDate, endDate) {
       this.miner = {}
+      this.poolStats = []
+      this.pool_miners = []
+
       this.getWebdValue()
+
       miner = window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length)
       let minerTask = BlocksService.fetchMiner(miner, !this.showLatestTransactions, startDate, endDate)
       let blocksTask = BlocksService.fetchBlocks(1, miner)
@@ -290,9 +295,11 @@ export default {
         }
       }, 1)
 
-      this.poolStats = []
       let poolStats = []
       let pools = SpecialAddresses.pools.filter((a) => { return a.status === 'up' })
+      let isPool = pools.filter((a) => { return a.address === miner })
+      if (isPool && isPool.length) pools = isPool
+      pools = pools.sort((a, b) => { return a.level - b.level })
       for (let p = 0; p < pools.length; p++) {
         let pool = pools[p]
         try {
@@ -334,12 +341,19 @@ export default {
               hashes_alt: 0,
               address: miner
             }
+            let uniqueMiners = []
+            let mappedMiners = {}
             for (let mIndex = 0; mIndex < poolMiners.length; mIndex++) {
               let m = poolMiners[mIndex]
+              let uniqueMiner = false
+              if (!mappedMiners[m.address]) {
+                mappedMiners[m.address] = m
+                uniqueMiner = true
+              }
               m.reward_confirmed = m.reward_total
               if (m.reward_confirmed) aggregateMiner.reward_confirmed += m.reward_confirmed
               if (m.stakeBalance) m.totalPOSBalance = Number(m.stakeBalance)
-              if (m.totalPOSBalance) {
+              if (m.totalPOSBalance && uniqueMiner) {
                 aggregateMiner.totalPOSBalance += m.totalPOSBalance
               }
               if (m.hps) {
@@ -352,8 +366,11 @@ export default {
                 aggregateMiner.hashes_alt += m.hashes
               }
             }
-            poolMiners.push(aggregateMiner)
-            this.pool_miners = poolMiners.sort((c, d) => {
+            Object.keys(mappedMiners).forEach(function (key) {
+              uniqueMiners.push(mappedMiners[key])
+            })
+            uniqueMiners.push(aggregateMiner)
+            this.pool_miners = uniqueMiners.sort((c, d) => {
               let a = Number(c.totalPOSBalance)
               let b = Number(d.totalPOSBalance)
               if (isNaN(a)) a = 0
