@@ -14,7 +14,7 @@ This project allows to deploy a complete, scalable and fast service to access We
 
 ### 3. Install nodejs (long term support version) and mongodb:
 ```bash
-sudo apt update && sudo apt upgrade # reboot if needed
+sudo apt update
 
 sudo dpkg --add-architecture i386
 sudo apt install -y build-essential linuxbrew-wrapper erlang libssl-dev:i386
@@ -38,6 +38,7 @@ echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu ${release}/mo
 sudo apt update
 sudo apt-get install -y mongodb-org
 sudo service mongod start
+sudo systemctl enable mongod
 ```
 
 ### 4. Clone Node-WebDollar
