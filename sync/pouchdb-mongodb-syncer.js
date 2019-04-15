@@ -360,6 +360,10 @@ function decodeMinerAddress (miner_address) {
   return encodeBase64(Buffer.concat([ Buffer.from(PREFIX_BASE64, 'hex'), address, checksum, Buffer.from(SUFFIX_BASE64, 'hex')]))
 }
 
+function computeTxId (txSerialized) {
+  return SHA256(SHA256(txSerialized))
+}
+
 function isPoSBlock (blockId) {
   return blockId % 30 < 20
 }
@@ -489,6 +493,7 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
   if (trxs_number > 0) {
     for (var i = 0; i < trxs_number; i++) {
       var trx_addresses = []
+      var trx_offset = CURRENT_OFFSET
       var OFFSET_TRX_VERSION = OFFSET_1
       var OFFSET_TRX_NONCE = OFFSET_1
       var OFFSET_TRX_LENGTH = OFFSET_1
@@ -498,6 +503,7 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
       var OFFSET_TRX_SIGN = OFFSET_64
       var OFFSET_NUMBER = OFFSET_7
 
+      var trx_hash = ''
       var trx_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_VERSION))
       CURRENT_OFFSET += OFFSET_TRX_VERSION
       // HARD FORK change for TRX NONCE
@@ -592,10 +598,12 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
       total_fee += fee
       total_from_amount += trxs_from.amount
       total_to_amount += trxs_to.amount
+      trx_hash = computeTxId(substr(block_hex, trx_offset, CURRENT_OFFSET - trx_offset)).toString('hex')
 
       var trx = {
         'version': trx_version,
         'nonce': trx_nonce,
+        'hash': trx_hash,
         'time_lock': trx_time_lock,
         'from': trxs_from,
         'to': trxs_to,
@@ -721,6 +729,9 @@ async function sync (from, to, force) {
   await blockChainDB.collection(mongodbTransactionCollection).createIndex(
     { addresses: 1 }
   )
+  await blockChainDB.collection(mongodbTransactionCollection).createIndex(
+    { hash: 1 }
+  )
 
   // Create indexes for mtransaction collection
   await blockChainDB.createCollection(mongodbMTransactionCollection)
@@ -732,6 +743,9 @@ async function sync (from, to, force) {
   )
   await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
     { type: 1 }
+  )
+  await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
+    { trx_hash: 1 }
   )
 
   try {
@@ -785,6 +799,7 @@ async function sync (from, to, force) {
                 address: trxs_from[j].trx_from_address,
                 type: 0,
                 nonce: full_trx.nonce,
+                trx_hash: full_trx.hash,
                 amount: trxs_from[j].trx_from_amount
               })
             }
@@ -794,6 +809,7 @@ async function sync (from, to, force) {
                 address: trxs_to[j].trx_to_address,
                 type: 1,
                 nonce: full_trx.nonce,
+                trx_hash: full_trx.hash,
                 amount: trxs_to[j].trx_to_amount
               })
             }
