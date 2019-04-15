@@ -4,13 +4,21 @@
   "description": "",
   "main": "syncer.js",
   "scripts": {
-    "test": "exit 1",
-    "start": "forever start syncer.js"
+    "lint": "eslint --ext .js *.js mongodb"
   },
   "author": "ader1990",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^1.17.3"
+    "eslint": "^4.19.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-vue": "^4.0.0",
+    "extract-text-webpack-plugin": "^3.0.0"
   },
   "dependencies": {
     "atob": "^2.1.1",
@@ -19,7 +27,7 @@
     "cors": "^2.8.4",
     "express": "^4.16.3",
     "express-sanitize-escape": "^1.1.0",
-    "forever": "^0.15.3",
+    "forever": "^1.0.0",
     "mongodb": "^3.1.6",
     "morgan": "^1.9.0",
     "mysql2": "^1.6.1",

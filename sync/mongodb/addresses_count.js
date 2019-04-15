@@ -3,7 +3,7 @@
     $group: {
       _id: 0,
       addresses: {
-        $addToSet: "$addresses"
+        $addToSet: '$addresses'
       }
     }
   }, {
@@ -20,14 +20,14 @@
     $group: {
       _id: 0,
       addresses: {
-        $addToSet: "$addresses"
+        $addToSet: '$addresses'
       }
     }
   }, {
     $project: {
       _id: 0,
       addresses_count: {
-        $size: "$addresses"
+        $size: '$addresses'
       }
     }
   }

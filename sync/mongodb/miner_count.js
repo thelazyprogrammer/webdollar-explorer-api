@@ -3,14 +3,14 @@
     $group: {
       _id: 0,
       test: {
-        $addToSet: "$miner"
+        $addToSet: '$miner'
       }
     }
   }, {
     $project: {
       _id: 0,
       test: {
-        $size: "$test"
+        $size: '$test'
       }
     }
   }

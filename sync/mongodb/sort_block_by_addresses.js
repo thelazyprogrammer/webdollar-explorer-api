@@ -11,12 +11,12 @@
       miner: 1,
       fee: 1,
       addresses_count: {
-        $size: "$addresses"
+        $size: '$addresses'
       }
     }
   }, {
     $sort: {
-      "addresses_count": -1
+      'addresses_count': -1
     }
   }, {
     $limit: 50

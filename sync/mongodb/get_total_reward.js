@@ -7,7 +7,7 @@
     $group: {
       _id: 1,
       total_reward: {
-        $sum: "$base_reward"
+        $sum: '$base_reward'
       }
     }
   }
