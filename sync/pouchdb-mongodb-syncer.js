@@ -407,6 +407,8 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
   var human_timestamp = 0
   var block_hash_data = ''
   var block_nonce = ''
+  var blockChainHash = block_hash
+  var blockChainHashPrev = ''
 
   if (block_id >= HARD_FORKS_POS) {
     if (isPoSBlock(block_id)) {
@@ -427,13 +429,16 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
       block_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_VERSION))
       CURRENT_OFFSET += OFFSET_BLOCK_VERSION
       block_hashPrev = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      blockChainHashPrev = block_hashPrev
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
       human_timestamp = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_TIMESTAMP)) + 1524742312
       CURRENT_OFFSET += OFFSET_BLOCK_TIMESTAMP
 
-      block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      blockChainHashPrev = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      block_hash_data = blockChainHashPrev
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
       if (block_id > HARD_FORKS_POS) {
+        block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
         CURRENT_OFFSET += OFFSET_BLOCK_HASH
       }
       algorithm = 'pos'
@@ -447,8 +452,9 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
       human_timestamp = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_TIMESTAMP)) + 1524742312
       CURRENT_OFFSET += OFFSET_BLOCK_TIMESTAMP
 
-      block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+      blockChainHashPrev = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
+      block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
       CURRENT_OFFSET += OFFSET_BLOCK_HASH
     }
   } else {
@@ -457,6 +463,7 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
     block_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_VERSION))
     CURRENT_OFFSET += OFFSET_BLOCK_VERSION
     block_hashPrev = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
+    blockChainHashPrev = block_hashPrev
     CURRENT_OFFSET += OFFSET_BLOCK_HASH
     human_timestamp = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_TIMESTAMP)) + 1524742312
     CURRENT_OFFSET += OFFSET_BLOCK_TIMESTAMP
@@ -615,9 +622,11 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
   return {
     'number': block_id,
     'hash': block_hash,
+    'previous_hash': block_hashPrev,
+    'chain_hash': blockChainHash,
+    'previous_chain_hash': blockChainHashPrev,
     'nonce': block_nonce,
     'version': block_version,
-    'previous_hash': block_hashPrev,
     'timestamp': human_timestamp,
     'miner': miner_address_decoded,
     'trxs_number': trxs_container.length,
