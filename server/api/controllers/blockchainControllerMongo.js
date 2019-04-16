@@ -984,6 +984,9 @@ exports.get_ts_items = async function (req, res) {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Cache-Control', 'public, max-age=2')
   let address = req.query.miner
+  if (!address || address.length != 40) {
+    address = ''
+  }
   let type = req.query.type
 
   let MongoClient = require('mongodb').MongoClient
@@ -1000,15 +1003,17 @@ exports.get_ts_items = async function (req, res) {
     number: {
      '$gte': Number(0),
      '$lte': Number(1000000)
-    },
-    miner: address
+    }
   }
   let trxsMatch = {
     block_number: {
      '$gte': Number(0),
      '$lte': Number(1000000)
-    },
-	  addresses: {$all: [address]}
+    }
+  }
+  if (address) {
+    blocksMatch.miner = address
+    trxsMatch.addresses = { $all: [address] }
   }
   let match = blocksMatch
   let matchCollection = config.mongodb.collection
@@ -1016,8 +1021,6 @@ exports.get_ts_items = async function (req, res) {
     match = trxsMatch
     matchCollection = config.mongodb.trx_collection
   }
-	console.log(type)
-	console.log(req.query)
   let items = await blockChainDB.collection(matchCollection).aggregate([
     {
         '$match': match
