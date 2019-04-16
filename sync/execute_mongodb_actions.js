@@ -143,7 +143,7 @@ async function getTimeSeriesBlocks(from, to) {
   let blocks = []
   let mongoDB = await MongoClient.connect(mongodbUrl, { useNewUrlParser: true })
   let blockChainDB = mongoDB.db(mongodbBlockchainDB)
-  let timeInterval = 24 * 3600 // daiily
+  let timeInterval = 24 * 3600 * 30 // daily
   blocks = await blockChainDB.collection(mongodbBlockCollection).aggregate([
     {
         '$match': {
@@ -173,6 +173,11 @@ async function getTimeSeriesBlocks(from, to) {
       $group: {
         _id : "$blocks_per_interval",
         blocks_number : { $sum: 1 }
+      }
+    },
+    {
+      $sort: {
+        '_id': 1
       }
     }
   ]).toArray()
