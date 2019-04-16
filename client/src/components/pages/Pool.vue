@@ -28,7 +28,6 @@ import PoolsService from '@/services/PoolsService'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
 import PoolLiveMiners from '@/components/lists/PoolLiveMiners.vue'
 import Loading from '@/components/utils/Loading'
-import Highcharts from 'highcharts'
 
 export default {
   name: 'pools',
@@ -52,8 +51,7 @@ export default {
         yAxis: {
           title: {
             text: 'Number'
-          },
-        //  type: 'logarithmic'
+          }
         },
         legend: {
           enabled: true
