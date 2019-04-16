@@ -19,6 +19,8 @@
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "d3": "^4.13.0",
+    "highcharts": "^7.1.1",
+    "highcharts-vue": "^1.2.0",
     "moment": "^2.22.2",
     "vue": "^2.5.2",
     "vue-analytics": "^5.10.4",

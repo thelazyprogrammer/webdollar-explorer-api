@@ -8,12 +8,15 @@ import VueAnalytics from 'vue-analytics'
 import VueClipboard from 'vue-clipboard2'
 import ToggleButton from 'vue-js-toggle-button'
 import Slider from 'vue-slider-component'
+import HighchartsVue from 'highcharts-vue'
+
 let Paginate = require('vuejs-paginate')
 
 Vue.config.productionTip = false
 
 Vue.use(VueClipboard)
 Vue.use(ToggleButton)
+Vue.use(HighchartsVue)
 
 Vue.component('paginate', Paginate)
 Vue.component('vue-slider', Slider)

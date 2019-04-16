@@ -1,19 +1,19 @@
 <template>
   <div class="pools">
     <div id="address" v-if="miner && miner.address" class="table-wrap">
-       <miner-info :estimated_value="this.estimated_value" :estimated_value_usd="this.estimated_value_usd" :miner="this.miner"></miner-info>
-
-       <div>
-
+      <miner-info :estimated_value="this.estimated_value" :estimated_value_usd="this.estimated_value_usd" :miner="this.miner"></miner-info>
+      <div>
+        <highcharts class="tabWrapper" :options="chartOptions"></highcharts>
+      </div>
+      <div>
         <div class="tabWrapper">
           <button id="button_live_miners" v-if="miner" class="w3-bar-item w3-button">Live miners ({{ miners.length }})</button>
-        </div>
+         </div>
 
-        <div class="liveMinersTab transactionsWrapper" id="live_miners">
-        <pool-live-miners :page_number="1" :miners="miners"></pool-live-miners>
-        </div>
-     </div>
-
+         <div class="liveMinersTab transactionsWrapper" id="live_miners">
+           <pool-live-miners :page_number="1" :miners="miners"></pool-live-miners>
+         </div>
+      </div>
     </div>
     <loading v-else></loading>
   </div>
@@ -36,6 +36,25 @@ export default {
 
   data () {
     return {
+      chartOptions: {
+        chart: {
+          backgroundColor: '#292828',
+          type: 'area'
+        },
+        title: {
+          style:{ "color": "#fec02c" },
+          text: 'Transactions'
+        },
+        yAxis: {
+          title: {
+            text: 'TRX Number'
+          }
+        },
+        series: [{
+          data: [10, 0, 8, 2, 6, 4, 5, 5, 1, 3, 4, 6, 7],
+          color: '#6fcd98'
+        }]
+      },
       miner: { default: function () { return { } } },
       miners: { default: function () { return [] } },
       estimated_value: 0,
