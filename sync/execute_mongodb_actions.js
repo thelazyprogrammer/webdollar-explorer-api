@@ -101,6 +101,7 @@ async function getPoSMiners() {
        }
      )}
   }
+  mongoDB.close()
   return posMiners
 }
 
@@ -138,6 +139,48 @@ async function checkSanity() {
    }
 }
 
+async function getTimeSeriesBlocks(from, to) {
+  let blocks = []
+  let mongoDB = await MongoClient.connect(mongodbUrl, { useNewUrlParser: true })
+  let blockChainDB = mongoDB.db(mongodbBlockchainDB)
+  let timeInterval = 24 * 3600 // daiily
+  blocks = await blockChainDB.collection(mongodbBlockCollection).aggregate([
+    {
+        '$match': {
+          number: {
+            '$gte': Number(from),
+            '$lte': Number(to)
+          }
+        },
+    },
+    {
+      '$project': {
+        _id : 0,
+        blocks_per_interval : {
+          "$multiply" : [
+            { "$floor" :
+              { "$divide" : [
+                "$timestamp",
+                timeInterval
+              ]}
+            },
+            timeInterval
+          ]
+        }
+      }
+    },
+    {
+      $group: {
+        _id : "$blocks_per_interval",
+        blocks_number : { $sum: 1 }
+      }
+    }
+  ]).toArray()
+
+  mongoDB.close()
+  console.log(blocks)
+}
+
 async function executeCommand(command) {
   if (command == "get_pos_miners") {
     let miners = await getPoSMiners()
@@ -152,6 +195,8 @@ async function executeCommand(command) {
     return
   } else if (command == "check_sanity") {
     await checkSanity()
+  } else if (command == "get_time_series_blocks") {
+    await getTimeSeriesBlocks(process.argv[3], process.argv[4])
   } else {
     throw ("Command not available: " + command)
   }
