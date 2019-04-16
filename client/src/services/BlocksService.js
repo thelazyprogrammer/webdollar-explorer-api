@@ -81,5 +81,13 @@ export default {
 
   fetchUncles () {
     return Api().get('uncle')
+  },
+
+  fetchTSItems (miner, type) {
+    let extraURLParams = ''
+    if (miner && type) {
+      extraURLParams += '?&miner=' + encodeURIComponent(miner) + '&type=' + type
+    }
+    return Api().get('ts_items' + extraURLParams)
   }
 }

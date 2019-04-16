@@ -43,27 +43,37 @@ export default {
         },
         title: {
           style: { 'color': '#fec02c' },
-          text: 'Blocks'
+          text: 'Blocks & Transactions'
         },
         xAxis: {
           type: 'datetime'
         },
         yAxis: {
           title: {
-            text: 'Blocks per month'
+            text: 'Number'
           }
         },
         legend: {
-          enabled: false
+          enabled: true
         },
-        series: [{
-          type: 'area',
-          data: [
-            [1525046400000, 2051],
-            [1525132800000, 692]
-          ],
-          color: '#6fcd98'
-        }]
+        series: [
+          {
+            name: 'Blocks',
+            type: 'area',
+            data: [],
+            legendColor: '#00c02c',
+            showInLegend: false,
+            color: '#00c02c'
+          },
+          {
+            name: 'Transactions',
+            type: 'area',
+            data: [],
+            showInLegend: false,
+            legendColor: '#fec02c',
+            color: '#fec02c'
+          }
+        ]
       },
       miner: { default: function () { return { } } },
       miners: { default: function () { return [] } },
@@ -128,9 +138,15 @@ export default {
     async getMiner (miner, startDate, endDate) {
       this.miner = {}
       let minerTask = BlocksService.fetchMiner(miner, false, startDate, endDate)
+      let blockTSTask = BlocksService.fetchTSItems(miner, 'blocks')
+      let trxTSTask = BlocksService.fetchTSItems(miner, 'trxs')
 
       let minerData = await minerTask
+      let blockData = await blockTSTask
+      let trxData = await trxTSTask
       this.miner = minerData.data
+      this.chartOptions.series[0].data = blockData.data
+      this.chartOptions.series[1].data = trxData.data
     },
     async getWebdValue () {
       if (this.estimated_value && this.estimated_value_usd) {
