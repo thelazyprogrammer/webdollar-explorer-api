@@ -979,3 +979,82 @@ exports.get_stars = async function (req, res) {
   }
   res.json(stars)
 }
+
+exports.get_ts_items = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=2')
+  let address = req.query.miner
+  let type = req.query.type
+
+  let MongoClient = require('mongodb').MongoClient
+  try {
+    var mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  } catch (ex) {
+    console.log(ex)
+    res.json()
+    return
+  }
+  let blockChainDB = mongoDB.db(config.mongodb.db)
+  let timeInterval = 24 * 3600 * 1 // daily
+  let blocksMatch = {
+    number: {
+     '$gte': Number(0),
+     '$lte': Number(1000000)
+    },
+    miner: address
+  }
+  let trxsMatch = {
+    block_number: {
+     '$gte': Number(0),
+     '$lte': Number(1000000)
+    },
+	  addresses: {$all: [address]}
+  }
+  let match = blocksMatch
+  let matchCollection = config.mongodb.collection
+  if (type === 'trxs') {
+    match = trxsMatch
+    matchCollection = config.mongodb.trx_collection
+  }
+	console.log(type)
+	console.log(req.query)
+  let items = await blockChainDB.collection(matchCollection).aggregate([
+    {
+        '$match': match
+    },
+    {
+      '$project': {
+        _id : 0,
+        items_per_interval : {
+          "$multiply" : [
+            { "$floor" :
+              { "$divide" : [
+                "$timestamp",
+                timeInterval
+              ]}
+            },
+            timeInterval
+          ]
+        }
+      }
+    },
+    {
+      $group: {
+        _id : "$items_per_interval",
+        items_number : { $sum: 1 }
+      }
+    },
+    {
+      $sort: {
+        '_id': 1
+      }
+    }
+  ]).toArray()
+
+  let itemsParsed = []
+  for (let index = 0; index < items.length; index ++) {
+    itemsParsed.push([items[index]._id * 1000, items[index].items_number])
+  }
+  mongoDB.close()
+  res.json(itemsParsed)
+}
