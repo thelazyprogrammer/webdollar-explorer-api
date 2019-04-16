@@ -3,7 +3,7 @@
     <div id="address" v-if="miner && miner.address" class="table-wrap">
       <miner-info :estimated_value="this.estimated_value" :estimated_value_usd="this.estimated_value_usd" :miner="this.miner"></miner-info>
       <div>
-        <highcharts class="tabWrapper" :options="chartOptions"></highcharts>
+        <highcharts  class="tabWrapper" :options="chartOptions"></highcharts>
       </div>
       <div>
         <div class="tabWrapper">
@@ -39,19 +39,29 @@ export default {
       chartOptions: {
         chart: {
           backgroundColor: '#292828',
-          type: 'area'
+          zoomType: 'x'
         },
         title: {
-          style:{ "color": "#fec02c" },
-          text: 'Transactions'
+          style: { 'color': '#fec02c' },
+          text: 'Blocks'
+        },
+        xAxis: {
+          type: 'datetime'
         },
         yAxis: {
           title: {
-            text: 'TRX Number'
+            text: 'Blocks per month'
           }
         },
+        legend: {
+          enabled: false
+        },
         series: [{
-          data: [10, 0, 8, 2, 6, 4, 5, 5, 1, 3, 4, 6, 7],
+          type: 'area',
+          data: [
+            [1525046400000, 2051],
+            [1525132800000, 692]
+          ],
           color: '#6fcd98'
         }]
       },
