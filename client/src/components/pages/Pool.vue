@@ -8,11 +8,11 @@
       <div>
         <div class="tabWrapper">
           <button id="button_live_miners" v-if="miner" class="w3-bar-item w3-button">Live miners ({{ miners.length }})</button>
-         </div>
+        </div>
 
-         <div class="liveMinersTab transactionsWrapper" id="live_miners">
-           <pool-live-miners :page_number="1" :miners="miners"></pool-live-miners>
-         </div>
+        <div class="liveMinersTab transactionsWrapper" id="live_miners">
+          <pool-live-miners :page_number="1" :miners="miners"></pool-live-miners>
+        </div>
       </div>
     </div>
     <loading v-else></loading>
@@ -28,6 +28,7 @@ import PoolsService from '@/services/PoolsService'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
 import PoolLiveMiners from '@/components/lists/PoolLiveMiners.vue'
 import Loading from '@/components/utils/Loading'
+import Highcharts from 'highcharts'
 
 export default {
   name: 'pools',
@@ -51,10 +52,25 @@ export default {
         yAxis: {
           title: {
             text: 'Number'
-          }
+          },
+        //  type: 'logarithmic'
         },
         legend: {
           enabled: true
+        },
+        plotOptions: {
+          area: {
+            marker: {
+              radius: 2
+            },
+            lineWidth: 1,
+            states: {
+              hover: {
+                lineWidth: 1
+              }
+            },
+            threshold: null
+          }
         },
         series: [
           {
