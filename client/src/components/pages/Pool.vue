@@ -43,7 +43,7 @@ export default {
         },
         title: {
           style: { 'color': '#fec02c' },
-          text: 'Blocks & Transactions'
+          text: 'Analytics'
         },
         xAxis: {
           type: 'datetime'
@@ -53,9 +53,6 @@ export default {
             text: 'Number'
           },
           type: 'logarithmic'
-        },
-        legend: {
-          enabled: true
         },
         plotOptions: {
           area: {
@@ -73,6 +70,12 @@ export default {
         },
         credits: {
           enabled: false
+        },
+        legend: {
+          itemStyle: {
+            color: '#fec02c',
+            fontWeight: 'bold'
+          }
         },
         series: [
           {
