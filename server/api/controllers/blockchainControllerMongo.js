@@ -1001,24 +1001,24 @@ exports.get_ts_items = async function (req, res) {
   let timeInterval = 24 * 3600 * 1 // daily
   let itemNumber = { $sum: 1 }
   let multiplierId = 1000
-  let multiplierItemNumber = 1
-
+  let dividerItemNumber = 1
+  let maxBlocks = 1000000
   let blocksMatch = {
     number: {
      '$gte': Number(0),
-     '$lte': Number(1000000)
+     '$lte': Number(maxBlocks)
     }
   }
   let trxsMatch = {
     block_number: {
      '$gte': Number(0),
-     '$lte': Number(1000000)
+     '$lte': Number(maxBlocks)
     }
   }
   let amountReceivedMatch = {
     block_number: {
      '$gte': Number(0),
-     '$lte': Number(330000)
+     '$lte': Number(718878)
     }
   }
 
@@ -1039,7 +1039,7 @@ exports.get_ts_items = async function (req, res) {
     if (type === 'amount_sent') amountReceivedMatch.type = 0
     matchCollection = config.mongodb.mtrx_collection
     itemNumber = { $sum: "$amount" }
-    multiplierItemNumber = 0.0001
+    dividerItemNumber = 10000
   }
   let items = await blockChainDB.collection(matchCollection).aggregate([
     {
@@ -1077,7 +1077,7 @@ exports.get_ts_items = async function (req, res) {
 
   let itemsParsed = []
   for (let index = 0; index < items.length; index ++) {
-    itemsParsed.push([items[index]._id * multiplierId, items[index].items_number * multiplierItemNumber])
+    itemsParsed.push([Math.ceil(items[index]._id * multiplierId), items[index].items_number / dividerItemNumber])
   }
   mongoDB.close()
   res.json(itemsParsed)
