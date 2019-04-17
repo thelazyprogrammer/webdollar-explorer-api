@@ -999,6 +999,10 @@ exports.get_ts_items = async function (req, res) {
   }
   let blockChainDB = mongoDB.db(config.mongodb.db)
   let timeInterval = 24 * 3600 * 1 // daily
+  let itemNumber = { $sum: 1 }
+  let multiplierId = 1000
+  let multiplierItemNumber = 1
+
   let blocksMatch = {
     number: {
      '$gte': Number(0),
@@ -1011,8 +1015,17 @@ exports.get_ts_items = async function (req, res) {
      '$lte': Number(1000000)
     }
   }
+  let amountReceivedMatch = {
+    block_number: {
+     '$gte': Number(0),
+     '$lte': Number(330000)
+    }
+  }
+
   if (address) {
     blocksMatch.miner = address
+    amountReceivedMatch.address = address
+    amountReceivedMatch.type = 1
     trxsMatch.addresses = { $all: [address] }
   }
   let match = blocksMatch
@@ -1021,6 +1034,13 @@ exports.get_ts_items = async function (req, res) {
     match = trxsMatch
     matchCollection = config.mongodb.trx_collection
   }
+  if (type === 'amount_received' || type === 'amount_sent') {
+    match = amountReceivedMatch
+    if (type === 'amount_sent') amountReceivedMatch.type = 0
+    matchCollection = config.mongodb.mtrx_collection
+    itemNumber = { $sum: "$amount" }
+    multiplierItemNumber = 0.0001
+  }
   let items = await blockChainDB.collection(matchCollection).aggregate([
     {
         '$match': match
@@ -1028,6 +1048,7 @@ exports.get_ts_items = async function (req, res) {
     {
       '$project': {
         _id : 0,
+	amount: '$amount',
         items_per_interval : {
           "$multiply" : [
             { "$floor" :
@@ -1044,7 +1065,7 @@ exports.get_ts_items = async function (req, res) {
     {
       $group: {
         _id : "$items_per_interval",
-        items_number : { $sum: 1 }
+        items_number : itemNumber
       }
     },
     {
@@ -1056,7 +1077,7 @@ exports.get_ts_items = async function (req, res) {
 
   let itemsParsed = []
   for (let index = 0; index < items.length; index ++) {
-    itemsParsed.push([items[index]._id * 1000, items[index].items_number])
+    itemsParsed.push([items[index]._id * multiplierId, items[index].items_number * multiplierItemNumber])
   }
   mongoDB.close()
   res.json(itemsParsed)
