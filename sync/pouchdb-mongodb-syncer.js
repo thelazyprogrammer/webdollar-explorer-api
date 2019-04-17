@@ -753,6 +753,15 @@ async function sync (from, to, force) {
   await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
     { trx_hash: 1 }
   )
+  await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
+    { timestamp: 1 }
+  )
+  await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
+    { from_to_type: 1 }
+  )
+  await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
+    { addresses: 1 }
+  )
 
   try {
     let pouchDB = new PouchClient(pouchdbBlockDB)
