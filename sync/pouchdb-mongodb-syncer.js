@@ -504,6 +504,7 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
       var OFFSET_NUMBER = OFFSET_7
 
       var trx_hash = ''
+      var trx_from_to_type = 'SISO'
       var trx_version = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_VERSION))
       CURRENT_OFFSET += OFFSET_TRX_VERSION
       // HARD FORK change for TRX NONCE
@@ -567,6 +568,10 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
       var trx_to_length = deserializeNumber(substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_LENGTH))
       CURRENT_OFFSET += OFFSET_TRX_LENGTH
 
+      if (trx_from_length === 1 && trx_to_length > 1) trx_from_to_type = 'SIMO'
+      if (trx_from_length > 1 && trx_to_length === 1) trx_from_to_type = 'MISO'
+      if (trx_from_length > 1 && trx_to_length > 1) trx_from_to_type = 'MIMO'
+
       var trxs_to = {
         'trxs': [],
         'address': [],
@@ -609,6 +614,7 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
         'to': trxs_to,
         'from_amount': trxs_from.amount,
         'to_amount': trxs_to.amount,
+        'from_to_type': trx_from_to_type,
         'fee': fee,
         'block_number': block_id,
         'timestamp': human_timestamp,
@@ -798,6 +804,9 @@ async function sync (from, to, force) {
                 block_number: full_trx.block_number,
                 address: trxs_from[j].trx_from_address,
                 type: 0,
+                addresses: full_trx.to.address,
+                timestamp: full_trx.timestamp,
+                from_to_type: full_trx.from_to_type,
                 nonce: full_trx.nonce,
                 trx_hash: full_trx.hash,
                 amount: trxs_from[j].trx_from_amount
@@ -808,6 +817,9 @@ async function sync (from, to, force) {
                 block_number: full_trx.block_number,
                 address: trxs_to[j].trx_to_address,
                 type: 1,
+                timestamp: full_trx.timestamp,
+                from_to_type: full_trx.from_to_type,
+                addresses: full_trx.from.address,
                 nonce: full_trx.nonce,
                 trx_hash: full_trx.hash,
                 amount: trxs_to[j].trx_to_amount
@@ -831,7 +843,10 @@ async function sync (from, to, force) {
               await blockChainDB.collection(mongodbMTransactionCollection).insertOne({
                 block_number: full_trx.block_number,
                 address: trxs_from[j].trx_from_address,
+                addresses: full_trx.to.address,
                 type: 0,
+                timestamp: full_trx.timestamp,
+                from_to_type: full_trx.from_to_type,
                 nonce: full_trx.nonce,
                 amount: trxs_from[j].trx_from_amount
               })
@@ -842,6 +857,9 @@ async function sync (from, to, force) {
                 address: trxs_to[j].trx_to_address,
                 type: 1,
                 nonce: full_trx.nonce,
+                timestamp: full_trx.timestamp,
+                addresses: full_trx.from.address,
+                from_to_type: full_trx.from_to_type,
                 amount: trxs_to[j].trx_to_amount
               })
             }
