@@ -1018,7 +1018,7 @@ exports.get_ts_items = async function (req, res) {
   let amountReceivedMatch = {
     block_number: {
      '$gte': Number(0),
-     '$lte': Number(718878)
+     '$lte': Number(maxBlocks)
     }
   }
 
