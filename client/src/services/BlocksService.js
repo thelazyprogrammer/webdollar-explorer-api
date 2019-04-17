@@ -85,7 +85,7 @@ export default {
 
   fetchTSItems (miner, type) {
     let extraURLParams = ''
-    if (miner && type) {
+    if (miner || type) {
       extraURLParams += '?&miner=' + encodeURIComponent(miner) + '&type=' + type
     }
     return Api().get('ts_items' + extraURLParams)

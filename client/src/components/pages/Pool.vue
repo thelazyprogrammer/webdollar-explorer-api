@@ -51,7 +51,8 @@ export default {
         yAxis: {
           title: {
             text: 'Number'
-          }
+          },
+          type: 'logarithmic'
         },
         legend: {
           enabled: true
@@ -70,21 +71,32 @@ export default {
             threshold: null
           }
         },
+        credits: {
+          enabled: false
+        },
         series: [
           {
-            name: 'Blocks',
-            type: 'area',
+            name: 'Amount received',
+            type: 'spline',
             data: [],
-            legendColor: '#00c02c',
-            showInLegend: false,
+            color: 'blue'
+          },
+          {
+            name: 'Amount sent',
+            type: 'spline',
+            data: [],
+            color: 'orange'
+          },
+          {
+            name: 'Blocks',
+            type: 'spline',
+            data: [],
             color: '#00c02c'
           },
           {
             name: 'Transactions',
-            type: 'area',
+            type: 'spline',
             data: [],
-            showInLegend: false,
-            legendColor: '#fec02c',
             color: '#fec02c'
           }
         ]
@@ -154,13 +166,19 @@ export default {
       let minerTask = BlocksService.fetchMiner(miner, false, startDate, endDate)
       let blockTSTask = BlocksService.fetchTSItems(miner, 'blocks')
       let trxTSTask = BlocksService.fetchTSItems(miner, 'trxs')
+      let amountReceivedTSTask = BlocksService.fetchTSItems(miner, 'amount_received')
+      let amountSentTSTask = BlocksService.fetchTSItems(miner, 'amount_sent')
 
       let minerData = await minerTask
       let blockData = await blockTSTask
       let trxData = await trxTSTask
+      let amountReceived = await amountReceivedTSTask
+      let amountSent = await amountSentTSTask
       this.miner = minerData.data
-      this.chartOptions.series[0].data = blockData.data
-      this.chartOptions.series[1].data = trxData.data
+      this.chartOptions.series[2].data = blockData.data
+      this.chartOptions.series[3].data = trxData.data
+      this.chartOptions.series[0].data = amountReceived.data
+      this.chartOptions.series[1].data = amountSent.data
     },
     async getWebdValue () {
       if (this.estimated_value && this.estimated_value_usd) {
