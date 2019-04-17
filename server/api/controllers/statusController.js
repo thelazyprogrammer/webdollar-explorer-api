@@ -43,3 +43,34 @@ exports.get_status_mongo = async function (req, res) {
     mongoDB.close()
   }
 }
+
+exports.get_current_supply = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=40')
+
+  var MongoClient = require('mongodb').MongoClient
+  try {
+    var mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+  } catch (ex) {
+    res.json()
+    return
+  }
+  try {
+    let blockChainDB = mongoDB.db(config.mongodb.db)
+    let block = await blockChainDB.collection(config.mongodb.collection).find({}).sort({ number: -1 }).limit(1).toArray()
+    let current_supply = 4156801128 + (block[0].number - 40) * 6000
+    res.json(current_supply)
+  } catch (ex) {
+    console.log(ex)
+    res.json()
+  } finally {
+    mongoDB.close()
+  }
+}
+
+exports.get_total_supply = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=3600')
+
+  res.json(42000000000)
+}

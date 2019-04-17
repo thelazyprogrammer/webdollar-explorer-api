@@ -22,6 +22,12 @@ module.exports = function (app) {
   app.route('/status')
     .get(statusRoute)
 
+  app.route('/current_supply')
+    .get(statusController.get_current_supply)
+
+  app.route('/total_supply')
+    .get(statusController.get_total_supply)
+
   app.route('/stars/:address*')
     .get(blockchainMongo.get_stars)
 
