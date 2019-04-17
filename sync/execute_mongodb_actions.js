@@ -110,7 +110,10 @@ async function checkSanity() {
     'WEBD$gAY19Mp6VnujexNW3gjHNiAEQkvkIs9div$',
     'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
     'WEBD$gCMxAKX96yhmaygo@NG+vnb4cz1eYoYpMv$',
-    'WEBD$gAosJ5+2tFnS$q5EsZZGVHKEU#cHnPJbZz$'
+    'WEBD$gAosJ5+2tFnS$q5EsZZGVHKEU#cHnPJbZz$',
+    'WEBD$gDZwjjD7ZE5+AE+44ITr8yo5E2aXYT3mEH$',
+    'WEBD$gDx8CjURuVS+LSI91ufs@LH2QpIdSzaAxT$',
+    'WEBD$gD5@1VU3ZiJ1siQxib#wAb4xeQTUS2zscn$'
   ]
 
   let failure = false
