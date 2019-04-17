@@ -74,7 +74,7 @@ export default {
         legend: {
           itemStyle: {
             color: '#fec02c',
-            fontWeight: 'bold'
+            fontWeight: 'normal'
           }
         },
         series: [
@@ -82,13 +82,13 @@ export default {
             name: 'Amount received',
             type: 'spline',
             data: [],
-            color: 'blue'
+            color: '#576dd7'
           },
           {
             name: 'Amount sent',
             type: 'spline',
             data: [],
-            color: 'orange'
+            color: '#da6654'
           },
           {
             name: 'Blocks',
