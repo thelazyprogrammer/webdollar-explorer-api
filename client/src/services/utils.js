@@ -148,7 +148,7 @@ export default {
           color: '#da6654'
         },
         {
-          name: 'Blocks',
+          name: 'Blocks mined',
           type: 'spline',
           data: [],
           color: '#00c02c'
