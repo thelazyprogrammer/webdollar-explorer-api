@@ -625,6 +625,7 @@ a.add_post_link {
     height: 45px;
 }
 .w3-btn, .w3-button {
+    font-size: 0.85em;
     border: none;
     height: 45px;
     display: inline-block;

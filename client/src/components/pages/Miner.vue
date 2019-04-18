@@ -13,8 +13,8 @@
           <button id="button_trx" v-if="miner.transactions_number" class="w3-bar-item w3-button" v-on:click="openTab('transactions')">Transactions <br> ({{ getTrxNumber(miner.transactions_number, miner.transactions.length)}})</button>
           <button id="button_block" v-if="miner.blocks_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks')">Mined Blocks <br> ({{ getTrxNumber(miner.blocks_number, miner.blocks.length)}})</button>
           <button id="button_block_resolved" v-if="this.blocksr_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(this.blocksr_number, this.blocksr.length)}})</button>
-          <button id="button_pools_stats" v-if="this.poolStats.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_stats')">Live Pool Stats<br>({{ this.poolStats.length }})</button>
-          <button id="button_pools_miners" v-if="this.pool_miners.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_miners')">Live Pool Miners<br> ({{ this.pool_miners.length }})</button>
+          <button id="button_pools_stats" v-if="this.poolStats.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_stats')">Pool Stats<br>({{ this.poolStats.length }})</button>
+          <button id="button_pools_miners" v-if="this.pool_miners.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_miners')">Pool Miners<br> ({{ this.pool_miners.length }})</button>
           <button id="button_miner_analytics" v-if="this.chart_options && this.chart_options.chart" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('miner_analytics')">Analytics</button>
         </div>
 
@@ -189,7 +189,7 @@ export default {
       if (parseInt(trxReceivedNumber) >= parseInt(allTrxNumber)) {
         return trxReceivedNumber
       } else {
-        return 'latest ' + trxReceivedNumber + ' from ' + allTrxNumber
+        return trxReceivedNumber + ' from ' + allTrxNumber
       }
     },
     orderTrx (transactions, miner) {
