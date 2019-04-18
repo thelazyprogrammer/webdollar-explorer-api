@@ -100,7 +100,7 @@ export default {
       },
       title: {
         style: { 'color': '#fec02c' },
-        text: 'Analytics'
+        text: null
       },
       xAxis: {
         type: 'datetime'

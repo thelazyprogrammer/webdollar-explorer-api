@@ -7,7 +7,6 @@
      <div class="sliderWrapper">
          <vue-slider @drag-end="onTimeIntervalChange" :tooltipDir.sync="tooltipDir" :piecewise.sync="piecewise" :data.sync="data" :value.sync="value"></vue-slider>
      </div>
-     <analytics v-if="this.chart_options && this.chart_options.chart" :chart_options="this.chart_options"></analytics>
      <div :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
 
         <div class="tabWrapper">
@@ -16,6 +15,7 @@
           <button id="button_block_resolved" v-if="this.blocksr_number" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('blocks_resolved')">Resolved Blocks <br> ({{ getTrxNumber(this.blocksr_number, this.blocksr.length)}})</button>
           <button id="button_pools_stats" v-if="this.poolStats.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_stats')">Live Pool Stats<br>({{ this.poolStats.length }})</button>
           <button id="button_pools_miners" v-if="this.pool_miners.length > 0" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('pool_miners')">Live Pool Miners<br> ({{ this.pool_miners.length }})</button>
+          <button id="button_miner_analytics" v-if="this.chart_options && this.chart_options.chart" class="w3-bar-item w3-button" style="background-color: #a4c0ab" v-on:click="openTab('miner_analytics')">Analytics</button>
         </div>
 
         <div class="addressTab transactionsWrapper" id="transactions">
@@ -46,9 +46,11 @@
           <pool-stats :stats="this.poolStats"></pool-stats>
         </div>
 
-       <div class="addressTab transactionsWrapper" id="pools_miners">
+        <div id="pools_miners">
           <pool-live-miners :page_number="1" :miners="this.pool_miners"></pool-live-miners>
         </div>
+
+        <analytics class="addressTab transactionsWrapper" id="miner_analytics" v-if="this.chart_options && this.chart_options.chart" :chart_options="this.chart_options"></analytics>
       </div>
 
     </div>
@@ -421,6 +423,8 @@ export default {
         Utils.setColor('button_block_resolved', '#a4c0ab')
         Utils.setColor('button_pools_miners', '#a4c0ab')
         Utils.setDisplay('pools_miners', 'none')
+        Utils.setColor('button_miner_analytics', '#a4c0ab')
+        Utils.setDisplay('miner_analytics', 'none')
       } else if (name === 'blocks_resolved') {
         Utils.setDisplay('blocks', 'none')
         Utils.setDisplay('transactions', 'none')
@@ -432,6 +436,8 @@ export default {
         Utils.setColor('button_block_resolved', '#00c02c')
         Utils.setColor('button_pools_miners', '#a4c0ab')
         Utils.setDisplay('pools_miners', 'none')
+        Utils.setColor('button_miner_analytics', '#a4c0ab')
+        Utils.setDisplay('miner_analytics', 'none')
       } else if (name === 'pool_stats') {
         Utils.setDisplay('blocks', 'none')
         Utils.setDisplay('transactions', 'none')
@@ -443,6 +449,8 @@ export default {
         Utils.setColor('button_pools_stats', '#00c02c')
         Utils.setColor('button_pools_miners', '#a4c0ab')
         Utils.setDisplay('pools_miners', 'none')
+        Utils.setColor('button_miner_analytics', '#a4c0ab')
+        Utils.setDisplay('miner_analytics', 'none')
       } else if (name === 'pool_miners') {
         Utils.setDisplay('blocks', 'none')
         Utils.setDisplay('transactions', 'none')
@@ -452,8 +460,23 @@ export default {
         Utils.setColor('button_block', '#a4c0ab')
         Utils.setColor('button_trx', '#a4c0ab')
         Utils.setColor('button_block_resolved', '#a4c0ab')
-        Utils.setColor('button_pools_stats', 'a4c0ab')
+        Utils.setColor('button_pools_stats', '#a4c0ab')
         Utils.setColor('button_pools_miners', '#00c02c')
+        Utils.setColor('button_miner_analytics', '#a4c0ab')
+        Utils.setDisplay('miner_analytics', 'none')
+      } else if (name === 'miner_analytics') {
+        Utils.setDisplay('blocks', 'none')
+        Utils.setDisplay('transactions', 'none')
+        Utils.setDisplay('blocks_resolved', 'none')
+        Utils.setDisplay('pools_stats', 'none')
+        Utils.setDisplay('pools_miners', 'none')
+        Utils.setColor('button_block', '#a4c0ab')
+        Utils.setColor('button_trx', '#a4c0ab')
+        Utils.setColor('button_block_resolved', '#a4c0ab')
+        Utils.setColor('button_pools_stats', '#a4c0ab')
+        Utils.setColor('button_pools_miners', '#a4c0ab')
+        Utils.setColor('button_miner_analytics', '#00c02c')
+        Utils.setDisplay('miner_analytics', 'block')
       } else {
         Utils.setDisplay('blocks', 'none')
         Utils.setDisplay('transactions', 'block')
@@ -465,6 +488,8 @@ export default {
         Utils.setColor('button_block_resolved', '#a4c0ab')
         Utils.setColor('button_pools_miners', '#a4c0ab')
         Utils.setDisplay('pools_miners', 'none')
+        Utils.setColor('button_miner_analytics', '#a4c0ab')
+        Utils.setDisplay('miner_analytics', 'none')
       }
     }
   }
@@ -472,7 +497,7 @@ export default {
 </script>
 
 <style type="text/css">
-#pools_miners {
+#pools_miners, #miner_analytics {
   display: none
 }
 
