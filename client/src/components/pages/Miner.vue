@@ -7,6 +7,7 @@
      <div class="sliderWrapper">
          <vue-slider @drag-end="onTimeIntervalChange" :tooltipDir.sync="tooltipDir" :piecewise.sync="piecewise" :data.sync="data" :value.sync="value"></vue-slider>
      </div>
+     <analytics v-if="this.chart_options && this.chart_options.chart" :chart_options="this.chart_options"></analytics>
      <div :class="miner.transactions.length === 0 || miner.blocks.length === 0 ? 'minedBlocksAndTransactionsRevert' : '' ">
 
         <div class="tabWrapper">
@@ -67,6 +68,7 @@ import PoolsService from '@/services/PoolsService'
 import ExchangeService from '@/services/ExchangeService'
 import Transactions from '@/components/lists/Transactions.vue'
 import MinerInfo from '@/components/infoComponents/MinerInfo.vue'
+import Analytics from '@/components/infoComponents/Analytics.vue'
 import LightBlocks from '@/components/lists/LightMinedBlocks.vue'
 import PoolStats from '@/components/lists/PoolStats.vue'
 import PoolLiveMiners from '@/components/lists/PoolLiveMiners.vue'
@@ -74,7 +76,7 @@ import Loading from '@/components/utils/Loading'
 import vueSlider from 'vue-slider-component'
 export default {
 
-  components: { vueSlider, Transactions, MinerInfo, LightBlocks, Loading, PoolStats, PoolLiveMiners },
+  components: { vueSlider, Transactions, MinerInfo, LightBlocks, Loading, PoolStats, PoolLiveMiners, Analytics },
 
   name: 'miner',
 
@@ -97,7 +99,8 @@ export default {
       data: { default: function () { return this.getDates() } },
       value: { default: function () { return this.getStartEndDates() } },
       poolStats: [],
-      pool_miners: []
+      pool_miners: [],
+      chart_options: {}
     }
   },
   async beforeRouteUpdate (to) {
@@ -108,12 +111,14 @@ export default {
     this.miner = {}
     this.poolStats = []
     this.pool_miners = []
+    this.chart_options = {}
   },
 
   mounted () {
     this.miner = {}
     this.poolStats = []
     this.pool_miners = []
+    this.chart_options = {}
     this.getMiner(window.location.href.substring(window.location.href.indexOf('WEBD'), window.location.href.length))
   },
 
@@ -263,12 +268,28 @@ export default {
       let blocksTask = BlocksService.fetchBlocks(1, miner)
       let blocksResolvedTask = BlocksService.fetchBlocks(1, '', miner)
       let transactionsTask = BlocksService.fetchTransactions(1, miner)
+      let blockTSTask = BlocksService.fetchTSItems(miner, 'blocks')
+      let trxTSTask = BlocksService.fetchTSItems(miner, 'trxs')
+      let amountReceivedTSTask = BlocksService.fetchTSItems(miner, 'amount_received')
+      let amountSentTSTask = BlocksService.fetchTSItems(miner, 'amount_sent')
 
-      let minerData = await minerTask
+      let blockData = await blockTSTask
+      let trxData = await trxTSTask
+      let amountReceived = await amountReceivedTSTask
+      let amountSent = await amountSentTSTask
+
       let blocks = await blocksTask
       let blocksResolved = await blocksResolvedTask
       let transactions = await transactionsTask
+      let minerData = await minerTask
       this.miner = minerData.data
+
+      let chartOptions = Utils.getChartOptions()
+      chartOptions.series[2].data = blockData.data
+      chartOptions.series[3].data = trxData.data
+      chartOptions.series[0].data = amountReceived.data
+      chartOptions.series[1].data = amountSent.data
+      this.chart_options = chartOptions
 
       this.miner.transactions = this.orderTrx(transactions, miner)
 

@@ -90,5 +90,76 @@ export default {
       return (Math.round(number / 10) / 100) + ' Kh/s'
     }
     return number + ' h/s'
+  },
+
+  getChartOptions () {
+    return {
+      chart: {
+        backgroundColor: '#292828',
+        zoomType: 'x'
+      },
+      title: {
+        style: { 'color': '#fec02c' },
+        text: 'Analytics'
+      },
+      xAxis: {
+        type: 'datetime'
+      },
+      yAxis: {
+        title: {
+          text: null
+        },
+        type: 'logarithmic'
+      },
+      plotOptions: {
+        area: {
+          marker: {
+            radius: 2
+          },
+          lineWidth: 1,
+          states: {
+            hover: {
+              lineWidth: 1
+            }
+          },
+          threshold: null
+        }
+      },
+      credits: {
+        enabled: false
+      },
+      legend: {
+        itemStyle: {
+          color: '#fec02c',
+          fontWeight: 'normal'
+        }
+      },
+      series: [
+        {
+          name: 'Amount received',
+          type: 'spline',
+          data: [],
+          color: '#576dd7'
+        },
+        {
+          name: 'Amount sent',
+          type: 'spline',
+          data: [],
+          color: '#da6654'
+        },
+        {
+          name: 'Blocks',
+          type: 'spline',
+          data: [],
+          color: '#00c02c'
+        },
+        {
+          name: 'Transactions',
+          type: 'spline',
+          data: [],
+          color: '#fec02c'
+        }
+      ]
+    }
   }
 }
