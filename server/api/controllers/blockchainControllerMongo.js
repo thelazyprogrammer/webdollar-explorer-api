@@ -982,7 +982,7 @@ exports.get_stars = async function (req, res) {
 
 exports.get_ts_items = async function (req, res) {
   res.header('Access-Control-Allow-Origin', '*')
-  res.header('Cache-Control', 'public, max-age=2')
+  res.header('Cache-Control', 'public, max-age=240')
   let address = req.query.miner
   if (!address || address.length != 40) {
     address = ''
