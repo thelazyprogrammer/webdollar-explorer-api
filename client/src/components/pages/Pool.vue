@@ -50,7 +50,7 @@ export default {
         },
         yAxis: {
           title: {
-            text: 'Number'
+            text: null
           },
           type: 'logarithmic'
         },
