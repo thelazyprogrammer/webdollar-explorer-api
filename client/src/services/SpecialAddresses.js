@@ -11,9 +11,14 @@ export default {
       address: 'WEBD$gCJDtpe$grMQ#jezcq+FdX6eMUGMa24yIT$'
     },
     {
-      name: 'P2PB2B_1',
+      name: 'P2PB2B',
       'status': 'up',
       address: 'WEBD$gDNzWkHmJC3ZcB1gINt58Uspj$mV9+wDkH$'
+    },
+    {
+      name: 'BitRabbit',
+      'status': 'up',
+      address: 'WEBD$gBttMQ5kqqfPjcwqG3dLZsiyNy+Goq$2#L$'
     }
   ],
   pools: [
