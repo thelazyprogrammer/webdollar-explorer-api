@@ -10,43 +10,43 @@ module.exports = function (app) {
   let readAnAddressRoute = config.enable_mongodb ? blockchainMongo.read_an_address_mongo : blockchainNative.read_an_address
   let readABlockRoute = config.enable_mongodb ? blockchainMongo.read_a_block_mongo : blockchainNative.read_a_block
 
-  app.route('/block')
+  app.route('/api/block')
     .get(latestBlocksRoute)
 
-  app.route('/block/:blockId')
+  app.route('/api/block/:blockId')
     .get(readABlockRoute)
 
-  app.route('/address/:address*')
+  app.route('/api/address/:address*')
     .get(readAnAddressRoute)
 
-  app.route('/status')
+  app.route('/api/status')
     .get(statusRoute)
 
-  app.route('/current_supply')
+  app.route('/api/current_supply')
     .get(statusController.get_current_supply)
 
-  app.route('/total_supply')
+  app.route('/api/total_supply')
     .get(statusController.get_total_supply)
 
-  app.route('/stars/:address*')
+  app.route('/api/stars/:address*')
     .get(blockchainMongo.get_stars)
 
-  app.route('/pending_trx')
+  app.route('/api/pending_trx')
     .get(blockchainNative.get_pending_trx)
 
-  app.route('/latest_trx')
+  app.route('/api/latest_trx')
     .get(blockchainMongo.get_latest_trx)
 
-  app.route('/latest_miners')
+  app.route('/api/latest_miners')
     .get(blockchainMongo.get_latest_miners)
 
-  app.route('/trx')
+  app.route('/api/trx')
     .get(blockchainMongo.get_trx)
 
-  app.route('/uncle')
+  app.route('/api/uncle')
     .get(blockchainMongo.get_uncle)
 
-  app.route('/ts_items')
+  app.route('/api/ts_items')
     .get(blockchainMongo.get_ts_items)
 }
 
