@@ -6,7 +6,7 @@ const POOL_API = {
   'WMP': 'https://server.webdollarminingpool.com/pools/miners',
   'Roxana': 'https://webdollarpool.win:80/pools/miners',
   'BACMpool': 'https://pool.bacm.ro/pools/miners',
-  '2Moon2Pool': 'https://2moonpool.ddns.net:3335/pools/miners',
+  '2MooNPooL': 'https://2moonpool.ddns.net:3335/pools/miners',
   'EuroPool': 'https://webd-europool.ddns.net:2222/pools/miners',
   'CoffeePool': 'https://webd.pool.coffee:8443/pool'
 }
