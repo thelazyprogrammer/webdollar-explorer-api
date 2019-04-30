@@ -143,12 +143,12 @@ export default {
       min_amount: 20
     },
     {
-      name: '2Moon2Pool',
+      name: '2MooNPooL',
       address: 'WEBD$gDIR0gQdFEPzCip1AN8qwosSiRJhdzJjQ3$',
       'status': 'up',
       level: 10,
       fee: 2,
-      min_amount: 20
+      min_amount: 10
     }
   ],
 
