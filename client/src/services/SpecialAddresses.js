@@ -87,6 +87,14 @@ export default {
       min_amount: 20
     },
     {
+      name: 'BACM',
+      address: 'WEBD$gCs1#dzHasNGrxefzCENF0$oTKMhV#SDev$',
+      'status': 'up',
+      fee: 1,
+      level: 5,
+      min_amount: 20
+    },
+    {
       name: 'InfinityPool',
       address: 'WEBD$gBMQp$yXWiZjHUvkrR7u7uqM7g8wUn6TTj$',
       'status': 'down',
