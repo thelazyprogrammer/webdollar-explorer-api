@@ -10,6 +10,7 @@ const POOL_API = {
   '2MooNPooL': 'https://2moonpool.ddns.net:3335/pools/miners',
   'EuroPool': 'https://webd-europool.ddns.net:2222/pools/miners',
   'CoffeePool': 'https://webd.pool.coffee:8443/pool'
+  'CanadianPoolStake': 'https://webdollarpool.ca/pools/miners'
 }
 
 function getAxiosWrapper (poolApi) {
