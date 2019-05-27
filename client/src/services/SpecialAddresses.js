@@ -87,6 +87,14 @@ export default {
       min_amount: 20
     },
     {
+      name: 'CanadianStakePool',
+      address: 'WEBD$gAtzwEJfs1ZHnT6rfNG9p++7@Qf4Af4dxn$',
+      'status': 'up',
+      fee: 0,
+      level: 4,
+      min_amount: 20
+    },
+    {
       name: 'BACM',
       address: 'WEBD$gCs1#dzHasNGrxefzCENF0$oTKMhV#SDev$',
       'status': 'up',
