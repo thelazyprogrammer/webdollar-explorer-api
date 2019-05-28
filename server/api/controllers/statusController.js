@@ -59,7 +59,7 @@ exports.get_current_supply = async function (req, res) {
     let blockChainDB = mongoDB.db(config.mongodb.db)
     let block = await blockChainDB.collection(config.mongodb.collection).find({}).sort({ number: -1 }).limit(1).toArray()
     let current_supply = 4156801128 + (block[0].number - 40) * 6000
-    res.json(current_supply * 10000)
+    res.json(current_supply)
   } catch (ex) {
     console.log(ex)
     res.json()
@@ -72,5 +72,5 @@ exports.get_total_supply = async function (req, res) {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Cache-Control', 'public, max-age=3600')
 
-  res.json(420000000000000)
+  res.json(42000000000)
 }
