@@ -9,7 +9,8 @@ const POOL_API = {
   'BACM': 'https://pool.bacm.ro:8443/pools/miners',
   '2MooNPooL': 'https://2moonpool.ddns.net:3335/pools/miners',
   'EuroPool': 'https://webd-europool.ddns.net:2222/pools/miners',
-  'CoffeePool': 'https://webd.pool.coffee:8443/pool'
+  'CoffeePool': 'https://webd.pool.coffee:8443/pool',
+  'CanadianStakePool': 'https://webdollarpool.ca/pools/miners'
 }
 
 function getAxiosWrapper (poolApi) {
