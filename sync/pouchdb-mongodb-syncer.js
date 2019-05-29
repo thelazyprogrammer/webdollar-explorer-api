@@ -779,7 +779,15 @@ async function sync (from, to, force) {
         number: decoded_block.number,
         miner: { $ne: decoded_block.miner }
       }).toArray()
-      if (force || badBlocks.length > 0 || badBlocksMiner.length > 0) {
+      let badBlocksTrx = await blockChainDB.collection(mongodbBlockCollection).find({
+        number: decoded_block.number,
+        trxs_number: { $ne: decoded_block.trxs_number }
+      }).toArray()
+      let badBlocksFee = await blockChainDB.collection(mongodbBlockCollection).find({
+        number: decoded_block.number,
+        fee: { $ne: decoded_block.fee }
+      }).toArray()
+      if (force || badBlocks.length > 0 || badBlocksMiner.length > 0 || badBlocksTrx > 0 || badBlocksFee > 0) {
         let badBlockReason = 'new hash'
         if (badBlocksMiner.length > 0) {
           badBlockReason = 'new miner'
