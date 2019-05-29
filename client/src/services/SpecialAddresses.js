@@ -91,7 +91,7 @@ export default {
       address: 'WEBD$gAtzwEJfs1ZHnT6rfNG9p++7@Qf4Af4dxn$',
       'status': 'up',
       fee: 0,
-      level: 4,
+      level: 11,
       min_amount: 20
     },
     {
