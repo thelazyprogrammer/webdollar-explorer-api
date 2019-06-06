@@ -781,13 +781,19 @@ async function sync (from, to, force) {
         badBlock = badBlocks[0]
         for (let prop = 0; prop < properties.length; prop++) {
           if (badBlock[properties[prop]] != decoded_block[properties[prop]]) {
-            console.log(decoded_block.number + ": prop is bad " + properties[prop])
+            logger.log({
+              level: 'info',
+              message: 'Block property is bad. ' + properties[prop] + ': ' + badBlock[properties[prop]]
+            })
             isBadBlock = true
             break
           }
         }
       } else {
-          console.log('block is not present ' + decoded_block.number )
+        logger.log({
+          level: 'info',
+          message: 'Block is not present ' + decoded_block.number
+        })
       }
       if (force || isBadBlock) {
         logger.log({
@@ -799,8 +805,7 @@ async function sync (from, to, force) {
         await blockChainDB.collection(mongodbMTransactionCollection).deleteMany({ block_number: decoded_block.number })
       }
       let goodBlock = await blockChainDB.collection(mongodbBlockCollection).find({
-        number: decoded_block.number,
-        hash: decoded_block.hash
+        number: decoded_block.number
       }).toArray()
       if (goodBlock.length == 0) {
         logger.log({
