@@ -772,35 +772,32 @@ async function sync (from, to, force) {
       decoded_block = decodeRawBlock(i, response._attachments.key.data)
 
       let badBlocks = await blockChainDB.collection(mongodbBlockCollection).find({
-        number: decoded_block.number,
-        hash: { $ne: decoded_block.hash }
+        number: decoded_block.number
       }).toArray()
-      let badBlocksMiner = await blockChainDB.collection(mongodbBlockCollection).find({
-        number: decoded_block.number,
-        miner: { $ne: decoded_block.miner }
-      }).toArray()
-      let badBlocksTrx = await blockChainDB.collection(mongodbBlockCollection).find({
-        number: decoded_block.number,
-        trxs_number: { $ne: decoded_block.trxs_number }
-      }).toArray()
-      let badBlocksFee = await blockChainDB.collection(mongodbBlockCollection).find({
-        number: decoded_block.number,
-        fee: { $ne: decoded_block.fee }
-      }).toArray()
-      if (force || badBlocks.length > 0 || badBlocksMiner.length > 0 || badBlocksTrx > 0 || badBlocksFee > 0) {
-        let badBlockReason = 'new hash'
-        if (badBlocksMiner.length > 0) {
-          badBlockReason = 'new miner'
+      let badBlock = ''
+      let isBadBlock = false
+      if (badBlocks && badBlocks.length > 0) {
+        let properties = ['hash', 'miner', 'nonce', 'version', 'timestamp', 'resolver', 'resolver2', 'reward', 'trxs_number', 'from_amount', 'to_amount']
+        badBlock = badBlocks[0]
+        for (let prop = 0; prop < properties.length; prop++) {
+          if (badBlock[properties[prop]] != decoded_block[properties[prop]]) {
+            console.log(decoded_block.number + ": prop is bad " + properties[prop])
+            isBadBlock = true
+            break
+          }
         }
+      } else {
+          console.log('block is not present ' + decoded_block.number )
+      }
+      if (force || isBadBlock) {
         logger.log({
           level: 'info',
-          message: 'Removing bad block ' + decoded_block.number + '. Reason: ' + badBlockReason
+          message: 'Removing bad block ' + decoded_block.number
         })
         await blockChainDB.collection(mongodbBlockCollection).deleteMany({ number: decoded_block.number })
         await blockChainDB.collection(mongodbTransactionCollection).deleteMany({ block_number: decoded_block.number })
         await blockChainDB.collection(mongodbMTransactionCollection).deleteMany({ block_number: decoded_block.number })
       }
-
       let goodBlock = await blockChainDB.collection(mongodbBlockCollection).find({
         number: decoded_block.number,
         hash: decoded_block.hash
