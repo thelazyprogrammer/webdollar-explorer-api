@@ -18,12 +18,14 @@ exports.get_status_mongo = async function (req, res) {
   try {
     let blockChainDB = mongoDB.db(config.mongodb.db)
     let blockTask = await blockChainDB.collection(config.mongodb.collection).find({}).sort({ number: -1 }).limit(1).toArray()
+    let blockNumberTask = await blockChainDB.collection(config.mongodb.collection).find({}).count()
     let trxTask = await blockChainDB.collection(config.mongodb.trx_collection).find({}).sort({ number: -1 }).count()
     let block = await blockTask
+    let blockNumber = await blockNumberTask
     let trxCount = await trxTask
     let isSynchronized = false
     let currentTimestamp = new Date().getTime()
-    if (currentTimestamp - block[0].timestamp * 1000 < MAX_SYNC_OFFSET) {
+    if (blockNumber - 1 === block[0].number && currentTimestamp - block[0].timestamp * 1000 < MAX_SYNC_OFFSET) {
       isSynchronized = true
     }
 
