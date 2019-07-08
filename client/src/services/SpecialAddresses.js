@@ -95,6 +95,14 @@ export default {
       min_amount: 20
     },
     {
+      name: 'ImperiumStake',
+      address: 'WEBD$gAm4m6CwR9A4hzyDtGD39bMm$$fGDBAEkr$',
+      'status': 'up',
+      fee: 0,
+      level: 11,
+      min_amount: 20
+    },
+    {
       name: 'BACM',
       address: 'WEBD$gCs1#dzHasNGrxefzCENF0$oTKMhV#SDev$',
       'status': 'up',
