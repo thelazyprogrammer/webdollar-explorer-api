@@ -90,7 +90,7 @@ export default {
       name: 'CanadianStakePool',
       address: 'WEBD$gAtzwEJfs1ZHnT6rfNG9p++7@Qf4Af4dxn$',
       'status': 'up',
-      fee: 0,
+      fee: 2,
       level: 11,
       min_amount: 20
     },
