@@ -79,7 +79,7 @@ export default {
       min_amount: 20
     },
     {
-      name: 'BACMpool',
+      name: 'LOFT',
       address: 'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
       'status': 'up',
       fee: 1,
@@ -105,7 +105,7 @@ export default {
     {
       name: 'BACM',
       address: 'WEBD$gCs1#dzHasNGrxefzCENF0$oTKMhV#SDev$',
-      'status': 'up',
+      'status': 'down',
       fee: 1,
       level: 5,
       min_amount: 20
