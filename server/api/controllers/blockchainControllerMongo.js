@@ -1002,7 +1002,7 @@ exports.get_ts_items = async function (req, res) {
   let itemNumber = { $sum: 1 }
   let multiplierId = 1000
   let dividerItemNumber = 1
-  let maxBlocks = 1000000
+  let maxBlocks = 2000000
   let blocksMatch = {
     number: {
      '$gte': Number(0),
