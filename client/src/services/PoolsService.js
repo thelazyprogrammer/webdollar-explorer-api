@@ -11,7 +11,8 @@ const POOL_API = {
   'EuroPool': 'https://webd-europool.ddns.net:2222/pools/miners',
   'CoffeePool': 'https://webd.pool.coffee:8443/pool',
   'CanadianStakePool': 'https://webdollarpool.ca/pools/miners',
-  'ImperiumStake': 'https://webdollarpool.eu/pools/miners'
+  'ImperiumStake': 'https://webdollarpool.eu/pools/miners',
+  'TimiPool': 'https://pool.timi.ro/pools/miners'
 }
 
 function getAxiosWrapper (poolApi) {

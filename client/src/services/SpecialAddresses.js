@@ -55,6 +55,14 @@ export default {
       min_amount: 20
     },
     {
+      name: 'TimiPool',
+      address: 'WEBD$gDkPvqvpjFPd#wPL2KimDSH5+Nvh0Jg$$r$',
+      'status': 'up',
+      level: 10,
+      fee: 0,
+      min_amount: 20
+    },
+    {
       name: 'WMP',
       address: 'WEBD$gDEVpp1z9QNZ+MvBjbk+Md76iWZK2WZmqn$',
       'status': 'up',
