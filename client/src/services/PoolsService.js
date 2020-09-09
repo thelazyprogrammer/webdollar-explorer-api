@@ -12,7 +12,8 @@ const POOL_API = {
   'CoffeePool': 'https://webd.pool.coffee:8443/pool',
   'CanadianStakePool': 'https://webdollarpool.ca/pools/miners',
   'ImperiumStake': 'https://webdollarpool.eu/pools/miners',
-  'TimiPool': 'https://pool.timi.ro/pools/miners'
+  'TimiPool': 'https://pool.timi.ro/pools/miners',
+  'WEBD-Splashpool-USA': 'https://splashpool.myvnc.com:8080/pools/miners'
 }
 
 function getAxiosWrapper (poolApi) {

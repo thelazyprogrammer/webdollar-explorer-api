@@ -49,7 +49,7 @@ export default {
     {
       name: 'WMP-ASIA',
       address: 'WEBD$gCrEhDsa9Wv$@x3QkNd4jbNcb5bISk8Nyv$',
-      'status': 'up',
+      'status': 'down',
       level: 10,
       fee: 2,
       min_amount: 20
@@ -73,7 +73,7 @@ export default {
     {
       name: 'Roxana',
       address: 'WEBD$gD$XiN5r1uVU#QgZRhM@en8dR1xLB@BEtf$',
-      'status': 'up',
+      'status': 'down',
       level: 7,
       fee: 1,
       min_amount: 20
@@ -97,7 +97,7 @@ export default {
     {
       name: 'CanadianStakePool',
       address: 'WEBD$gAtzwEJfs1ZHnT6rfNG9p++7@Qf4Af4dxn$',
-      'status': 'up',
+      'status': 'down',
       fee: 2,
       level: 11,
       min_amount: 20
@@ -105,7 +105,7 @@ export default {
     {
       name: 'ImperiumStake',
       address: 'WEBD$gAm4m6CwR9A4hzyDtGD39bMm$$fGDBAEkr$',
-      'status': 'up',
+      'status': 'down',
       fee: 0,
       level: 11,
       min_amount: 20
@@ -177,6 +177,14 @@ export default {
     {
       name: '2MooNPooL',
       address: 'WEBD$gDIR0gQdFEPzCip1AN8qwosSiRJhdzJjQ3$',
+      'status': 'down',
+      level: 10,
+      fee: 2,
+      min_amount: 10
+    },
+    {
+      name: 'WEBD-Splashpool-USA',
+      address: 'WEBD$gBLWfWQ+9@5P6wpX+$9xnoscRJpM+Qn+$D$',
       'status': 'up',
       level: 10,
       fee: 2,
