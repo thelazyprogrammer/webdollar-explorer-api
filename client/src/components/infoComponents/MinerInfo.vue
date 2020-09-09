@@ -3,7 +3,7 @@
     <div v-if="miner" class="minerTable">
 
       <div style="display: block;text-align:center; height: 58px;">
-        <img style="width:50px; height:50px; margin-bottom: -15px" :src="'https://robohash.org/' + encodeURIComponent(miner.address) + '?set=set4&size=50x50'" />
+        <img style="width:50px; height:50px; margin-bottom: -15px" :src="'https://ikon.center/?' + encodeURIComponent(miner.address)" />
         <span style="font-size: 0.9em;"> {{getLabel(miner.address)}} </span>
         <span style="font-size: 0.9em; color: #fec02c!important"> {{ miner.address }} </span>
         <a title="Star network" class="webdAddress" :href="'#/stars/' + miner.address">&#9734;</a>
@@ -150,10 +150,10 @@ export default {
       }.bind(this), 2000)
     },
     getPossiblePoSReward (balance) {
-      let totalDailyReward = 6000 * 60 * 60 * 24 / 40
+      let totalDailyReward = 6000 * 60 * 60 * 24 / 43.2
       let daysPassed = (new Date() - new Date(1524743407 * 1000)) / (1000 * 60 * 60 * 24)
-      let currSupply = (totalDailyReward * Math.round(daysPassed) + 4156801128)
-      let posReward = 0.6666
+      let currSupply = (totalDailyReward * Math.round(daysPassed) + 4156801128) * 0.8
+      let posReward = 0.9
       let share = posReward * totalDailyReward / currSupply
       let dailyReward = share * balance / 10000
       let monthlyReward = dailyReward * 30 * 97 / 100
