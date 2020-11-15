@@ -36,7 +36,7 @@ const mongodbBlockchainDB = 'blockchainDB3'
 const mongodbBlockCollection = 'blocks'
 const mongodbTransactionCollection = 'transactions'
 const mongodbMTransactionCollection = 'mtransactions'
-const mongodbUrl = 'mongodb://localhost:27017'
+const mongodbUrl = 'mongodb://%2Ftmp%2Fmongodb-27017.sock'
 
 const PREFIX_BASE64 = '584043fe'
 const SUFFIX_BASE64 = 'FF'
@@ -50,6 +50,7 @@ const TRX_NONCE_V2_BLOCK = 46950
 const GENESIS_ADDRESS_FORK = 'WEBD$gDZwjjD7ZE5+AE+44ITr8yo5E2aXYT3mEH$'
 const HARD_FORKS_WALLET_RECOVERY = 153060
 const HARD_FORKS_POS = 567810
+const HARD_FORKS_POS_90 = 1650000
 const GENESIS_AMOUNT_FORK = 18674856891922
 const GENESIS_ADDRESS_TIMESTAMP = 'Wed, 11 Jul 2018 11:19:52 GMT'
 
@@ -365,7 +366,10 @@ function computeTxId (txSerialized) {
 }
 
 function isPoSBlock (blockId) {
-  return blockId % 30 < 20
+  if (blockId < HARD_FORKS_POS_90) {
+    return blockId % 30 < 20
+  }
+  return blockId % 100 < 90
 }
 
 function decodeRawBlock (block_id, block_raw, divide_amounts) {
@@ -475,7 +479,6 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
     block_hash_data = substr(block_hex, CURRENT_OFFSET, OFFSET_BLOCK_HASH).toString('hex')
     CURRENT_OFFSET += OFFSET_BLOCK_HASH
   }
-
   var miner_address = substr(block_hex, CURRENT_OFFSET, OFFSET_ADDRESS).toString('hex')
   CURRENT_OFFSET += OFFSET_ADDRESS
   var miner_address_decoded = decodeMinerAddress(miner_address)

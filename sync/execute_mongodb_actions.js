@@ -35,7 +35,7 @@ const mongodbBlockchainDB = "blockchainDB3"
 const mongodbBlockCollection = "blocks"
 const mongodbTransactionCollection = "transactions"
 const mongodbMTransactionCollection = "mtransactions"
-const mongodbUrl = "mongodb://localhost:27017"
+const mongodbUrl = "mongodb:///tmp/mongodb-27017.sock"
 
 let miner = {
   address: '',
@@ -127,7 +127,7 @@ async function checkSanity() {
   for (let i in knownAddresses) {
     let address = knownAddresses[i]
     let optionsExplorer = {
-      uri:  'http://localhost:3000' + '/address/' + encodeURIComponent(address),
+      uri:  'http://localhost:3001' + '/address/' + encodeURIComponent(address),
       json: true
     };
     var optionsCore = {
