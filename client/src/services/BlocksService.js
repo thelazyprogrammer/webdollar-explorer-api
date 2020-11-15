@@ -1,6 +1,13 @@
 import Api from '@/services/Api'
 require('axios-debug-log')
 
+function encodeURIComponentInternal (uri) {
+  if (uri && uri.length === 40) {
+    return encodeURIComponent(uri)
+  }
+  return uri
+}
+
 export default {
 
   fetchBlocks (pageNumber, minerAddress, resolverAddress) {
@@ -9,10 +16,10 @@ export default {
     }
     let extraURLParams = '?page_number=' + pageNumber
     if (minerAddress) {
-      extraURLParams += '&miner=' + encodeURIComponent(minerAddress)
+      extraURLParams += '&miner=' + encodeURIComponentInternal(minerAddress)
     }
     if (resolverAddress) {
-      extraURLParams += '&resolver=' + encodeURIComponent(resolverAddress)
+      extraURLParams += '&resolver=' + encodeURIComponentInternal(resolverAddress)
     }
     return Api().get('block' + extraURLParams)
   },
@@ -29,7 +36,7 @@ export default {
     if (startDate && endDate) {
       extraURLParams += '&start_date=' + startDate + '&end_date=' + endDate
     }
-    return Api().get('address/' + encodeURIComponent(minerAddress) + extraURLParams)
+    return Api().get('address/' + encodeURIComponentInternal(minerAddress) + extraURLParams)
   },
 
   fetchStars (starUrl) {
@@ -58,7 +65,7 @@ export default {
     }
     let extraURLParams = '?page_number=' + pageNumber
     if (minerAddress) {
-      extraURLParams += '&miner=' + encodeURIComponent(minerAddress)
+      extraURLParams += '&miner=' + encodeURIComponentInternal(minerAddress)
     }
     if (isFrom) {
       extraURLParams += '&is_from=' + isFrom
@@ -86,7 +93,7 @@ export default {
   fetchTSItems (miner, type) {
     let extraURLParams = ''
     if (miner || type) {
-      extraURLParams += '?&miner=' + encodeURIComponent(miner) + '&type=' + type
+      extraURLParams += '?&miner=' + encodeURIComponentInternal(miner) + '&type=' + type
     }
     return Api().get('ts_items' + extraURLParams)
   }
