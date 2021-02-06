@@ -53,7 +53,7 @@ export default {
       }
       try {
         let blockIdNr = parseInt(blockId)
-        if (blockIdNr.ToString() != blockId) {
+        if (blockIdNr.ToString() !== blockId) {
           isTrxSigBlockId = true
         }
       } catch (ex) {
