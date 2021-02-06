@@ -53,10 +53,11 @@ export default {
       }
       try {
         let blockIdNr = parseInt(blockId)
-        if (blockIdNr.toString() !== blockId) {
+        if (blockIdNr.toString() !== blockId.toString()) {
           isTrxSigBlockId = true
         }
       } catch (ex) {
+        console.log(ex)
         isTrxSigBlockId = true
       }
       this.block_loaded = false
