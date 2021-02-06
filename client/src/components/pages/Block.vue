@@ -47,12 +47,26 @@ export default {
   },
   methods: {
     async getBlock (blockId) {
+      let isTrxSigBlockId = false
       if (!blockId) {
         blockId = this.$route.params.block_id
       }
+      try {
+        let blockIdNr = parseInt(blockId)
+        if (blockIdNr.ToString() != blockId) {
+          isTrxSigBlockId = true
+        }
+      } catch (ex) {
+        isTrxSigBlockId = true
+      }
       this.block_loaded = false
       try {
-        let response = await BlocksService.fetchBlock(blockId)
+        let response = {}
+        if (isTrxSigBlockId === false) {
+          response = await BlocksService.fetchBlock(blockId)
+        } else {
+          response = await BlocksService.fetchBlockByTxSig(blockId)
+        }
         if (response.data.trxs) {
           let trxsParsed = []
           response.data.trxs.forEach(function (trx) {
