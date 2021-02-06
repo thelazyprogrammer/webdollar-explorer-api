@@ -28,6 +28,10 @@ export default {
     return Api().get('block/' + blockId)
   },
 
+  fetchBlockByTxSig (txSig) {
+    return Api().get('block_tx_sig/' + txSig)
+  },
+
   fetchMiner (minerAddress, showAllTransactions, startDate, endDate) {
     let extraURLParams = '?show_all_transactions=false'
     if (showAllTransactions) {
