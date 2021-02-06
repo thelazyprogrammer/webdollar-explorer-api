@@ -9,12 +9,16 @@ module.exports = function (app) {
   let latestBlocksRoute = config.enable_mongodb ? blockchainMongo.latest_blocks_mongo : blockchainNative.latest_blocks
   let readAnAddressRoute = config.enable_mongodb ? blockchainMongo.read_an_address_mongo : blockchainNative.read_an_address
   let readABlockRoute = config.enable_mongodb ? blockchainMongo.read_a_block_mongo : blockchainNative.read_a_block
+  let readABlocByTxSigRoute = config.enable_mongodb ? blockchainMongo.read_a_block_mongo_tx_sig : blockchainNative.read_a_block
 
   app.route('/block')
     .get(latestBlocksRoute)
 
   app.route('/block/:blockId')
     .get(readABlockRoute)
+
+  app.route('/block_tx_sig/:txSig')
+    .get(readABlocByTxSigRoute)
 
   app.route('/address/:address*')
     .get(readAnAddressRoute)

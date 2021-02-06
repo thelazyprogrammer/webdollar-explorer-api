@@ -25,7 +25,7 @@ exports.get_status_mongo = async function (req, res) {
     let trxCount = await trxTask
     let isSynchronized = false
     let currentTimestamp = new Date().getTime()
-    if (blockNumber - 1 === block[0].number && currentTimestamp - block[0].timestamp * 1000 < MAX_SYNC_OFFSET) {
+    if ((blockNumber - 1 === block[0].number || blockNumber === block[0].number) && currentTimestamp - block[0].timestamp * 1000 < MAX_SYNC_OFFSET) {
       isSynchronized = true
     }
 
@@ -35,7 +35,8 @@ exports.get_status_mongo = async function (req, res) {
       block_timestamp: block[0].timestamp * 1000,
       last_block: block[0].number,
       current_supply: 4156801128 + (block[0].number - 40) * 6000,
-      trx_number: trxCount
+      trx_number: trxCount,
+      block_count: blockNumber,
     }
     res.json(statusResult)
   } catch (ex) {
