@@ -35,7 +35,7 @@ const mongodbBlockchainDB = "blockchainDB3"
 const mongodbBlockCollection = "blocks"
 const mongodbTransactionCollection = "transactions"
 const mongodbMTransactionCollection = "mtransactions"
-const mongodbUrl = "mongodb:///tmp/mongodb-27017.sock"
+const mongodbUrl = "mongodb://%2Ftmp%2Fmongodb-27017.sock"
 
 let miner = {
   address: '',
@@ -106,6 +106,18 @@ async function getPoSMiners() {
 }
 
 async function checkSanity() {
+  let mongoDB = await MongoClient.connect(mongodbUrl, { useNewUrlParser: true })
+  let blockChainDB = mongoDB.db(mongodbBlockchainDB)
+  for (let blockId=0; blockId<1863972; blockId++) {
+      let block_exists = await blockChainDB.collection(mongodbBlockCollection).find({
+        number: blockId
+      }).count()
+      if (block_exists != 1) {
+        throw "block does not exist: " + blockId
+      }
+  }
+  mongoDB.close()
+
   let knownAddresses = [
     'WEBD$gAY19Mp6VnujexNW3gjHNiAEQkvkIs9div$',
     'WEBD$gCsh0nNrsZv9VYQfe5Jn$9YMnD4hdyx62n$',
@@ -144,9 +156,9 @@ async function checkSanity() {
       console.log(address + ": balances are the same. explorer " + balanceExplorer.balance + " == core " + balanceCoreWebdollar.balance)
     }
   }
-   if (failure) {
-     throw "Addresses did not pass sanity check"
-   }
+  if (failure) {
+    throw "Addresses did not pass sanity check"
+  }
 }
 
 async function getTimeSeriesBlocks(from, to) {

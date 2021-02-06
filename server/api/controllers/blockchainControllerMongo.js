@@ -102,6 +102,44 @@ exports.latest_blocks_mongo = async function (req, res) {
   }
 }
 
+exports.read_a_block_mongo_tx_sig = async function (req, res) {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Cache-Control', 'public, max-age=120')
+
+  var block = {}
+  var txSig = req.params.txSig
+
+  if (!txSig) {
+    res.json(block)
+    return
+  }
+
+  try {
+    let MongoClient = require('mongodb').MongoClient
+    let mongoDB = await MongoClient.connect(config.mongodb.url, { useNewUrlParser: true })
+    let blockChainDB = mongoDB.db(config.mongodb.db)
+
+    let block_db = await blockChainDB.collection(config.mongodb.collection).find({
+      trx_from_signatures: { $elemMatch: { $eq: txSig }}
+    }).toArray()
+    if (block_db.length == 1) {
+      block = block_db[0]
+      let trxs = await blockChainDB.collection(config.mongodb.trx_collection).find({ block_number: block.number }).toArray()
+      block.trxs = trxs
+    } else {
+      console.log(block_db)
+    }
+    mongoDB.close()
+    res.json(block)
+    return
+  } catch (ex) {
+    console.log(ex)
+    res.json(block)
+    return
+  }
+  res.json(block)
+}
+
 exports.read_a_block_mongo = async function (req, res) {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Cache-Control', 'public, max-age=120')

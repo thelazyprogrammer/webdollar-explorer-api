@@ -381,6 +381,7 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
   }
   var total_fee = 0
   var addresses = []
+  var trx_from_signatures = []
 
   var base_reward = BASE_REWARD * AMOUNT_DIVIDER
   if (block_id < FIRST_BLOCK_REWARDS.length) {
@@ -556,6 +557,9 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
           trx_addresses.push(trx_from.trx_from_address)
         }
         trx_from.trx_from_signature = substr(block_hex, CURRENT_OFFSET, OFFSET_TRX_SIGN).toString('hex')
+        if (trx_from_signatures.indexOf(trx_from.trx_from_signature) == -1) {
+          trx_from_signatures.push(trx_from.trx_from_signature)
+        }
         CURRENT_OFFSET += OFFSET_TRX_SIGN
         trx_from.trx_from_amount = deserializeNumber8BytesBuffer(block_hex, CURRENT_OFFSET)
         trxs_from.amount += trx_from.trx_from_amount
@@ -651,6 +655,7 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
     'to_amount': total_to_amount,
     'fee': total_fee,
     'addresses': addresses,
+    'trx_from_signatures': trx_from_signatures,
     'base_reward': base_reward,
     'reward': base_reward + total_fee,
     'trxs': trxs_container,
@@ -686,10 +691,10 @@ async function sync (from, to, force) {
     { number: 1 },
     { unique: true }
   )
-  await blockChainDB.collection(mongodbBlockCollection).createIndex(
-    { hash: 1 },
-    { unique: true }
-  )
+//  await blockChainDB.collection(mongodbBlockCollection).createIndex(
+//    { hash: 1 },
+//    { unique: true }
+//  )
   await blockChainDB.collection(mongodbBlockCollection).createIndex(
     { miner: 1 },
     { unique: false }
@@ -698,10 +703,10 @@ async function sync (from, to, force) {
     { addresses: 1 },
     { unique: false }
   )
-  await blockChainDB.collection(mongodbBlockCollection).createIndex(
-    { number: 1, hash: 1 },
-    { unique: false }
-  )
+//  await blockChainDB.collection(mongodbBlockCollection).createIndex(
+//    { number: 1, hash: 1 },
+//    { unique: false }
+//  )
   await blockChainDB.collection(mongodbBlockCollection).createIndex(
     { algorithm: -1 },
     { unique: false }
@@ -726,6 +731,10 @@ async function sync (from, to, force) {
     { resolver2: -1 },
     { unique: false }
   )
+  await blockChainDB.collection(mongodbBlockCollection).createIndex(
+    { trx_from_signatures: 1 },
+    { unique: false }
+  )
 
   // Create indexes for transaction collection
   await blockChainDB.createCollection(mongodbTransactionCollection)
@@ -738,9 +747,9 @@ async function sync (from, to, force) {
   await blockChainDB.collection(mongodbTransactionCollection).createIndex(
     { addresses: 1 }
   )
-  await blockChainDB.collection(mongodbTransactionCollection).createIndex(
-    { hash: 1 }
-  )
+ // await blockChainDB.collection(mongodbTransactionCollection).createIndex(
+ //   { hash: 1 }
+//  )
 
   // Create indexes for mtransaction collection
   await blockChainDB.createCollection(mongodbMTransactionCollection)
@@ -753,9 +762,9 @@ async function sync (from, to, force) {
   await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
     { type: 1 }
   )
-  await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
-    { trx_hash: 1 }
-  )
+//  await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
+//    { trx_hash: 1 }
+//  )
   await blockChainDB.collection(mongodbMTransactionCollection).createIndex(
     { timestamp: 1 }
   )
