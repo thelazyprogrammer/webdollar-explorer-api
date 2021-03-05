@@ -21,7 +21,7 @@ export default {
       address: 'WEBD$gBttMQ5kqqfPjcwqG3dLZsiyNy+Goq$2#L$'
     },
     {
-      name: '@webdollar_tip_bot',
+      name: 'WebdollarTipBot',
       'status': 'up',
       address: 'WEBD$gDnTKoDgfy4k8f3ahDfCGG7yKQMxgdrDBr$'
     }
