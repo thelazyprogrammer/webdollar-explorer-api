@@ -24,6 +24,16 @@ export default {
       name: 'WebdollarTipBot',
       'status': 'up',
       address: 'WEBD$gDnTKoDgfy4k8f3ahDfCGG7yKQMxgdrDBr$'
+    },
+    {
+      name: 'WWEBD_MATIC_FUND',
+      'status': 'up',
+      address: 'WEBD$gC+NwGALHX#9sXZjtUN++rt5t479EHIxa$$'
+    },
+    {
+      name: 'WWEBD_ETH_FUND',
+      'status': 'up',
+      address: 'WEBD$gAoqGpIZZ@4c2kGYN1+rguUCahLLPNH2Hj$'
     }
   ],
   pools: [
