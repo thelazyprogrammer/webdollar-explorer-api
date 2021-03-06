@@ -19,6 +19,11 @@ export default {
       name: 'BitRabbit',
       'status': 'up',
       address: 'WEBD$gBttMQ5kqqfPjcwqG3dLZsiyNy+Goq$2#L$'
+    },
+    {
+      name: 'WebdollarTipBot',
+      'status': 'up',
+      address: 'WEBD$gDnTKoDgfy4k8f3ahDfCGG7yKQMxgdrDBr$'
     }
   ],
   pools: [
