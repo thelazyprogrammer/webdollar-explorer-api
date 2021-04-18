@@ -150,7 +150,7 @@ export default {
       }.bind(this), 2000)
     },
     getPossiblePoSReward (balance) {
-      let totalDailyReward = 6000 * 60 * 60 * 24 / 43.2
+      let totalDailyReward = 1500 * 60 * 60 * 24 / 43.2
       let daysPassed = (new Date() - new Date(1524743407 * 1000)) / (1000 * 60 * 60 * 24)
       let currSupply = (totalDailyReward * Math.round(daysPassed) + 4156801128) * 0.8
       let posReward = 0.9

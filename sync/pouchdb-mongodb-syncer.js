@@ -53,6 +53,7 @@ const HARD_FORKS_POS = 567810
 const HARD_FORKS_POS_90 = 1650000
 const GENESIS_AMOUNT_FORK = 18674856891922
 const GENESIS_ADDRESS_TIMESTAMP = 'Wed, 11 Jul 2018 11:19:52 GMT'
+const HARD_FORK_REWARD = 2158001
 
 function getVirtualTransactionsFromHardFork () {
   return {
@@ -386,6 +387,9 @@ function decodeRawBlock (block_id, block_raw, divide_amounts) {
   var base_reward = BASE_REWARD * AMOUNT_DIVIDER
   if (block_id < FIRST_BLOCK_REWARDS.length) {
     base_reward = FIRST_BLOCK_REWARDS[block_id] * AMOUNT_DIVIDER
+  }
+  if (block_id >= HARD_FORK_REWARD) {
+    base_reward = 1500 * AMOUNT_DIVIDER
   }
 
   const OFFSET_1 = 1
