@@ -34,7 +34,7 @@ exports.get_status_mongo = async function (req, res) {
       current_timestamp: currentTimestamp,
       block_timestamp: block[0].timestamp * 1000,
       last_block: block[0].number,
-      current_supply: 4156801128 + (block[0].number - 40) * 6000,
+      current_supply: getCurrentSupply(block[0].number),
       trx_number: trxCount,
       block_count: blockNumber,
     }
@@ -45,6 +45,25 @@ exports.get_status_mongo = async function (req, res) {
   } finally {
     mongoDB.close()
   }
+}
+
+function getCurrentSupply(blockNr) {
+  let genesis_supply = 4156801128
+  let blockNrStage1 = blockNr
+  if (blockNr > 2158000) {
+    blockNrStage1 = 2158000
+  }
+  let base_reward_supply = (blockNrStage1 - 40) * 6000
+
+  let blockNrStage2 = 2158000
+  if (blockNr > 2158000) {
+    blockNrStage2 = blockNr
+  }
+  let after_base_reward_supply = (blockNrStage2 - 2158000) * 1500
+
+  let final_supply = genesis_supply + base_reward_supply + after_base_reward_supply
+
+  return final_supply
 }
 
 exports.get_current_supply = async function (req, res) {
@@ -61,7 +80,7 @@ exports.get_current_supply = async function (req, res) {
   try {
     let blockChainDB = mongoDB.db(config.mongodb.db)
     let block = await blockChainDB.collection(config.mongodb.collection).find({}).sort({ number: -1 }).limit(1).toArray()
-    let current_supply = 4156801128 + (block[0].number - 40) * 6000
+    let current_supply = getCurrentSupply(block[0].number)
     res.json(current_supply)
   } catch (ex) {
     console.log(ex)

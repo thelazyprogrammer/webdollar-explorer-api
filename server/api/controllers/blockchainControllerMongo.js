@@ -6,7 +6,8 @@ var config = require('../../config')
 var blockchainUtils = require('../blockchain/utils')
 
 const AMOUNT_DIVIDER = 10000
-const REWARD = AMOUNT_DIVIDER * 6000
+const BASE_REWARD = 1500
+const REWARD = AMOUNT_DIVIDER * BASE_REWARD
 const ADDRESS_CACHE_DB = 'address'
 const BALANCE_RATIO_DECIMALS = 5
 const MAX_POOLED_TRXS = 15
@@ -516,7 +517,7 @@ exports.get_latest_miners = async function (req, res) {
     }
     let pow_miners = await blockChainDB.collection(config.mongodb.collection).aggregate(pow_miners_query).toArray()
     latest_miners = miners
-    let total_amount = 6000 * 60 * 60 * 24 / 45 * 10000
+    let total_amount = BASE_REWARD * 60 * 60 * 24 / 45 * 10000
     miners.forEach(function (m) {
       m.ratio = Math.round(m.reward / total_amount * 100 * 100) / 100
       m.pow_blocks = 0
@@ -1040,7 +1041,7 @@ exports.get_ts_items = async function (req, res) {
   let itemNumber = { $sum: 1 }
   let multiplierId = 1000
   let dividerItemNumber = 1
-  let maxBlocks = 2000000
+  let maxBlocks = 3000000
   let blocksMatch = {
     number: {
      '$gte': Number(0),
