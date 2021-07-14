@@ -38,6 +38,14 @@ export default {
   ],
   pools: [
     {
+      name: 'MOFTpool',
+      address: 'WEBD$gCjzVHrbS$hmkZGCihyAsMbxh0Y0u50GE3$',
+      'status': 'up',
+      fee: 2,
+      level: 10,
+      min_amount: 20
+    },
+    {
       name: 'WEBD_POOL_1',
       address: 'WEBD$gDU+tP3@42@L9$Is463vDJi4IKrabPNNn$$',
       'status': 'down',
