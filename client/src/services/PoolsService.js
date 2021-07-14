@@ -2,6 +2,7 @@ import axios from 'axios'
 require('axios-debug-log')
 
 const POOL_API = {
+  'LOFT': 'https://us-est.webdmine.io:8443/pools/miners',
   'WMP-ASIA': 'https://singapore.webdollarminingpool.com/pools/miners',
   'WMP': 'https://server.webdollarminingpool.com/pools/miners',
   'Roxana': 'https://webdollarpool.win:80/pools/miners',
